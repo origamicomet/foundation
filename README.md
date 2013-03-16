@@ -30,14 +30,14 @@ Building
 Make sure you have the following:
 
   * A brain;
-  * Ruby 1.9.3;
-  * Rake;
-  * and [Ninja](https://github.com/martine/ninja).
+  * A C++ compiler (gcc, clang, msvc);
+  * and [Tup](https://github.com/gittup/tup).
 
-Then run `rake foundation:ninja[platform,configuration,architecture]`, and `ninja` afterwards.
-For more details see `Rakefile` or run `rake -T`.
+For Windows run `win32_build.bat --config={debug,release}`, and `win32_build.bat --build`.
 
-**Note:** if you're using Windows you'll need to make sure you set `VCINSTALLDIR` to something like `C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC`. You'll also need to run `%VCINSTALLDIR%\vcvarsall` prior to running `ninja`.
+For Mac OSX, and LInux run `./posix_build --config={debug,release}`, and `./posix_build --build`.
+
+**Note:** if you're using Windows you'll need to make sure you set `VCINSTALLDIR` to something like `C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC`.
 
 License
 ---
