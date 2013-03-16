@@ -30,6 +30,7 @@
 #include <foundation/ring_buffer.h>
 #include <foundation/dictionary.h>
 
+#include <foundation/atomics.h>
 #include <foundation/thread.h>
 #include <foundation/mutex.h>
 #include <foundation/condition_variable.h>

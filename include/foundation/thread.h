@@ -14,6 +14,7 @@
 #if defined(FOUNDATION_PLATFORM_WINDOWS)
   #define WIN32_LEAN_AND_MEAN
   #include <Windows.h>
+  #include <process.h>
 #elif defined(FOUNDATION_PLATFORM_POSIX)
 #elif 
 #endif
@@ -41,7 +42,7 @@ namespace foundation {
       #if defined(FOUNDATION_COMPILER_MSVC)
         _sys_handle = (HANDLE)(_beginthreadex(
           0,
-          stack_size,
+          0,
           &stub,
           (void*)this,
           CREATE_SUSPENDED,
