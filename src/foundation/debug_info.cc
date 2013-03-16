@@ -78,7 +78,7 @@ namespace foundation {
     if (!success)
       return false;
 
-    String symbol(NativeString(Allocator::default_scratch(), sym_info->Name)); {
+    String symbol(NativeString(Allocator::scratch(), sym_info->Name)); {
       const size_t to_copy = min(name_len, symbol.length());
       copy((void*)name, (const void*)symbol.to_ptr(), to_copy);
     }
@@ -119,7 +119,7 @@ namespace foundation {
     if (!success)
       return false;
 
-    String symbol_file_path(NativeString(Allocator::default_scratch(), ihl.FileName)); {
+    String symbol_file_path(NativeString(Allocator::scratch(), ihl.FileName)); {
       const size_t to_copy = min(file_path_len, symbol_file_path.length());
       copy((void*)file_path, (const void*)symbol_file_path.to_ptr(), to_copy);
     }
@@ -174,6 +174,7 @@ namespace foundation {
   FOUNDATION_NAKED void FOUNDATION_STDCALL get_execution_state(
     ExecutionState& exec_state )
   {
+    (void)exec_state;
   #if defined(FOUNDATION_ARCH_X86_64)
     _foundation_execution_state_x86_64();
   #elif defined(FOUNDATION_ARCH_X86)

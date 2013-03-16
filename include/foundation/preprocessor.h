@@ -9,6 +9,7 @@
 //  * __foundation_stringify expands macros before stringifying them.
 //  * __foundation_join expands macros before joining them.
 //  * FOUNDATION_NON_COPYABLE defines private members to follow the RoT.
+//  * make_new/delete wrap placement new for foundation::Allocators.
 
 // __foundation_stringify [
 #define __foundation_stringify1( _ToStringify ) \
@@ -36,5 +37,13 @@
   private: \
     _Class( const _Class& _ ); \
     _Class& operator= ( const _Class& _ );
+
+#include <new>
+
+#define make_new( _Class, _Allocator ) \
+  new (_Allocator.alloc(sizeof(_Class), alignof(_Class))) _Class
+
+#define make_delete( _Class, _Allocator, _Instance ) \
+  do { _Instance->~_Class(); _Allocator.free((void*)_Instance); } while (0, 0)
 
 #endif // _FOUNDATION_PREPROCESSOR_H_

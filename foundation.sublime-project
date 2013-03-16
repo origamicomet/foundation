@@ -4,8 +4,8 @@
 		{
 			"path": "include"
 		},
-    {
-      "path": "src"
-    }
+		{
+			"path": "src"
+		}
 	]
 }

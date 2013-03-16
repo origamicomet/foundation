@@ -32,16 +32,16 @@ namespace foundation {
     };
   }
 
-  Allocator& Allocator::default()
+  Allocator& Allocator::heap()
   {
     static DefaultAllocator def_allocator;
     return def_allocator;
   }
 
-  Allocator& Allocator::default_scratch()
+  Allocator& Allocator::scratch()
   {
     static ScratchAllocator def_scratch_allocator(
-      Allocator::default(),
+      Allocator::heap(),
       FOUNDATION_DEF_SCRATCH_ALLOCATOR_SIZE
     );
     

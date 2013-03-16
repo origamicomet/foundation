@@ -60,10 +60,10 @@ namespace foundation {
     }
   }
 
-  String::String( Allocator& allocator )
+  String::String( Allocator& allocator, size_t len )
     : _allocator(allocator)
-    , _length(0)
-    , _str(nullptr)
+    , _length(len)
+    , _str((char*)allocator.alloc(len, alignof(char)))
   {
   }
 

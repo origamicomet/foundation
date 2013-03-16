@@ -1,0 +1,18 @@
+include_rules
+
+preload src
+preload src/foundation
+
+ifeq (@(TUP_PLATFORM),win32)
+ifeq (@(FOUNDATION_DEBUG),y)
+: src/*.o src/foundation/*.o |> !ar |> foundationd.lib
+else
+: src/*.o src/foundation/*.o |> !ar |> foundation.lib
+endif
+else
+ifeq (@(FOUNDATION_DEBUG),y)
+: src/*.o src/foundation/*.o |> !ar |> libfoundationd.a
+else
+: src/*.o src/foundation/*.o |> !ar |> libfoundation.a
+endif
+endif

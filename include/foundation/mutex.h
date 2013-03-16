@@ -15,7 +15,6 @@
   #define WIN32_LEAN_AND_MEAN
   #include <Windows.h>
 #elif defined(FOUNDATION_PLATFORM_POSIX)
-#elif 
 #endif
 
 namespace foundation {

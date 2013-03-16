@@ -1,0 +1,30 @@
+CC = cl
+LD = link
+AR = lib
+AS = nasm
+
+CFLAGS += /nologo /c /W4 /GF /GL /GR- /I"$(TUP_CWD)\include"
+LDFLAGS += /NOLOGO /LTCG /DLL 
+
+ifeq (@(TUP_ARCH),i386)
+CFLAGS += /arch:SSE2
+ASFLAGS += -f win32
+LDFLAGS += /MACHINE:X86
+endif
+ifeq (@(TUP_ARCH),x86_64)
+CFLAGS += /arch:SSE2
+ASFLAGS += -f win64
+LDFLAGS += /MACHINE:X64
+endif
+
+ifeq (@(FOUNDATION_DEBUG),y)
+CFLAGS += /MDd /D "_DEBUG" /Zi /Fd"$(TUP_CWD)\foundationd.pdb"
+LDFLAGS += /DEBUG
+else
+CFLAGS += /MD /D "NDEBUG" /Zi /Fd"$(TUP_CWD)\foundation.pdb"
+endif
+
+!cc = |> $(CC) $(CFLAGS) %f /Fo"%o" |>
+!ld = |> $(LD) $(LDFLAGS) %f %o |>
+!ar = |> $(AR) $(ARFLAGS) /OUT:"$(TUP_CWD)\%o" %f |>
+!as = |> $(AS) $(ASFLAGS) -o %o %f |>

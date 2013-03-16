@@ -15,10 +15,10 @@
 
 namespace foundation {
 #if defined(FOUNDATION_PLATFORM_WINDOWS)
-  NativeString::NativeString( Allocator& allocator )
+  NativeString::NativeString( Allocator& allocator, size_t len )
     : _allocator(allocator)
-    , _length(0)
-    , _str(nullptr)
+    , _length(len)
+    , _str((wchar_t*)allocator.alloc(len, alignof(wchar_t)))
   {
   }
 
@@ -93,7 +93,7 @@ namespace foundation {
   void NativeString::operator+= ( const char* str )
   {
     // TODO: WideCharToMultiByte() w/ alloca()
-    NativeString native_str(String(Allocator::default_scratch(), str));
+    NativeString native_str(String(Allocator::scratch(), str));
     (*this) += native_str.to_ptr();
   }
 

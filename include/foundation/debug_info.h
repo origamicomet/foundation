@@ -85,7 +85,7 @@ namespace foundation {
     Array<Frame> frames;
 
     FOUNDATION_INLINE Callstack()
-      : frames(Allocator::default(), 0)
+      : frames(Allocator::heap(), 0)
     {}
   }; 
 

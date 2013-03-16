@@ -35,8 +35,8 @@ namespace foundation {
         void* ptr ) = 0;
 
     public:
-      static Allocator& default();
-      static Allocator& default_scratch();
+      static Allocator& heap();
+      static Allocator& scratch();
   };
 } // foundation
 

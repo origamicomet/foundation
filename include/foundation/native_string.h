@@ -25,7 +25,7 @@ namespace foundation {
       friend class String;
 
     public:
-      explicit NativeString( Allocator& allocator = Allocator::default() );
+      explicit NativeString( Allocator& allocator = Allocator::heap(), size_t len = 0 );
       NativeString( Allocator& allocator, const wchar_t* format, ... );
       ~NativeString();
 
@@ -53,14 +53,16 @@ namespace foundation {
       }
 
     public:
-      FOUNDATION_INLINE bool is_empty() const
-      { return (_length != 0); }
-
+      FOUNDATION_INLINE Allocator& allocator() const { return _allocator; }
+      
       FOUNDATION_INLINE size_t length() const
       { return _length; }
 
       FOUNDATION_INLINE size_t length_in_bytes() const
       { return _length * sizeof(wchar_t); }
+
+      FOUNDATION_INLINE bool empty() const
+      { return (_length != 0); }
 
       FOUNDATION_EXPORT wchar_t* to_ptr()
       { return _str; }
