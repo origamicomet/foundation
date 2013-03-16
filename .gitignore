@@ -1,1 +1,3 @@
 .tup
+tup.config
+*.sublime-workspace
