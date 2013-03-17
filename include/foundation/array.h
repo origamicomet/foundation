@@ -128,28 +128,29 @@ namespace foundation {
 
       FOUNDATION_INLINE T& operator[] ( size_t index )
       {
-        assert(index < array._size());
+        assert(index < size());
         return _ptr[index];
       }
 
       FOUNDATION_INLINE const T& operator[] ( size_t index ) const
       {
-        assert(index < array._size());
+        assert(index < size());
         return _ptr[index];
       }
 
     public:
-      FOUNDATION_INLINE size_t size() const
-      { return _size; }
+      FOUNDATION_INLINE void push_back( const T& item )
+      {
+        if (_size == _reserved)
+          grow();
 
-      FOUNDATION_INLINE size_t reserved() const
-      { return _reserved; }
+        copy_safe((void*)&_ptr[_size++], (const void*)&item, sizeof(T));
+      }
 
-      FOUNDATION_EXPORT T* to_ptr()
-      { return _ptr; }
-
-      FOUNDATION_INLINE const T* to_ptr() const
-      { return _ptr; }
+      FOUNDATION_INLINE void pop_back()
+      {
+        _size--;
+      }
 
     public:
       FOUNDATION_INLINE Iterator begin() const
@@ -164,26 +165,44 @@ namespace foundation {
       FOUNDATION_INLINE Iterator back() const
       { const Array<T>& self = *this; return Iterator(self, _size); }
 
-      FOUNDATION_INLINE void push_back( const T& item )
-      {
-        if (_size == _reserved)
-          grow();
+    public:
+      FOUNDATION_INLINE Allocator& allocator() const
+      { return _allocator; }
+      
+      FOUNDATION_INLINE size_t size() const
+      { return _size; }
 
-        copy_safe((void*)&_ptr[_size++], (const void*)&item, sizeof(T));
+      void resize( size_t size )
+      {
+        _size = _reserved = size;
+        _ptr = (T*)_allocator.realloc(
+          (void*)_ptr, size * sizeof(T), alignof(T)
+        );
       }
 
-      FOUNDATION_INLINE void pop_back()
+      FOUNDATION_INLINE size_t reserved() const
+      { return _reserved; }
+
+      void reserve( size_t extra )
       {
-        _size--;
+        _reserved += extra;
+        _ptr = (T*)_allocator.realloc(
+          (void*)_ptr, alignof(T), _reserved * sizeof(T)
+        );
       }
+
+      FOUNDATION_EXPORT T* to_ptr()
+      { return _ptr; }
+
+      FOUNDATION_INLINE const T* to_ptr() const
+      { return _ptr; }
 
     private:
       void grow()
       {
+        _reserved = round_to_prime(_reserved);
         _ptr = (T*)_allocator.realloc(
-          (void*)_ptr,
-          alignof(T),
-          round_to_prime(_reserved) * sizeof(T)
+          (void*)_ptr, alignof(T), _reserved * sizeof(T)
         );
       }
 

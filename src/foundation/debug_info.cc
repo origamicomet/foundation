@@ -5,7 +5,6 @@
 #include <foundation/debug_info.h>
 #include <foundation/memory.h>
 #include <foundation/string.h>
-#include <foundation/native_string.h>
 
 #if defined(FOUNDATION_PLATFORM_WINDOWS)
   #define WIN32_LEAN_AND_MEAN
@@ -22,20 +21,29 @@ namespace foundation {
     size_t num_search_dirs )
   {
 #if defined(FOUNDATION_PLATFORM_WINDOWS)
-    NativeString search_path; {
+    wchar_t* search_path = nullptr; {
+      String search_path_;
       for (size_t search_dir = 0; search_dir < num_search_dirs; ++search_dir) {
-        search_path += search_dirs[search_dir];
-
-        if (search_dir != num_search_dirs - 1)
-          search_path += ':';
+        search_path_ += search_dirs[search_dir];
+        if (search_dir != (num_search_dirs - 1))
+          search_path_ += ':';
       }
+
+      const size_t len = MultiByteToWideChar(
+        CP_UTF8, 0, search_path_.to_ptr(), search_path_.size(), nullptr, 0
+      );
+
+      search_path = (wchar_t*)alloca(len * sizeof(wchar_t));
+      MultiByteToWideChar(
+        CP_UTF8, 0, search_path_.to_ptr(), search_path_.size(), search_path, len
+      );
     }
 
     SymSetOptions(SymGetOptions() | SYMOPT_LOAD_LINES);
 
     return (SymInitializeW(
       GetModuleHandle(NULL),
-      search_path.to_ptr(),
+      search_path,
       TRUE /* Deferring symbol loading might create multi-threading issues... */
     ) == TRUE);
 #elif defined(FOUNDATION_PLATFORM_MACOSX) || defined(FOUNDATION_PLATFORM_LINUX)
@@ -78,11 +86,10 @@ namespace foundation {
     if (!success)
       return false;
 
-    String symbol(NativeString(Allocator::scratch(), sym_info->Name)); {
-      const size_t to_copy = min(name_len, symbol.length());
-      copy((void*)name, (const void*)symbol.to_ptr(), to_copy);
-    }
-    
+    WideCharToMultiByte(
+      CP_UTF8, 0, sym_info->Name, sym_info->NameLen + 1, (char*)name, name_len, 0, 0
+    );
+  
     return true;
 #elif defined(FOUNDATION_PLATFORM_MACOSX) || defined(FOUNDATION_PLATFORM_LINUX)
     return false;
@@ -119,10 +126,9 @@ namespace foundation {
     if (!success)
       return false;
 
-    String symbol_file_path(NativeString(Allocator::scratch(), ihl.FileName)); {
-      const size_t to_copy = min(file_path_len, symbol_file_path.length());
-      copy((void*)file_path, (const void*)symbol_file_path.to_ptr(), to_copy);
-    }
+    WideCharToMultiByte(
+      CP_UTF8, 0, ihl.FileName, wcslen(ihl.FileName) + 1, (char*)file_path, file_path_len, 0, 0
+    );
 
     return true;
 #elif defined(FOUNDATION_PLATFORM_MACOSX) || defined(FOUNDATION_PLATFORM_LINUX)

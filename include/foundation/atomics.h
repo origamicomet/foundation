@@ -7,9 +7,9 @@
 
 // A collection of atomic read and write wrappers.
 
-#include <foundation/config.h>
 #include <foundation/detect.h>
 #include <foundation/compat.h>
+#include <foundation/config.h>
 
 #if defined(FOUNDATION_PLATFORM_WINDOWS)
   #define WIN32_LEAN_AND_MEAN

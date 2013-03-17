@@ -31,10 +31,20 @@ namespace foundation {
     assert(path != NULL);
 
   #if defined(FOUNDATION_PLATFORM_WINDOWS)
-    NativeString native_path(String(Allocator::scratch(), path));
+    wchar_t* native_path; {
+      const size_t path_len = strlen(path);
+      const size_t len = MultiByteToWideChar(
+        CP_UTF8, 0, path, path_len, nullptr, 0
+      );
+
+      native_path = (wchar_t*)alloca(len * sizeof(wchar_t));
+      MultiByteToWideChar(
+        CP_UTF8, 0, path, path_len, native_path, len
+      );
+    }
 
     HANDLE sys_handle = CreateFileW(
-      native_path.to_ptr(),
+      native_path,
       GENERIC_READ,
       FILE_SHARE_READ | FILE_SHARE_WRITE,
       NULL,
@@ -59,10 +69,20 @@ namespace foundation {
     assert(path != NULL);
 
   #if defined(FOUNDATION_PLATFORM_WINDOWS)
-    NativeString native_path(String(Allocator::scratch(), path));
+    wchar_t* native_path; {
+      const size_t path_len = strlen(path);
+      const size_t len = MultiByteToWideChar(
+        CP_UTF8, 0, path, path_len, nullptr, 0
+      );
+
+      native_path = (wchar_t*)alloca(len * sizeof(wchar_t));
+      MultiByteToWideChar(
+        CP_UTF8, 0, path, path_len, native_path, len
+      );
+    }
 
     HANDLE sys_handle = CreateFileW(
-      native_path.to_ptr(),
+      native_path,
       GENERIC_READ | GENERIC_WRITE,
       FILE_SHARE_READ | FILE_SHARE_WRITE,
       NULL,
@@ -101,12 +121,12 @@ namespace foundation {
   namespace {
   #if defined(FOUNDATION_PLATFORM_WINDOWS)
     bool win32_scan_directory(
-      const NativeString& pattern,
+      const wchar_t* pattern,
       Array<Directory::Entry>& entries,
       bool recursively )
     {
       WIN32_FIND_DATAW find_data;
-      HANDLE sys_handle = FindFirstFileW(pattern.to_ptr(), &find_data);
+      HANDLE sys_handle = FindFirstFileW(pattern, &find_data);
 
       if (sys_handle == INVALID_HANDLE_VALUE)
         return false;
@@ -118,21 +138,12 @@ namespace foundation {
           Directory::Entry::DIRECTORY : Directory::Entry::FILE;
 
         /* entry.path = */ {
-          const String pattern_ = String(pattern);
-          const String file_name_ = String(
-            NativeString(Allocator::scratch(), find_data.cFileName[0])
-          );
+          const wchar_t* iter_p = pattern;
+          const wchar_t* iter_f = &find_data.cFileName[0];
+          while (*(iter_p++) == *(iter_f));
 
-          copy(
-            (void*)&entry.path[0],
-            (const void*)pattern_.to_ptr(),
-            pattern_.length_in_bytes()
-          );
-
-          copy(
-            (void*)&entry.path[pattern_.length_in_bytes() - 1],
-            (const void*)file_name_.to_ptr(),
-            file_name_.length_in_bytes()
+          WideCharToMultiByte(
+            CP_UTF8, 0, iter_f, -1, &entry.path[0], 255, 0, 0
           );
         }
 
@@ -150,11 +161,25 @@ namespace foundation {
           if (!recursively)
             continue;
 
-          const NativeString recursive_pattern = NativeString(
-            Allocator::scratch(), L"%s/**", find_data.cFileName);
+          const size_t len = wcslen(&find_data.cFileName[0]);
+          wchar_t* recursive_pattern =
+            (wchar_t*)Allocator::scratch().alloc((len + 4) * sizeof(wchar_t));
+
+          copy(
+            (void*)recursive_pattern,
+            (const void*)&find_data.cFileName[0],
+            len
+          );
+
+          recursive_pattern[len + 0] = '/';
+          recursive_pattern[len + 1] = '*';
+          recursive_pattern[len + 2] = '*';
+          recursive_pattern[len + 3] = '\0';
 
           if (!win32_scan_directory(recursive_pattern, entries, recursively))
             return false;
+
+          Allocator::scratch().free((void*)recursive_pattern);
         }
 
         entries.push_back(entry);
@@ -173,8 +198,19 @@ namespace foundation {
     bool recursively )
   {
   #if defined(FOUNDATION_PLATFORM_WINDOWS)
-    const NativeString pattern =
-      String(Allocator::scratch(), "%s/**", path);
+    wchar_t* pattern; {
+      const String pattern_("%s/**", path); 
+
+      const size_t len = MultiByteToWideChar(
+        CP_UTF8, 0, pattern_.to_ptr(), pattern_.size(), nullptr, 0
+      );
+
+      pattern = (wchar_t*)alloca(len * sizeof(wchar_t));
+      MultiByteToWideChar(
+        CP_UTF8, 0, pattern_.to_ptr(), pattern_.size(), pattern, len
+      );
+    }
+
     return win32_scan_directory(pattern, entries, recursively);
   #elif defined(FOUNDATION_PLATFORM_POSIX)
     return false;
@@ -200,10 +236,20 @@ namespace foundation {
     assert(path != nullptr);
 
   #if defined(FOUNDATION_PLATFORM_WINDOWS)
-    NativeString native_path(String(Allocator::scratch(), path));
+    wchar_t* native_path; {
+      const size_t path_len = strlen(path);
+      const size_t len = MultiByteToWideChar(
+        CP_UTF8, 0, path, path_len, nullptr, 0
+      );
+
+      native_path = (wchar_t*)alloca(len * sizeof(wchar_t));
+      MultiByteToWideChar(
+        CP_UTF8, 0, path, path_len, native_path, len
+      );
+    }
 
     HANDLE sys_handle = CreateFileW(
-      native_path.to_ptr(),
+      native_path,
       GENERIC_READ | GENERIC_WRITE,
       FILE_SHARE_READ | FILE_SHARE_WRITE,
       NULL,
@@ -313,20 +359,32 @@ namespace foundation {
 
         Directory::Entry entry;
         entry.type = Directory::Entry::FILE;
+
         /* entry.path = */ {
-          const String file_name = String(
-            NativeString(Allocator::scratch(), notify->FileName)
+          const size_t len = WideCharToMultiByte(
+            CP_UTF8, 0, &notify->FileName[0], -1, 0, 0, 0, 0
           );
 
-          const String path = String(
-            Allocator::scratch(), "%s/%s",
-            Path::unixify(file_name)
+          String path(Allocator::scratch(), dir->_path.size() + len + 1);
+          
+          copy(
+            (void*)path.to_ptr(),
+            (const void*)dir->_path.to_ptr(),
+            dir->_path.size() - 1
           );
+
+          path.to_ptr()[dir->_path.size()] = '/';
+
+          WideCharToMultiByte(
+            CP_UTF8, 0, &notify->FileName[0], -1, &path.to_ptr()[dir->_path.size() + 1], len, 0, 0
+          );
+
+          path.to_ptr()[path.size() - 1] = '\0';
 
           copy(
             (void*)&entry.path[0],
             (const void*)path.to_ptr(),
-            path.length_in_bytes()
+            min(path.size(), (size_t)255)
           );
         }
 

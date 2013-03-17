@@ -89,7 +89,7 @@ namespace foundation {
     {}
   }; 
 
-  // Walks the callstack to and attempts provide symbol information.
+  // Walks the callstack to attempt to provide symbol information.
   extern FOUNDATION_EXPORT bool callstack(
     Callstack& callstack ); 
 } // foundation

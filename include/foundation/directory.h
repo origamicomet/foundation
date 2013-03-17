@@ -15,7 +15,6 @@
 #include <foundation/config.h>
 #include <foundation/array.h>
 #include <foundation/string.h>
-#include <foundation/native_string.h>
 
 #if defined(FOUNDATION_PLATFORM_WINDOWS)
   #define WIN32_LEAN_AND_MEAN

@@ -34,6 +34,7 @@ namespace foundation {
 
       void unmap();
 
+    public:
       FOUNDATION_INLINE size_t length()
       {
       #if defined(FOUNDATION_PLATFORM_WINDOWS)

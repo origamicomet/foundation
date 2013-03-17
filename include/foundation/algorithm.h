@@ -14,6 +14,14 @@
 
 #include <stdlib.h>
 
+// Windows.h #defines min/max.
+#ifdef min
+  #undef min
+#endif
+#ifdef max
+  #undef max
+#endif
+
 namespace foundation {
   // Returns the lesser of two values.
   template <typename T>

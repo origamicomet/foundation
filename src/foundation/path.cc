@@ -5,7 +5,6 @@
 #include <foundation/path.h>
 #include <foundation/memory.h>
 #include <foundation/string.h>
-#include <foundation/native_string.h>
 
 #if defined(FOUNDATION_PLATFORM_WINDOWS)
   #define WIN32_LEAN_AND_MEAN
@@ -26,33 +25,30 @@ namespace foundation {
       if (path.empty())
         return String(path.allocator());
 
-      const char* min = path.to_ptr();
-      const char* max = path.to_ptr() + path.length_in_bytes();
+      auto min = path.begin();
+      auto max = path.end();
 
       // Strip the file extension.
       /* max = */ {
-        const char* iter = max;
-        while (*(--iter) != '.' && (iter != path.to_ptr()));
-        if (iter != path.to_ptr())
+        auto iter = max;
+        uint32_t code_point = 0;
+        while (((code_point = iter.to_code_point()) != '.') && ((--iter).is_valid()));
+        if (iter != path.begin())
           max = iter;
       }
 
       // Strip the leading directories.
       /* min = */ {
-        char ch;
-        const char* iter = max;
-        while ((ch = (*(--iter))) && (iter != path.to_ptr()))
-          if ((ch == '\\') || (ch == '/'))
+        auto iter = max;
+        uint32_t code_point = 0;
+        while (((code_point = iter.to_code_point())) && ((--iter).is_valid()))
+          if ((code_point == '\\') || (code_point == '/'))
             break;
-        if (iter != path.to_ptr())
+        if (iter != path.begin())
           min = iter;
       }
 
-      const size_t len = (size_t)(max - min);
-      String basename = String(path.allocator(), len + 1);
-      copy((void*)basename.to_ptr(), (const void*)min, len);
-      basename[len] = '\0';
-      return basename;
+      return String(path.allocator(), min, max);
     }
 
     String dirname(
@@ -61,25 +57,21 @@ namespace foundation {
       if (path.empty())
         return String(path.allocator());
 
-      const char* min = path.to_ptr();
-      const char* max = path.to_ptr() + path.length_in_bytes();
+      auto min = path.begin();
+      auto max = path.end();
 
       // Strip the file name and file extension.
       /* max = */ {
-        char ch;
-        const char* iter = max;
-        while ((ch = (*(--iter))), (iter != path.to_ptr()))
-          if ((ch == '\\') || (ch == '/'))
+        auto iter = max;
+        uint32_t code_point = 0;
+        while ((code_point = iter.to_code_point()) && ((--iter).is_valid()))
+          if ((code_point == '\\') || (code_point == '/'))
             break;
-        if (iter != path.to_ptr())
+        if (iter != path.begin())
           max = iter;
       }
 
-      const size_t len = (size_t)(max - min);
-      String dirname = String(path.allocator(), len + 1);
-      copy((void*)dirname.to_ptr(), (const void*)min, len);
-      dirname[len] = '\0';
-      return dirname;
+      return String(path.allocator(), min, max);
     }
 
     String extension(
@@ -88,15 +80,14 @@ namespace foundation {
       if (path.empty())
         return String(path.allocator());
 
-      const char* iter =
-        path.to_ptr() + path.length_in_bytes();
+      auto iter = path.end();
+      uint32_t code_point = 0;
+      while ((code_point = iter.to_code_point()) && ((--iter).is_valid()));
 
-      while (*(--iter) != '.' && (iter != path.to_ptr()));
+      if (iter == path.begin())
+        return String(path.allocator());
 
-      if (iter == path.to_ptr())
-        return String();
-
-      return String(path.allocator(), iter + 1);
+      return String(path.allocator(), (++iter), path.end());
     }
 
     String absolute(
@@ -106,16 +97,41 @@ namespace foundation {
         return String(path.allocator());
 
     #if defined(FOUNDATION_PLATFORM_WINDOWS)
-      const NativeString native_path(path);
+      wchar_t* native_path; {
+        const size_t len = MultiByteToWideChar(
+          CP_UTF8, 0, path.to_ptr(), path.size(), nullptr, 0
+        );
 
-      const size_t abs_path_len =
-        GetFullPathNameW(native_path.to_ptr(), 0, NULL, NULL);
+        native_path = (wchar_t*)alloca(len * sizeof(wchar_t));
+        MultiByteToWideChar(
+          CP_UTF8, 0, path.to_ptr(), path.size(), native_path, len
+        );
+      }
 
-      NativeString native_abs_path(path.allocator(), abs_path_len);
-        GetFullPathNameW(native_path.to_ptr(), abs_path_len,
-                         native_abs_path.to_ptr(), NULL);
+      String abs_path; {
+        size_t abs_path_len_ = 0;
+        wchar_t* abs_path_; {
+          abs_path_len_ = GetFullPathNameW(
+            native_path, 0, NULL, NULL
+          );
 
-      return unixify(String(native_abs_path));
+          abs_path_ = (wchar_t*)alloca(abs_path_len_ * sizeof(wchar_t));
+          GetFullPathNameW(
+            native_path, abs_path_len_, abs_path_, NULL
+          );
+        }
+
+        const size_t len = WideCharToMultiByte(
+          CP_UTF8, 0, abs_path_, abs_path_len_, nullptr, 0, 0, 0
+        );
+
+        abs_path = String(Allocator::heap(), len);
+        WideCharToMultiByte(
+          CP_UTF8, 0, abs_path_, abs_path_len_, (char*)abs_path.to_ptr(), len, 0, 0
+        );
+      }
+
+      return unixify(abs_path);
     #elif defined(FOUNDATION_PLATFORM_POSIX)
       return String(path.allocator());
     #endif
@@ -134,24 +150,24 @@ namespace foundation {
       const String abs_relative_to = absolute(relative_to);
 
       // Determine where the paths diverge:
-      const char* iter_p = abs_path.to_ptr();
-      const char* iter_r = abs_relative_to.to_ptr();
-      while (*(iter_p++) == *(iter_r++));
+      auto iter_p = abs_path.begin();
+      auto iter_r = abs_relative_to.begin();
+      while ((iter_p++).to_code_point() == (iter_r++).to_code_point());
 
       // We could end-up in the middle of a folder name, so roll back:
-      while (*(--iter_p) != '/');
-      while (*(--iter_r) != '/');
+      while ((--iter_p).to_code_point() != '/');
+      while ((--iter_r).to_code_point() != '/');
 
       // "Undo" each consecutive level from |relative_to|:
       String rel_path = String(path.allocator()); {
-        char ch;
-        while (ch = *(iter_r++))
-          if (ch == '/') rel_path += "../";
+        uint32_t code_point = 0;
+        while ((code_point = (iter_r++).to_code_point()))
+          if (code_point == '/')
+            rel_path += "../";
       }
 
       // Add remaining path (because rel_path points to iter_p now):
-      rel_path += (iter_p + 1);
-
+      rel_path += String(path.allocator(), (iter_p++), abs_path.end());
       return rel_path;
     }
 
@@ -161,25 +177,27 @@ namespace foundation {
       if (path.empty())
         return String(path.allocator());
 
-      // Replace occurances of `\` with `/`. 
-      String unixified = String(path.allocator(), path.length_in_bytes());
-      for (size_t i = 0; i < path.length_in_bytes(); ++i) {
-        if (path[i] == '\\') unixified[i] = '/';
-        else unixified[i] = path[i];
-      }
+      // Replace occurances of `\` with `/`:
+      String unixified = path;
+      for (auto iter = unixified.begin(); iter != unixified.end(); ++iter)
+        if (iter.to_code_point() == '\\')
+          iter.to_ref() = '/';
 
       // Replace drive letters like `C:/` with `/C/`.
-      if (unixified.length_in_bytes() >= 2) {
-        if (!((unixified[0] >= 'A') && (unixified[0] <= 'Z')) &&
-            !((unixified[0] >= 'a') && (unixified[0] <= 'z')) )
-          return unixified;
+      auto drive_letter = unixified.begin();
 
-        if (unixified[1] != ':')
-          return unixified;
+      const uint32_t drive_letter_ = drive_letter.to_code_point();
+      if (!((drive_letter_ >= 'A') && (drive_letter_ <= 'Z')) &&
+          !((drive_letter_ >= 'a') && (drive_letter_ <= 'z')))
+        return unixified;
 
-        unixified[1] = unixified[0];
-        unixified[0] = '/';
-      }
+      auto colon = (++(unixified.begin()));
+      const uint32_t colon_ = colon.to_code_point();
+      if (colon_ != ':')
+        return unixified;
+
+      colon.to_ref() = (drive_letter_ & 0x7F);
+      drive_letter.to_ref() = '/';
 
       return unixified;
     }

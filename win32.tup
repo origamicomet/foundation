@@ -18,10 +18,10 @@ LDFLAGS += /MACHINE:X64
 endif
 
 ifeq (@(FOUNDATION_DEBUG),y)
-CFLAGS += /MDd /D "_DEBUG" /Zi /Fd"$(TUP_CWD)\foundationd.pdb"
+CFLAGS += /MDd /D "_CRT_SECURE_NO_WARNINGS" /D "_DEBUG" /Zi /Fd"$(TUP_CWD)\foundationd.pdb"
 LDFLAGS += /DEBUG
 else
-CFLAGS += /MD /D "NDEBUG" /Zi /Fd"$(TUP_CWD)\foundation.pdb"
+CFLAGS += /MD /D "_CRT_SECURE_NO_WARNINGS" /D "NDEBUG" /Zi /Fd"$(TUP_CWD)\foundation.pdb"
 endif
 
 !cc = |> $(CC) $(CFLAGS) %f /Fo"%o" |>

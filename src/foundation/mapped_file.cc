@@ -5,7 +5,6 @@
 #include <foundation/mapped_file.h>
 #include <foundation/allocator.h>
 #include <foundation/string.h>
-#include <foundation/native_string.h>
 
 namespace foundation {
   MappedFile::MappedFile()
@@ -36,10 +35,20 @@ namespace foundation {
     size_t num_bytes )
   {
   #if defined(FOUNDATION_PLATFORM_WINDOWS)
-    NativeString native_path(String(Allocator::scratch(), path));
+    wchar_t* native_path; {
+      const size_t path_len = strlen(path);
+      const size_t len = MultiByteToWideChar(
+        CP_UTF8, 0, path, path_len, nullptr, 0
+      );
+
+      native_path = (wchar_t*)alloca(len * sizeof(wchar_t));
+      MultiByteToWideChar(
+        CP_UTF8, 0, path, path_len, native_path, len
+      );
+    }
 
     HANDLE file_handle = CreateFileW(
-      native_path.to_ptr(),
+      native_path,
       GENERIC_READ,
       FILE_SHARE_READ,
       NULL,
