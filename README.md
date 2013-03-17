@@ -12,7 +12,7 @@ various functions, classes, macros, and preprocessor definitions to handle:
   * Debugging and symbol look-up information. See [include/foundation/debug_info.h](include/foundation/debug_info.h).
   * Detailed crash handling and reportin. See [include/foundation/crash_handler.h](include/foundation/crash_handler.h).
   * Cross-platform wrappers around threading. See [include/foundation/thread.h](include/foundation/thread.h), [include/foundation/mutex.h](include/foundation/mutex.h), [include/foundation/condition_variable.h](include/foundation/condition_variable.h), and [include/foundation/atomics.h](include/foundation/atomics.h).
-  * Arrays, Dictionaries, Instrusive Lists, Ring Buffers, Queues, etc. See [include/foundation/array.h](include/foundation/array.h), [include/foundation/dictionary.h](include/foundation/dictionary.h), [include/foundation/string.h](include/foundation/string.h), [include/foundation/native_string.h](include/foundation/native_string.h) et cetra.
+  * Arrays, Dictionaries, Instrusive Lists, Ring Buffers, Queues, etc. See [include/foundation/array.h](include/foundation/array.h), [include/foundation/dictionary.h](include/foundation/dictionary.h), [include/foundation/string.h](include/foundation/string.h), [include/foundation/native_string.h](include/foundation/native_string.h).
 
 Contributing
 ---
