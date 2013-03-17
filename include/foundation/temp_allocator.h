@@ -22,7 +22,14 @@ namespace foundation {
       struct Block {
         Block* next;
         size_t num_used_bytes;
-        uint8_t bytes[_BlockSize - 1];
+        uint8_t bytes[_BlockSize];
+
+        Block() 
+          : next(nullptr)
+          , num_used_bytes(0)
+        {
+          zero((void*)&bytes[0], _BlockSize);
+        }
       };
 
     public:

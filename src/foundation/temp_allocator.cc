@@ -9,18 +9,15 @@ namespace foundation {
   TempAllocator<_BlockSize>::TempAllocator( Allocator& allocator )
     : _allocator(allocator)
   {
-    _head.next = nullptr;
-    _head.num_used_bytes = 0;
   }
 
   template <size_t _BlockSize>
   TempAllocator<_BlockSize>::~TempAllocator()
   {
     Block* block = _head.next;
-    
     while (block) {
       Block* next = block->next;
-      _allocator.free((void*)block);
+      make_delete(Block, _allocator, block);
       block = next;
     }
   }
@@ -30,6 +27,46 @@ namespace foundation {
     size_t num_bytes,
     size_t alignment )
   {
+    assert(num_bytes > _BlockSize);
+
+    Block* block = &_head;
+    while (block) {
+      if ((_BlockSize - block->num_used_bytes) < num_bytes) {
+        block = block->next;
+        continue;
+      }
+
+      void* ptr = &block->bytes[block->num_used_bytes];
+      void* aligned = align_forward(ptr, alignment);
+
+      const size_t num_used_bytes =
+        ((uintptr_t)aligned) - ((uintptr_t)&block->bytes[0]) + num_bytes;
+
+      if (num_used_bytes > _BlockSize)
+        break;
+
+      block->num_used_bytes = num_used_bytes;
+      return aligned;
+    }
+
+    block = &_head;
+    while (block->next)
+      block = block->next;
+
+    block->next = make_new(Block, _allocator)();
+    block = block->next;
+
+    void* ptr = &block->bytes[0];
+    void* aligned = align_forward(ptr, alignment);
+    
+    const size_t num_used_bytes =
+      ((uintptr_t)aligned) - ((uintptr_t)&block->bytes[0]) + num_bytes;
+
+    if (num_used_bytes > _BlockSize)
+      return nullptr;
+
+    block->num_used_bytes = num_used_bytes;
+    return aligned;
   }
 
   template <size_t _BlockSize>
@@ -38,11 +75,14 @@ namespace foundation {
     size_t num_bytes,
     size_t alignment )
   {
+    (void)ptr;
+    return nullptr;
   }
 
   template <size_t _BlockSize>
   void TempAllocator<_BlockSize>::free(
     void* ptr )
   {
+    (void)ptr;
   }
 } // foundation
