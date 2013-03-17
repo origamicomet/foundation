@@ -1,3 +1,4 @@
 .tup
 tup.config
 *.sublime-workspace
+*.log

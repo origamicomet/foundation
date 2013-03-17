@@ -15,6 +15,12 @@ namespace foundation {
   {
     FOUNDATION_NON_COPYABLE(ScratchAllocator);
 
+    private:
+      struct Header {
+        static const uint32_t Padding = 0xFFFFFFFFu;
+        size_t num_bytes;
+      };
+
     public:
       ScratchAllocator(
         Allocator& allocator,
@@ -36,7 +42,12 @@ namespace foundation {
         void* ptr );
 
     private:
+      bool is_allocated( void* ptr ) const;
+
+    private:
       Allocator& _allocator;
+      uintptr_t _begin, _end;
+      uintptr_t _allocate, _free;
   };
 } // foundation
 
