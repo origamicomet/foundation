@@ -4,7 +4,7 @@ AR = lib
 AS = nasm
 
 CFLAGS += /nologo /c /W4 /GF /GL /GR- /I"$(TUP_CWD)\include"
-LDFLAGS += /NOLOGO /LTCG /DLL 
+LDFLAGS += /NOLOGO /LTCG
 
 ifeq (@(TUP_ARCH),i386)
 CFLAGS += /arch:SSE2
@@ -25,6 +25,7 @@ CFLAGS += /MD /D "_CRT_SECURE_NO_WARNINGS" /D "NDEBUG" /Zi /Fd"$(TUP_CWD)\founda
 endif
 
 !cc = |> $(CC) $(CFLAGS) %f /Fo"%o" |>
-!ld = |> $(LD) $(LDFLAGS) %f %o |>
+!so = |> $(LD) $(LDFLAGS) /DLL /OUT:"$(TUP_CWD)\%o" %f |>
+!exe = |> $(LD) $(LDFLAGS) /SUBSYSTEM:CONSOLE /OUT:"$(TUP_CWD)\%o" %f |>
 !ar = |> $(AR) $(ARFLAGS) /OUT:"$(TUP_CWD)\%o" %f |>
 !as = |> $(AS) $(ASFLAGS) -o %o %f |>

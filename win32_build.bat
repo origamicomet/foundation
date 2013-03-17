@@ -23,13 +23,20 @@ if "%1"=="--build" (
   goto Build
 )
 
+if "%1"=="--generate-tests" (
+  goto GenerateTests
+)
+
 shift
 goto Parse
+
+:GenerateTests
+goto End
 
 :Build
 call "%VCINSTALLDIR%\vcvarsall.bat"
 echo Run `tup upd`
-goto :End
+goto End
 
 :Clean
 for /r %%f in (*.o) do (
@@ -38,6 +45,6 @@ for /r %%f in (*.pdb) do (
   if exist %%f del %%f )
 for /r %%f in (*.lib) do (
   if exist %%f del %%f )
-goto :End
+goto End
 
 :End
