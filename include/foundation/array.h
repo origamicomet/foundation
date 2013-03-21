@@ -53,7 +53,7 @@ namespace foundation {
           { return ((_array != iter._array) || (_index != iter._index)); }
 
           FOUNDATION_INLINE Iterator operator++ ()
-          { return Iterator(_array, max(_index + 1, _array.size())); }
+          { return Iterator(_array, min(_index + 1, _array.size())); }
 
           FOUNDATION_INLINE Iterator operator++ ( int )
           { Iterator iter(*this); ++(*this); return iter; }
