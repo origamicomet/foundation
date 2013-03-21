@@ -28,6 +28,7 @@
 #include <foundation/array.h>
 #include <foundation/intrusive_list.h>
 #include <foundation/ring_buffer.h>
+#include <foundation/pair.h>
 #include <foundation/dictionary.h>
 
 #include <foundation/atomics.h>

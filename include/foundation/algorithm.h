@@ -73,16 +73,24 @@ namespace foundation {
   FOUNDATION_INLINE int _search_comparator( const void* k, const void* v ) {
     const _Key& key = *((const _Key*)k);
     const _Value& value = *((const _Value*)v);
+
+    if (key > value)
+      return 1;
+
+    if (key < value)
+      return -1;
+
+    return 0;
   }
 
   // Performs an O(1) to O(log n) search on a foundation::sort'd array.
   template <typename _Key, typename _Value>
-  FOUNDATION_INLINE void search(
+  FOUNDATION_INLINE const _Value* search(
     const _Key& key,
     const _Value* array,
     size_t num_items )
   {
-    bsearch(
+    return bsearch(
       (const void*)&key,
       (const void*)array,
       num_items,
@@ -93,12 +101,12 @@ namespace foundation {
 
   // Performs an O(1) to O(log n) search on a foundation::sort'd array.
   template <typename T>
-  FOUNDATION_INLINE void search(
+  FOUNDATION_INLINE const T* search(
     const T& key,
     const T* array,
     size_t num_items )
   {
-    bsearch(
+    return bsearch(
       (const void*)&key,
       (const void*)array,
       num_items,
