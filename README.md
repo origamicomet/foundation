@@ -33,9 +33,9 @@ Make sure you have the following:
   * A C++ compiler (gcc, clang, msvc);
   * and [Tup](https://github.com/gittup/tup).
 
-For Windows run `win32_build.bat --config={debug,release}`, and `win32_build.bat --build`.
+For Windows run `win32_build.bat --config={debug,release}`, and `win32_build.bat build`.
 
-For Mac OSX, and LInux run `./posix_build --config={debug,release}`, and `./posix_build --build`.
+For Mac OSX, and LInux run `./posix_build --config={debug,release}`, and `./posix_build build`.
 
 **Note:** if you're using Windows you'll need to make sure you set `VCINSTALLDIR` to something like `C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC`.
 
