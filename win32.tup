@@ -17,15 +17,28 @@ ASFLAGS += -f win64
 LDFLAGS += /MACHINE:X64
 endif
 
+CFLAGS += /D "_CRT_SECURE_NO_WARNINGS" /Zi
 ifeq (@(FOUNDATION_DEBUG),y)
-CFLAGS += /MDd /D "_CRT_SECURE_NO_WARNINGS" /D "_DEBUG" /Zi /Fd"$(TUP_CWD)\foundationd.pdb"
+CFLAGS += /MDd /D "_DEBUG"
 LDFLAGS += /DEBUG
 else
-CFLAGS += /MD /D "_CRT_SECURE_NO_WARNINGS" /D "NDEBUG" /Zi /Fd"$(TUP_CWD)\foundation.pdb"
+CFLAGS += /MD /D "NDEBUG"
 endif
 
-!cc = |> $(CC) $(CFLAGS) %f /Fo"%o" |>
+!cc = |> $(CC) $(CFLAGS) /Fd"$(TUP_CWD)\%O.pdb" %f /Fo"%o" |>
+
+SHARED_LIB_EXT = .dll
 !so = |> $(LD) $(LDFLAGS) /DLL /OUT:"$(TUP_CWD)\%o" %f |>
-!exe = |> $(LD) $(LDFLAGS) /SUBSYSTEM:CONSOLE /OUT:"$(TUP_CWD)\%o" %f |>
+
+ifeq (@(FOUNDATION_DEBUG),y)
+SUBSYSTEM = /SUBSYSTEM:CONSOLE /ENTRY:mainCRTStartup
+else
+SUBSYSTEM = /SUBSYSTEM:WINDOWS /ENTRY:mainCRTStartup
+endif
+
+EXE_EXT = .exe
+!exe = |> $(LD) $(LDFLAGS) $(SUBSYSTEM) /OUT:"$(TUP_CWD)\%o" %f |>
+
+LIB_EXT = .lib
 !ar = |> $(AR) $(ARFLAGS) /OUT:"$(TUP_CWD)\%o" %f |>
 !as = |> $(AS) $(ASFLAGS) -o %o %f |>

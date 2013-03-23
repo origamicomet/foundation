@@ -5,33 +5,34 @@ if "%1"=="" (
   goto End
 )
 
-if "%1"=="--config=debug" (
-  echo CONFIG_FOUNDATION_DEBUG=y > tup.config
-  goto End
+if "%1"=="--config" (
+  if "%2"=="debug" (
+    echo Updating tup.config
+    echo CONFIG_FOUNDATION_DEBUG=y > tup.config
+    goto End
+  )
+
+  if "%2"=="release" (
+    echo Updating tup.config
+    echo CONFIG_FOUNDATION_DEBUG=n > tup.config
+    goto End
+  )
+
+  shift
+  shift
+  goto Parse
 )
 
-if "%1"=="--config=release" (
-  echo CONFIG_FOUNDATION_DEBUG=n > tup.config
-  goto End
-)
-
-if "%1"=="--clean" (
+if "%1"=="clean" (
   goto Clean
 )
 
-if "%1"=="--build" (
+if "%1"=="build" (
   goto Build
-)
-
-if "%1"=="--generate-tests" (
-  goto GenerateTests
 )
 
 shift
 goto Parse
-
-:GenerateTests
-goto End
 
 :Build
 call "%VCINSTALLDIR%\vcvarsall.bat"
