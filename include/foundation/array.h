@@ -75,7 +75,7 @@ namespace foundation {
           { return ((_index > 0) && (_index <= _array.size())); }
 
         private:
-          Array& _array;
+          Array<T>& _array;
           size_t _index;
       };
 
@@ -94,7 +94,7 @@ namespace foundation {
       }
 
     public:
-      Array( const Array& array )
+      Array( const Array<T>& array )
         : _allocator(array._allocator)
         , _size(array._size)
         , _reserved(array._reserved)
@@ -103,7 +103,7 @@ namespace foundation {
         copy((void*)_ptr, (const void*)array._ptr, array._reserved * sizeof(T));
       }
 
-      Array& operator= ( const Array& array )
+      Array<T>& operator= ( const Array<T>& array )
       {
         if (this == &array)
           return *this;
