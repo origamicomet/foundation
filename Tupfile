@@ -7,4 +7,6 @@ ifeq (@(FOUNDATION_DEBUG),y)
 SUFFIX = -debug
 endif
 
+SUFFIX = $(SUFFIX)-@(TUP_ARCH)
+
 : src/*.o src/foundation/*.o |> !ar |> foundation$(SUFFIX)$(LIB_EXT)
