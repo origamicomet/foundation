@@ -9,6 +9,8 @@
 #include <foundation/compat.h>
 #include <foundation/config.h>
 
+#include <foundation/math.h>
+
 #include <foundation/assert.h>
 #include <foundation/preprocessor.h>
 #include <foundation/algorithm.h>

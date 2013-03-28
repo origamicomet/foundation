@@ -5,7 +5,7 @@
 #ifndef _FOUNDATION_CONFIG_H_
 #define _FOUNDATION_CONFIG_H_
 
-// Provides a central location to modify library from and functionality.
+// Provides a central location to modify library form and functionality.
 
 #include <foundation/compat.h>
 
