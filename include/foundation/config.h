@@ -30,6 +30,8 @@
   #include <stdarg.h>
 
   static void __foundation_default_log_callback( const char* format, ... ) {
+    static const int _unused0 = setvbuf(stdout, nullptr, _IONBF, 0);
+    static const int _unused1 = setvbuf(stderr, nullptr, _IONBF, 0);
     va_list va;
     va_start(va, format);
     vfprintf(stderr, format, va);
