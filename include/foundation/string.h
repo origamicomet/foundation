@@ -59,10 +59,19 @@ namespace foundation {
 
           Iterator operator++ () const
           {
-            size_t byte = _byte;
+            size_t byte = min(_byte + 1, max((size_t)1, _string._raw.size()) - 1);
             while ((_string._raw[byte] != 0) && (!utf8::is_initial_byte(_string._raw[byte])))
               ++byte;
             return Iterator(_string, byte);
+          }
+
+          Iterator operator++ ()
+          {
+            size_t byte = min(_byte + 1, max((size_t)1, _string._raw.size()) - 1);
+            while ((_string._raw[byte] != 0) && (!utf8::is_initial_byte(_string._raw[byte])))
+              ++byte;
+            _byte = byte;
+            return *this;
           }
 
           FOUNDATION_INLINE Iterator operator++ ( int )
@@ -70,10 +79,19 @@ namespace foundation {
 
           Iterator operator-- () const
           {
-            size_t byte = _byte;
+            size_t byte = max(_byte, (size_t)1) - 1;
             while ((byte > 0) && (!utf8::is_initial_byte(_string._raw[byte])))
               --byte;
             return Iterator(_string, byte);
+          }
+
+          Iterator operator-- ()
+          {
+            size_t byte = max(_byte, (size_t)1) - 1;
+            while ((byte > 0) && (!utf8::is_initial_byte(_string._raw[byte])))
+              --byte;
+            _byte = byte;
+            return *this;
           }
 
           FOUNDATION_INLINE Iterator operator-- ( int )
