@@ -3,10 +3,11 @@ include_rules
 preload src
 preload src/foundation
 
-ifeq (@(FOUNDATION_DEBUG),y)
-SUFFIX = -debug
+ifeq (@(FOUNDATION_BUILD),debug)
+SUFFIX = -dbg
 endif
 
 SUFFIX = $(SUFFIX)-@(TUP_ARCH)
 
+LIBS =
 : src/*.o src/foundation/*.o |> !ar |> foundation$(SUFFIX)$(LIB_EXT)

@@ -31,11 +31,15 @@ Make sure you have the following:
 
   * A brain;
   * A C++ compiler (gcc, clang, msvc);
+  * Ruby;
   * and [Tup](https://github.com/gittup/tup).
 
-For Windows run `win32_build.bat --config={debug,release}`, and `win32_build.bat build`.
-
-For Mac OSX, and LInux run `./posix_build --config={debug,release}`, and `./posix_build build`.
+```
+$ ruby configure {debug,release}
+$ build.bat (Windows) or ./build.sh (POSIX)
+$ tup init
+$ tup upd
+```
 
 **Note:** if you're using Windows you'll need to make sure you set `VCINSTALLDIR` to something like `C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC`.
 
