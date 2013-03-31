@@ -287,6 +287,8 @@ struct nedmallinfo {
 NO_NED_NAMESPACE prevents the functions from being defined in the nedalloc
 namespace when in C++ (uses the global C namespace instead).
 */
+#define NO_NED_NAMESPACE
+
 /*! \def THROWSPEC
 \brief Defined to throw() or noexcept(true) (as in, throws nothing) under C++, otherwise nothing.
 */
