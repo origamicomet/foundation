@@ -21,7 +21,8 @@ namespace foundation {
     size_t num_search_dirs )
   {
 #if defined(FOUNDATION_PLATFORM_WINDOWS)
-    wchar_t* search_path = nullptr; {
+    wchar_t* search_path = nullptr;
+    if (num_search_dirs > 0) {
       String search_path_;
       for (size_t search_dir = 0; search_dir < num_search_dirs; ++search_dir) {
         search_path_ += search_dirs[search_dir];
@@ -41,10 +42,11 @@ namespace foundation {
 
     SymSetOptions(SymGetOptions() | SYMOPT_LOAD_LINES);
 
+    SymCleanup(GetModuleHandle(NULL));
     return (SymInitializeW(
       GetModuleHandle(NULL),
       search_path,
-      TRUE /* Deferring symbol loading might create multi-threading issues... */
+      FALSE // TRUE /* Deferring symbol loading might create multi-threading issues... */
     ) == TRUE);
 #elif defined(FOUNDATION_PLATFORM_MACOSX) || defined(FOUNDATION_PLATFORM_LINUX)
     return false;
@@ -171,13 +173,13 @@ namespace foundation {
 } // foundation
 
 #if defined(FOUNDATION_ARCH_X86_64)
-  extern "C" void FOUNDATION_STDCALL foundation_execution_state_x86_64();
+  extern "C" void foundation_execution_state_x86_64();
 #elif defined(FOUNDATION_ARCH_X86)
-  extern "C" void FOUNDATION_STDCALL foundation_execution_state_x86();
+  extern "C" void foundation_execution_state_x86();
 #endif
 
 namespace foundation {
-  FOUNDATION_NAKED void FOUNDATION_STDCALL get_execution_state(
+  void FOUNDATION_STDCALL get_execution_state(
     ExecutionState& exec_state )
   {
     (void)exec_state;
