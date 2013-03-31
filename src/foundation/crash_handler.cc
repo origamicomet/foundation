@@ -26,10 +26,8 @@ namespace foundation {
         exit(EXIT_FAILURE);
       }
 
-      for (auto iter = cs.frames.begin();
-           iter != cs.frames.end(); ++iter)
-      {
-        Callstack::Frame& frame = iter.to_ref();
+      for (size_t f = 0; f < cs.frames.size(); ++f) {
+        Callstack::Frame& frame = cs.frames[f];
 
         FOUNDATION_LOG(
           "  %s\n    in `%s` on line %u\n\n",
