@@ -71,9 +71,9 @@ namespace foundation {
 
   void String::operator+= ( const char* str )
   {
-    const size_t offset = _raw.size() - 1;
+    const size_t offset = max((size_t)1, _raw.size()) - 1;
     const size_t len = strlen(str);
-    _raw.resize(offset + len);
+    _raw.resize(_raw.size() + len + 1);
     copy((void*)&_raw[offset], (const void*)str, len + 1);
   }
 
