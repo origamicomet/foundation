@@ -8,6 +8,7 @@
 // A resizable array.
 
 #include <foundation/config.h>
+#include <foundation/detect.h>
 #include <foundation/compat.h>
 #include <foundation/assert.h>
 #include <foundation/algorithm.h>
@@ -128,7 +129,9 @@ namespace foundation {
 
       FOUNDATION_INLINE T& operator[] ( size_t index )
       {
-        assert(index < size());
+        assert(index < reserved());
+        if (index >= size())
+          _size = index + 1;
         return _ptr[index];
       }
 
