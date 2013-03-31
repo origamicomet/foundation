@@ -34,6 +34,8 @@ Make sure you have the following:
   * Ruby;
   * and [Tup](https://github.com/gittup/tup).
 
+Then shell-fu:
+
 ```
 $ ruby configure {debug,release}
 $ build.bat (Windows) or ./build.sh (POSIX)
