@@ -171,9 +171,9 @@ namespace foundation {
 } // foundation
 
 #if defined(FOUNDATION_ARCH_X86_64)
-  extern "C" void _foundation_execution_state_x86_64();
+  extern "C" void FOUNDATION_STDCALL foundation_execution_state_x86_64();
 #elif defined(FOUNDATION_ARCH_X86)
-  extern "C" void _foundation_execution_state_x86();
+  extern "C" void FOUNDATION_STDCALL foundation_execution_state_x86();
 #endif
 
 namespace foundation {
@@ -182,9 +182,9 @@ namespace foundation {
   {
     (void)exec_state;
   #if defined(FOUNDATION_ARCH_X86_64)
-    _foundation_execution_state_x86_64();
+    foundation_execution_state_x86_64();
   #elif defined(FOUNDATION_ARCH_X86)
-    _foundation_execution_state_x86();
+    foundation_execution_state_x86();
   #endif
   }
 
