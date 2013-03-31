@@ -26,19 +26,19 @@ namespace foundation {
   // Returns the lesser of two values.
   template <typename T>
   FOUNDATION_INLINE T min( T a, T b ) {
-    return (( b > a ) ? a : b);
+    return (( a < b ) ? a : b);
   }
 
   // Returns the greater of two values.
   template <typename T>
   FOUNDATION_INLINE T max( T a, T b ) {
-    return (( a < b ) ? a : b);
+    return (( a > b ) ? a : b);
   }
 
   // Returns a value such that a <= x <= b.
   template <typename T>
   FOUNDATION_INLINE T clamp( T a, T b, T x ) {
-    return (x < a ? a : (x > b ? b : x));
+    return ((x < a) ? a : (x > b ? b : x));
   }
 
   template <typename T>
