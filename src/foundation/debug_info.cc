@@ -40,13 +40,13 @@ namespace foundation {
       );
     }
 
-    SymSetOptions(SymGetOptions() | SYMOPT_LOAD_LINES);
+    SymSetOptions(SymGetOptions() | SYMOPT_LOAD_LINES | SYMOPT_OMAP_FIND_NEAREST);
+    SymCleanup(GetCurrentProcess());
 
-    SymCleanup(GetModuleHandle(NULL));
     return (SymInitializeW(
-      GetModuleHandle(NULL),
+      GetCurrentProcess(),
       search_path,
-      FALSE // TRUE /* Deferring symbol loading might create multi-threading issues... */
+      TRUE /* Deferring symbol loading might create multi-threading issues... */
     ) == TRUE);
 #elif defined(FOUNDATION_PLATFORM_MACOSX) || defined(FOUNDATION_PLATFORM_LINUX)
     return false;
@@ -67,19 +67,15 @@ namespace foundation {
       return false;
 
 #if defined(FOUNDATION_PLATFORM_WINDOWS)
-    SYMBOL_INFOW * sym_info =
-      (SYMBOL_INFOW *)alloca(
-        sizeof(SYMBOL_INFOW) +
-        256 * sizeof(wchar_t) - 1
-      );
-
-    zero((void*)sym_info, sizeof(SYMBOL_INFOW) + 256 * sizeof(wchar_t) - 1);
-    sym_info->SizeOfStruct = sizeof(SYMBOL_INFOW) + 256 * sizeof(wchar_t) - 1;
+    SYMBOL_INFOW* sym_info =
+      (SYMBOL_INFOW*)alloca(sizeof(SYMBOL_INFOW) + 254 * sizeof(wchar_t));
+    zero((void*)sym_info, sizeof(SYMBOL_INFOW) + 254 * sizeof(wchar_t));
+    sym_info->SizeOfStruct = sizeof(SYMBOL_INFOW);
     sym_info->MaxNameLen = 255;
 
     const bool success =
       (SymFromAddrW(
-        GetModuleHandle(NULL),
+        GetCurrentProcess(),
         (DWORD64)address,
         0, /* Don't need displacement */
         sym_info
@@ -117,11 +113,12 @@ namespace foundation {
     zero((void*)&ihl, sizeof(IMAGEHLP_LINEW64));
     ihl.SizeOfStruct = sizeof(IMAGEHLP_LINEW64);
 
+    DWORD displacement;
     const bool success =
       (SymGetLineFromAddrW64(
-        GetModuleHandle(NULL),
+        GetCurrentProcess(),
         (DWORD64)address,
-        0, /* Don't need displacement */
+        &displacement, /* Don't need displacement */
         &ihl
       ) == TRUE);
 
@@ -150,11 +147,12 @@ namespace foundation {
     zero((void*)&ihl, sizeof(IMAGEHLP_LINEW64));
     ihl.SizeOfStruct = sizeof(IMAGEHLP_LINEW64);
 
+    DWORD displacement;
     const bool success =
       (SymGetLineFromAddrW64(
-        GetModuleHandle(NULL),
+        GetCurrentProcess(),
         (DWORD64)address,
-        0, /* Don't need displacement */
+        &displacement, /* Don't need displacement */
         &ihl
       ) == TRUE);
 
@@ -203,7 +201,7 @@ namespace foundation {
     get_execution_state(exec_state);
 
 #if defined(FOUNDATION_ARCH_X86_64)
-    static const DWORD machine_type = IMAGE_FILE_MACHINE_I386;
+    static const DWORD machine_type = IMAGE_FILE_MACHINE_AMD64;
 
     context.ContextFlags = CONTEXT_CONTROL;
     context.Rbp          = exec_state.RBP;
@@ -217,18 +215,18 @@ namespace foundation {
     stack_frame.AddrPC.Offset    = exec_state.RIP;
     stack_frame.AddrPC.Mode      = AddrModeFlat;
 #elif defined(FOUNDATION_ARCH_X86)
-    static const DWORD machine_type = IMAGE_FILE_MACHINE_AMD64;
+    static const DWORD machine_type = IMAGE_FILE_MACHINE_I386;
 
     context.ContextFlags = CONTEXT_CONTROL;
     context.Ebp          = exec_state.EBP;
     context.Esp          = exec_state.ESP;
     context.Eip          = exec_state.EIP;
 
-    stack_frame.AddrFrame.Offset = exec_state.EBP;
+    stack_frame.AddrFrame.Offset = context.Ebp;
     stack_frame.AddrFrame.Mode   = AddrModeFlat;
-    stack_frame.AddrStack.Offset = exec_state.ESP;
+    stack_frame.AddrStack.Offset = context.Esp;
     stack_frame.AddrStack.Mode   = AddrModeFlat;
-    stack_frame.AddrPC.Offset    = exec_state.EIP;
+    stack_frame.AddrPC.Offset    = context.Eip;
     stack_frame.AddrPC.Mode      = AddrModeFlat;
 #endif
     
