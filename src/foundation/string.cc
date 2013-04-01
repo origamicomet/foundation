@@ -7,8 +7,9 @@
 
 namespace foundation {
   String::String( Allocator& allocator, size_t len )
-    : _raw(allocator, len)
+    : _raw(allocator, 0)
   {
+    _raw.resize(len);
   }
 
   String::String( const char* format, ... )

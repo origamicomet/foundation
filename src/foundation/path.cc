@@ -131,7 +131,7 @@ namespace foundation {
         );
       }
 
-      return unixify(abs_path);
+      return abs_path;
     #elif defined(FOUNDATION_PLATFORM_POSIX)
       return String(path.allocator());
     #endif
@@ -179,9 +179,10 @@ namespace foundation {
 
       // Replace occurances of `\` with `/`:
       String unixified = path;
-      for (auto iter = unixified.begin(); iter != unixified.end(); ++iter)
+      for (auto iter = unixified.begin(); iter != unixified.end(); ++iter) {
         if (iter.to_code_point() == '\\')
           iter.to_ref() = '/';
+      }
 
       // Replace drive letters like `C:/` with `/C/`.
       auto drive_letter = unixified.begin();
