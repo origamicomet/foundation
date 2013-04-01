@@ -10,19 +10,24 @@
 namespace foundation {
   namespace {
     void _on_signal( int sig ) {
+      FOUNDATION_LOG("\n===============================================================================\n");
+
       switch (sig) {
-        case SIGTERM: FOUNDATION_LOG("\nRecieved a termination request!\n\n"); break;
-        case SIGSEGV: FOUNDATION_LOG("\nEncountered a segmentation fault!\n\n"); break;
-        case SIGINT: FOUNDATION_LOG("\nRecieved an external interrupt!\n\n"); break;
-        case SIGILL: FOUNDATION_LOG("\nEncountered an invalid instruction!\n\n"); break;
-        case SIGABRT: FOUNDATION_LOG("\nAbnormal program termination!\n\n"); break;
-        case SIGFPE: FOUNDATION_LOG("\nEncountered a floating-point exception!\n\n"); break;
+        case SIGTERM: FOUNDATION_LOG("Recieved a termination request!\n"); break;
+        case SIGSEGV: FOUNDATION_LOG("Encountered a segmentation fault!\n"); break;
+        case SIGINT: FOUNDATION_LOG("Recieved an external interrupt!\n"); break;
+        case SIGILL: FOUNDATION_LOG("Encountered an invalid instruction!\n"); break;
+        case SIGABRT: FOUNDATION_LOG("Abnormal program termination!\n"); break;
+        case SIGFPE: FOUNDATION_LOG("Encountered a floating-point exception!\n"); break;
       }
+
+      FOUNDATION_LOG("-------------------------------------------------------------------------------\n");
+      FOUNDATION_LOG("Callstack:\n\n");
 
       Callstack cs;
 
       if (!callstack(cs)) {
-        FOUNDATION_LOG("  Unable to generate callstack!\n");
+        FOUNDATION_LOG("  Failed.\n");
         exit(EXIT_FAILURE);
       }
 
