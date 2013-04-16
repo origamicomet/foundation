@@ -81,11 +81,11 @@ namespace foundation {
       };
 
     public:
-      explicit Array( Allocator& allocator, size_t reserve = 0 )
+      explicit Array( Allocator& allocator = Allocator::heap(), size_t reserve = 0 )
         : _allocator(allocator)
         , _size(0)
         , _reserved(reserve)
-        , _ptr((T*)allocator.alloc(reserve * sizeof(T), alignof(T)))
+        , _ptr((T*)allocator.alloc(reserve * sizeof(T), max(alignof(T), (size_t)4)))
       {}
 
       ~Array()
@@ -99,7 +99,7 @@ namespace foundation {
         : _allocator(array._allocator)
         , _size(array._size)
         , _reserved(array._reserved)
-        , _ptr((T*)array._allocator.alloc(array._reserved * sizeof(T), alignof(T)))
+        , _ptr((T*)array._allocator.alloc(array._reserved * sizeof(T), max(alignof(T), (size_t)4)))
       {
         copy((void*)_ptr, (const void*)array._ptr, array._reserved * sizeof(T));
       }
@@ -111,7 +111,7 @@ namespace foundation {
 
         _size = array._size;
         _reserved = array._reserved;
-        _ptr = (T*)_allocator.realloc((void*)_ptr, array._reserved * sizeof(T), alignof(T));
+        _ptr = (T*)_allocator.realloc((void*)_ptr, array._reserved * sizeof(T), max(alignof(T), (size_t)4));
         copy((void*)_ptr, (const void*)array._ptr, array._reserved * sizeof(T));
 
         return *this;
@@ -179,7 +179,7 @@ namespace foundation {
       {
         _size = _reserved = size;
         _ptr = (T*)_allocator.realloc(
-          (void*)_ptr, size * sizeof(T), alignof(T)
+          (void*)_ptr, size * sizeof(T), max(alignof(T), (size_t)4)
         );
       }
 
@@ -190,7 +190,7 @@ namespace foundation {
       {
         _reserved += extra;
         _ptr = (T*)_allocator.realloc(
-          (void*)_ptr, alignof(T), _reserved * sizeof(T)
+          (void*)_ptr, _reserved * sizeof(T), max(alignof(T), (size_t)4)
         );
       }
 
@@ -205,7 +205,7 @@ namespace foundation {
       {
         _reserved = round_to_prime(_reserved);
         _ptr = (T*)_allocator.realloc(
-          (void*)_ptr, alignof(T), _reserved * sizeof(T)
+          (void*)_ptr, _reserved * sizeof(T), max(alignof(T), (size_t)4)
         );
       }
 
