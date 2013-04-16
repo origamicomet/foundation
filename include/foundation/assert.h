@@ -32,8 +32,9 @@
   assertf(_Condition, \
     "An assertion failed:\n" \
     "\n" \
-    "  `" #_Condition "`\n" \
-    "    in `" __foundation_stringify(__FILE__) "` on line " __foundation_stringify(__LINE__) "\n\n" \
+    "  `%s`\n" \
+    "    in `" __foundation_stringify(__FILE__) "` on line " __foundation_stringify(__LINE__) "\n\n", \
+    #_Condition \
   )
 // ]
 
