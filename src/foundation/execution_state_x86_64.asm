@@ -1,6 +1,6 @@
 section .text
-global _foundation_execution_state_x86_64@0
-_foundation_execution_state_x86_64@0:
+global _foundation_execution_state_x86_64
+_foundation_execution_state_x86_64:
   ; push rcx
   ; mov rcx, [rsp + 16]
   ; mov qword [rcx], rax
@@ -26,4 +26,4 @@ _foundation_execution_state_x86_64@0:
   ; pop rcx
   ; push rcx
   ; mov qword [rax + 128], rcx
-  ret 8
+  ret

@@ -87,7 +87,7 @@ namespace foundation {
     FOUNDATION_INLINE Callstack()
       : frames(Allocator::heap(), 0)
     {}
-  }; 
+  };
 
   // Walks the callstack to attempt to provide symbol information.
   extern FOUNDATION_EXPORT bool callstack(

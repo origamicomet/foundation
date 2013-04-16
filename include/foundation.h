@@ -23,6 +23,7 @@
 #include <foundation/temp_allocator.h>
 
 #include <foundation/string.h>
+#include <foundation/hash.h>
 
 #include <foundation/array.h>
 #include <foundation/intrusive_list.h>

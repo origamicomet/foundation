@@ -90,7 +90,7 @@ namespace foundation {
     const _Value* array,
     size_t num_items )
   {
-    return bsearch(
+    return (_Value*)bsearch(
       (const void*)&key,
       (const void*)array,
       num_items,
@@ -101,12 +101,12 @@ namespace foundation {
 
   // Performs an O(1) to O(log n) search on a foundation::sort'd array.
   template <typename T>
-  FOUNDATION_INLINE const T* search(
+  FOUNDATION_INLINE T* search(
     const T& key,
     const T* array,
     size_t num_items )
   {
-    return bsearch(
+    return (T*)bsearch(
       (const void*)&key,
       (const void*)array,
       num_items,
