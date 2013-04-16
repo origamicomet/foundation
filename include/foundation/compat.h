@@ -196,6 +196,9 @@
 
   #define __builtin_bswap64( _Qword ) \
     _byteswap_uint64(_Qword)
+
+  // TODO: Create a proper wrapper (this doesn't exactly match).
+  #define snprintf _snprintf
 #elif defined(FOUNDATION_COMPILER_GCC) || defined(FOUNDATION_COMPILER_CLANG)
 #else
   #error ("Compiler does not support important intrinsics!")
