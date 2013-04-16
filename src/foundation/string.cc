@@ -65,6 +65,33 @@ namespace foundation {
     return *this;
   }
 
+  String String::operator+ ( char ch )
+  {
+    String str_ = *this;
+    str_._raw.push_back((uint8_t)ch);
+    return str_;
+  }
+
+  String String::operator+ ( const char* str )
+  {
+    String str_ = *this;
+    const size_t offset = max((size_t)1, str_._raw.size()) - 1;
+    const size_t len = strlen(str);
+    str_._raw.resize(str_._raw.size() + len + 1);
+    copy((void*)&str_._raw[offset], (const void*)str, len + 1);
+    return str_;
+  }
+
+  String String::operator+ ( const String& str )
+  {
+    String str_ = *this;
+    const size_t offset = max((size_t)1, str_._raw.size()) - 1;
+    const size_t len = str.size();
+    str_._raw.resize(str_._raw.size() + len + 1);
+    copy((void*)&str_._raw[offset], (const void*)str.to_ptr(), len + 1);
+    return str_;
+  }
+
   void String::operator+= ( char ch )
   {
     _raw.push_back((uint8_t)ch);
@@ -80,9 +107,22 @@ namespace foundation {
 
   void String::operator+= ( const String& str )
   {
-    const size_t offset = _raw.size() - 1;
-    const size_t len = str._raw.size() - 1;
-    _raw.resize(offset + len);
-    copy((void*)&_raw[offset], (const void*)str._raw.to_ptr(), len + 1);
+    const size_t offset = max((size_t)1, str._raw.size() - 1);
+    const size_t len = str._raw.size();
+    _raw.resize(_raw.size() + len + 1);
+    copy((void*)&_raw[offset], (const void*)str.to_ptr(), len + 1);
+  }
+
+  String String::chomp( const String& prefix )
+  {
+    auto iter_s = begin();
+    auto iter_p = prefix.begin();
+
+    while (iter_s.to_code_point() == iter_p.to_code_point()) {
+      ++iter_s;
+      ++iter_p;
+    }
+
+    return String(Allocator::scratch(), begin(), iter_s);
   }
 } // foundation

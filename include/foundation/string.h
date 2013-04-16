@@ -142,9 +142,16 @@ namespace foundation {
       String& operator= ( const String& str );
 
     public:
+      String operator+ ( char ch );
+      String operator+ ( const char* str );
+      String operator+ ( const String& str );
+
       void operator+= ( char ch );
       void operator+= ( const char* str );
       void operator+= ( const String& str );
+
+    public:
+      String chomp( const String& prefix );
 
     public:
       FOUNDATION_INLINE Iterator begin() const
