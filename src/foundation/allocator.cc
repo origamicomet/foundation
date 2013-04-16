@@ -19,10 +19,17 @@ namespace foundation {
 
       public:
         void* alloc( size_t num_bytes, size_t alignment ) {
-          return nedmalloc2(num_bytes, alignment, 0);
+          if (num_bytes == 0)
+            return nullptr;
+          return nedrealloc2(nullptr, num_bytes, alignment, 0);
         }
 
         void* realloc( void* ptr, size_t num_bytes, size_t alignment ) {
+          if (num_bytes == 0) {
+            if (ptr)
+              nedfree2(ptr, 0);
+            return nullptr;
+          }
           return nedrealloc2(ptr, num_bytes, alignment, 0);
         }
 

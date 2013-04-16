@@ -32,6 +32,9 @@ namespace foundation {
     assert((alignment % 4) == 0);
     num_bytes = ((num_bytes + 3) / 4) * 4;
 
+    if (num_bytes == 0)
+      return nullptr;
+
     uintptr_t ptr = _allocate;
     Header* header = (Header*)ptr;
     void* p = align_forward(((void*)(header + 1)), alignment);
@@ -60,9 +63,15 @@ namespace foundation {
     size_t num_bytes,
     size_t alignment )
   {
-    (void)ptr;
-    (void)num_bytes;
-    (void)alignment;
+    if (num_bytes > 0) {
+      void* ptr_ = alloc(num_bytes, alignment);
+      if (ptr)
+        copy(ptr_, ptr, num_bytes);
+      free(ptr);
+      return ptr_;
+    }
+
+    free(ptr);
     return nullptr;
   }
 
