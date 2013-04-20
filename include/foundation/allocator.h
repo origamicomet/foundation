@@ -42,10 +42,4 @@ namespace foundation {
   };
 } // foundation
 
-#define MAKE_NEW( _Type, _Allocator ) \
-  new ((_Allocator.alloc(sizeof(_Type), alignof(_Type)))) _Type
-
-#define MAKE_DELETE( _Type, _Allocator, _Instance ) \
-  do { _Instance->~_Type(); _Allocator.free((void*)_Instance); } while (0, 0)
-
 #endif // _FOUNDATION_ALLOCATOR_H_

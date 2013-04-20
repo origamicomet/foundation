@@ -40,10 +40,10 @@
 
 #include <new>
 
-#define make_new( _Class, _Allocator ) \
-  new (_Allocator.alloc(sizeof(_Class), alignof(_Class))) _Class
+#define make_new( _Type, _Allocator ) \
+  new ((_Allocator.alloc(sizeof(_Type), alignof(_Type)))) _Type
 
-#define make_delete( _Class, _Allocator, _Instance ) \
-  do { _Instance->~_Class(); _Allocator.free((void*)_Instance); } while (0, 0)
+#define make_delete( _Type, _Allocator, _Instance ) \
+  do { _Instance->~_Type(); _Allocator.free((void*)_Instance); } while (0, 0)
 
 #endif // _FOUNDATION_PREPROCESSOR_H_
