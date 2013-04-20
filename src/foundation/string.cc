@@ -38,18 +38,17 @@ namespace foundation {
     : _raw(allocator, 0)
   {
     assert(&min._string == &max._string);
-    assert(min._byte < max._byte);
+    assert(min._byte <= max._byte);
 
     size_t len = 0;
     
+    // Inclusive:
     const auto past_max = ++max;
-    if (past_max.is_valid())
-      len = (past_max._byte - min._byte) - 1;
-    else
-      len = max._string._raw.size() - min._byte;
+    if (past_max.is_valid()) len = (past_max._byte - min._byte);
+    else len = max._byte - min._byte;
 
     _raw.resize(len + 1);
-    copy((void*)_raw.to_ptr(), (const void*)min._string._raw[min._byte], len);
+    copy((void*)_raw.to_ptr(), (const void*)&min._string._raw[min._byte], len);
     _raw[len] = '\0';
   }
 
