@@ -15,6 +15,7 @@
 #include <foundation/config.h>
 #include <foundation/array.h>
 #include <foundation/string.h>
+#include <foundation/time_stamp.h>
 
 #if defined(FOUNDATION_PLATFORM_WINDOWS)
   #define WIN32_LEAN_AND_MEAN
@@ -39,6 +40,7 @@ namespace foundation {
 
         Type type;
         char path[255];
+        TimeStamp last_modified;
       };
 
       enum Event {
@@ -50,7 +52,7 @@ namespace foundation {
       typedef void (*OnEventCallback)(
         Event event,
         WatchedDirectory* directory,
-        const Entry* entry,
+        const Entry& entry,
         void* user_ptr );
 
     private:
@@ -62,6 +64,9 @@ namespace foundation {
         const char* path );
 
       static Directory* create(
+        const char* path );
+
+      static bool exists(
         const char* path );
 
       void remove();

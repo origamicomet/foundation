@@ -38,6 +38,7 @@
 
 #include <foundation/thread_safe/queue.h>
 
+#include <foundation/time_stamp.h>
 #include <foundation/path.h>
 #include <foundation/file.h>
 #include <foundation/mapped_file.h>

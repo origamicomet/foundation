@@ -32,7 +32,7 @@ namespace foundation {
 
   #if defined(FOUNDATION_PLATFORM_WINDOWS)
     wchar_t* native_path; {
-      const size_t path_len = strlen(path);
+      const size_t path_len = strlen(path) + 1;
       const size_t len = MultiByteToWideChar(
         CP_UTF8, 0, path, path_len, nullptr, 0
       );
@@ -50,7 +50,7 @@ namespace foundation {
       NULL,
       OPEN_EXISTING,
       FILE_FLAG_BACKUP_SEMANTICS, /* Don't ask me. */
-      NULL );
+      NULL);
 
     if (sys_handle == INVALID_HANDLE_VALUE)
       return nullptr;
@@ -70,7 +70,7 @@ namespace foundation {
 
   #if defined(FOUNDATION_PLATFORM_WINDOWS)
     wchar_t* native_path; {
-      const size_t path_len = strlen(path);
+      const size_t path_len = strlen(path) + 1;
       const size_t len = MultiByteToWideChar(
         CP_UTF8, 0, path, path_len, nullptr, 0
       );
@@ -81,14 +81,17 @@ namespace foundation {
       );
     }
 
+    if (!CreateDirectoryW(native_path, NULL))
+      return nullptr;
+
     HANDLE sys_handle = CreateFileW(
       native_path,
-      GENERIC_READ | GENERIC_WRITE,
+      GENERIC_READ,
       FILE_SHARE_READ | FILE_SHARE_WRITE,
       NULL,
-      CREATE_NEW,
+      OPEN_EXISTING,
       FILE_FLAG_BACKUP_SEMANTICS, /* Don't ask me. */
-      NULL );
+      NULL);
 
     if (sys_handle == INVALID_HANDLE_VALUE)
       return nullptr;
@@ -98,6 +101,29 @@ namespace foundation {
     return dir;
   #elif defined(FOUNDATION_PLATFORM_POSIX)
     return nullptr;
+  #endif
+  }
+
+  bool Directory::exists(
+    const char* path )
+  {
+    assert(path != nullptr);
+  #if defined(FOUNDATION_PLATFORM_WINDOWS)
+    wchar_t* native_path; {
+      const size_t path_len = strlen(path) + 1;
+      const size_t len = MultiByteToWideChar(
+        CP_UTF8, 0, path, path_len, nullptr, 0
+      );
+
+      native_path = (wchar_t*)alloca(len * sizeof(wchar_t));
+      MultiByteToWideChar(
+        CP_UTF8, 0, path, path_len, native_path, len
+      );
+    }
+
+    const DWORD attrib = GetFileAttributesW(native_path);
+    return ((attrib != INVALID_FILE_ATTRIBUTES) && (attrib & FILE_ATTRIBUTE_DIRECTORY));
+  #elif defined(FOUNDATION_PLATFORM_POSIX)
   #endif
   }
 
@@ -145,6 +171,13 @@ namespace foundation {
           WideCharToMultiByte(
             CP_UTF8, 0, iter_f, -1, &entry.path[0], 255, 0, 0
           );
+        }
+
+        /* entry.last_modified = */ {
+          const FILETIME ft = find_data.ftLastWriteTime;
+          const uint64_t epoch =
+            (((uint64_t)ft.dwHighDateTime) << 32) | ((uint64_t)ft.dwLowDateTime);
+          return TimeStamp(epoch / 10000000LL - 11644473600LL);
         }
 
         if (find_data.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) {
@@ -237,7 +270,7 @@ namespace foundation {
 
   #if defined(FOUNDATION_PLATFORM_WINDOWS)
     wchar_t* native_path; {
-      const size_t path_len = strlen(path);
+      const size_t path_len = strlen(path) + 1;
       const size_t len = MultiByteToWideChar(
         CP_UTF8, 0, path, path_len, nullptr, 0
       );
@@ -255,7 +288,7 @@ namespace foundation {
       NULL,
       OPEN_EXISTING,
       FILE_FLAG_BACKUP_SEMANTICS, /* Don't ask me. */
-      NULL );
+      NULL);
 
     if (sys_handle == INVALID_HANDLE_VALUE)
       return nullptr;
@@ -388,6 +421,8 @@ namespace foundation {
           );
         }
 
+        entry.last_modified = TimeStamp::now();
+
         Directory::Event event;
         switch( notify->Action ) {
           case FILE_ACTION_RENAMED_NEW_NAME:
@@ -405,7 +440,7 @@ namespace foundation {
           break;
         }
 
-        dir->_on_event_callback(event, dir, &entry, dir->_user_ptr);
+        dir->_on_event_callback(event, dir, entry, dir->_user_ptr);
       } while (notify->NextEntryOffset != 0 && !dir->_stopping);
     }
 
