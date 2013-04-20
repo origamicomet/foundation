@@ -19,6 +19,7 @@ namespace foundation {
     va_start(va, format);
     _raw.resize(vsnprintf(nullptr, 0, format, va) + 1);
     vsnprintf((char*)_raw.to_ptr(), _raw.size() - 1, format, va);
+    _raw[_raw.size() - 1] = '\0';
     va_end(va);
   }
 
@@ -29,6 +30,7 @@ namespace foundation {
     va_start(va, format);
     _raw.resize(vsnprintf(nullptr, 0, format, va) + 1);
     vsnprintf((char*)_raw.to_ptr(), _raw.size() - 1, format, va);
+    _raw[_raw.size() - 1] = '\0';
     va_end(va);
   }
 
@@ -56,6 +58,14 @@ namespace foundation {
   {
   }
 
+  String& String::operator= ( const char* str )
+  {
+    assert(str != nullptr);
+    _raw.resize(strlen(str) + 1);
+    copy((void*)_raw.to_ptr(), (const void*)str, _raw.size());
+    return *this;
+  }
+
   String& String::operator= ( const String& str )
   {
     if (&str == this)
@@ -65,14 +75,14 @@ namespace foundation {
     return *this;
   }
 
-  String String::operator+ ( char ch )
+  String String::operator+ ( char ch ) const
   {
     String str_ = *this;
     str_._raw.push_back((uint8_t)ch);
     return str_;
   }
 
-  String String::operator+ ( const char* str )
+  String String::operator+ ( const char* str ) const
   {
     String str_ = *this;
     const size_t offset = max((size_t)1, str_._raw.size()) - 1;
@@ -82,7 +92,7 @@ namespace foundation {
     return str_;
   }
 
-  String String::operator+ ( const String& str )
+  String String::operator+ ( const String& str ) const
   {
     String str_ = *this;
     const size_t offset = max((size_t)1, str_._raw.size()) - 1;

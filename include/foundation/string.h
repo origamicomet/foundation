@@ -139,12 +139,13 @@ namespace foundation {
 
     public:
       String( const String& str );
+      String& operator= ( const char* str );
       String& operator= ( const String& str );
 
     public:
-      String operator+ ( char ch );
-      String operator+ ( const char* str );
-      String operator+ ( const String& str );
+      String operator+ ( char ch ) const;
+      String operator+ ( const char* str ) const;
+      String operator+ ( const String& str ) const;
 
       void operator+= ( char ch );
       void operator+= ( const char* str );
