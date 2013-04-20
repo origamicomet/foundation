@@ -18,7 +18,7 @@ namespace foundation {
   class Hash {
     public:
       Hash( const char* str )
-        : _value(_HashingFunc((const void*)str, strlen(str), 0))
+        : _value(_HashingFunc((const void*)str, str ? strlen(str) : 0, 0))
       {}
 
       Hash( const String& str )
