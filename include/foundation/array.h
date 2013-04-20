@@ -24,12 +24,12 @@ namespace foundation {
         private:
           Iterator( const Array<T>& array, size_t index )
             : _array(const_cast<Array<T>&>(array))
-            , _index(index + 1)
+            , _index(index)
           {}
 
           Iterator( Array<T>& array, size_t index )
             : _array(array)
-            , _index(index + 1)
+            , _index(index)
           {}
 
         public:
@@ -54,26 +54,26 @@ namespace foundation {
           { return ((_array != iter._array) || (_index != iter._index)); }
 
           FOUNDATION_INLINE Iterator operator++ ()
-          { return Iterator(_array, min(_index + 1, _array.size())); }
+          { _index = min(_index + 1, _array.size()); return *this; }
 
           FOUNDATION_INLINE Iterator operator++ ( int )
           { Iterator iter(*this); ++(*this); return iter; }
 
           FOUNDATION_INLINE Iterator operator-- ()
-          { return Iterator(_array, max(1, _index) - 1); }
+          { _index = max(1, _index) - 1; return *this; }
 
           FOUNDATION_INLINE Iterator operator-- ( int )
           { Iterator iter(*this); --(*this); return iter; }
 
         public:
           FOUNDATION_INLINE T& to_ref()
-          { return _array.to_ptr()[_index - 1]; }
+          { return _array.to_ptr()[_index]; }
 
           FOUNDATION_INLINE const T& to_ref() const
-          { return _array.to_ptr()[_index - 1]; }
+          { return _array.to_ptr()[_index]; }
         
           FOUNDATION_INLINE bool is_valid() const
-          { return ((_index > 0) && (_index <= _array.size())); }
+          { return ((_index >= 0) && (_index < _array.size())); }
 
         private:
           Array<T>& _array;
@@ -101,7 +101,8 @@ namespace foundation {
         , _reserved(array._reserved)
         , _ptr((T*)array._allocator.alloc(array._reserved * sizeof(T), max(alignof(T), (size_t)4)))
       {
-        copy((void*)_ptr, (const void*)array._ptr, array._reserved * sizeof(T));
+        for (size_t idx = 0; idx < array._size; ++idx)
+          _ptr[idx] = array._ptr[idx];
       }
 
       Array<T>& operator= ( const Array<T>& array )
@@ -112,7 +113,9 @@ namespace foundation {
         _size = array._size;
         _reserved = array._reserved;
         _ptr = (T*)_allocator.realloc((void*)_ptr, array._reserved * sizeof(T), max(alignof(T), (size_t)4));
-        copy((void*)_ptr, (const void*)array._ptr, array._reserved * sizeof(T));
+        
+        for (size_t idx = 0; idx < array._size; ++idx)
+          _ptr[idx] = array._ptr[idx];
 
         return *this;
       }
@@ -146,8 +149,7 @@ namespace foundation {
       {
         if (_size == _reserved)
           grow();
-
-        copy_safe((void*)&_ptr[_size++], (const void*)&item, sizeof(T));
+        _ptr[_size++] = item;
       }
 
       FOUNDATION_INLINE void pop_back()
@@ -160,13 +162,13 @@ namespace foundation {
       { const Array<T>& self = *this; return Iterator(self, (size_t)0); }
 
       FOUNDATION_INLINE Iterator end() const
-      { const Array<T>& self = *this; return Iterator(self, max(_size, (size_t)1) - 1); }
+      { const Array<T>& self = *this; return Iterator(self, _size); }
 
       FOUNDATION_INLINE Iterator front() const
       { const Array<T>& self = *this; return Iterator(self, 0); }
 
       FOUNDATION_INLINE Iterator back() const
-      { const Array<T>& self = *this; return Iterator(self, _size); }
+      { const Array<T>& self = *this; return Iterator(self, max(_size, (size_t)1) - 1); }
 
     public:
       FOUNDATION_INLINE Allocator& allocator() const
