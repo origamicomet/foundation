@@ -13,6 +13,10 @@
 
 namespace foundation {
   namespace File {
+    // Determines if a |file| exists.
+    extern FOUNDATION_EXPORT bool exists(
+        const char* path );
+
     // Opens a |file|.
     extern FOUNDATION_EXPORT FILE* open(
       const char* file,

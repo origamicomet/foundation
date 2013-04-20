@@ -12,6 +12,27 @@
 
 namespace foundation {
   namespace File {
+    bool exists(
+      const char* path )
+    {
+    #if defined(FOUNDATION_PLATFORM_WINDOWS)
+      const wchar_t* native_path; {
+        const size_t len = MultiByteToWideChar(
+          CP_UTF8, 0, path, -1, 0, 0
+        );
+
+        native_path = (const wchar_t*)alloca(len * sizeof(wchar_t));
+        MultiByteToWideChar(
+          CP_UTF8, 0, path, -1, (wchar_t*)native_path, len
+        );
+      }
+
+      const DWORD attrib = GetFileAttributesW(native_path);
+      return ((attrib != INVALID_FILE_ATTRIBUTES) && !(attrib & FILE_ATTRIBUTE_DIRECTORY));
+    #elif defined(FOUNDATION_PLATFORM_POSIX)
+    #endif
+    }
+
     FILE* open(
       const char* path,
       const char* mode )
