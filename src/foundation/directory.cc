@@ -177,22 +177,28 @@ namespace foundation {
           const FILETIME ft = find_data.ftLastWriteTime;
           const uint64_t epoch =
             (((uint64_t)ft.dwHighDateTime) << 32) | ((uint64_t)ft.dwLowDateTime);
-          return TimeStamp(epoch / 10000000LL - 11644473600LL);
+          entry.last_modified = TimeStamp(epoch / 10000000LL - 11644473600LL);
         }
 
         if (find_data.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) {
           // Ignore `.` and `..`
           if ((find_data.cFileName[0] == '.') &&
               (find_data.cFileName[1] == '\0'))
+          {
             continue;
+          }
 
           if ((find_data.cFileName[0] == '.') &&
               (find_data.cFileName[1] == '.') &&
               (find_data.cFileName[2] == '\0'))
+          {
             continue;
+          }
 
-          if (!recursively)
+          if (!recursively) {
+            entries.push_back(entry);
             continue;
+          }
 
           const size_t len = wcslen(&find_data.cFileName[0]);
           wchar_t* recursive_pattern =
