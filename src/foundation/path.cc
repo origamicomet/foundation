@@ -14,11 +14,6 @@
 
 namespace foundation {
   namespace Path {
-    // TODO: Handle UTF-8 code points, perhaps use classes like String8,
-    //       String16, String32 and remove NativeString. Also, add code-point
-    //       based iterators? String::begin() / String::end().
-    //       The same goes for other string functions.
-
     String basename(
       const String& path )
     {
@@ -82,10 +77,16 @@ namespace foundation {
 
       auto iter = path.end();
       uint32_t code_point = 0;
-      while ((code_point = iter.to_code_point()) && ((--iter).is_valid()));
 
-      if (iter == path.begin())
-        return String(path.allocator());
+      while(true) {
+        code_point = iter.to_code_point();
+        if ((code_point == '/') || (code_point == '\\'))
+          return String(path.allocator());
+        if (code_point == '.')
+          break;
+        if (!((iter--).is_valid()))
+          break;
+      }
 
       return String(path.allocator(), (++iter), path.end());
     }
