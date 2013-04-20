@@ -159,7 +159,7 @@ namespace foundation {
       { const String& self = *this; return Iterator(self, (size_t)0); }
 
       FOUNDATION_INLINE Iterator end() const
-      { const String& self = *this; return Iterator(self, _raw.size() - 1); }
+      { const String& self = *this; return Iterator(self, max(_raw.size(), (size_t)1) - 1); }
 
     public:
       FOUNDATION_INLINE Allocator& allocator() const
