@@ -33,8 +33,17 @@ namespace foundation {
       { _value = hash._value; return *this; }
 
     public:
+      FOUNDATION_INLINE bool operator< ( const Hash<T, _HashingFunc>& hash ) const
+      { return _value < hash._value; }
+
+      FOUNDATION_INLINE bool operator> ( const Hash<T, _HashingFunc>& hash ) const
+      { return _value > hash._value; }
+
       FOUNDATION_INLINE bool operator== ( const Hash<T, _HashingFunc>& hash ) const
       { return _value == hash._value; }
+
+      FOUNDATION_INLINE bool operator!= ( const Hash<T, _HashingFunc>& hash ) const
+      { return _value != hash._value; }
 
     public:
       operator T()
