@@ -39,6 +39,10 @@ namespace utf8 {
     uint32_t* code_point,
     uint32_t byte );
 
+  extern FOUNDATION_EXPORT uint32_t encode(
+    uint32_t code_point,
+    const char* str );
+
   extern FOUNDATION_EXPORT size_t strlen(
     const uint8_t* str );
 

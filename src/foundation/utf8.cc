@@ -52,6 +52,29 @@ namespace utf8 {
     return *state;
   }
 
+  uint32_t encode( uint32_t code_point, const char* str ) {
+    uint8_t* u_str = (uint8_t*)str;
+    if (code_point <= 0x7f) {
+      u_str[0] = (uint8_t)code_point;
+      return 1;
+    } else if (code_point <= 0x7ff ) {
+      u_str[0] = (uint8_t)(0xc0 + (code_point >> 6));
+      u_str[1] = (uint8_t)(0x80 + (code_point & 0x3f));
+      return 2;
+    } else if (code_point <= 0xffff) {
+      u_str[0] = (uint8_t)(0xe0 + (code_point >> 12));
+      u_str[1] = (uint8_t)(0x80 + ((code_point >> 6) & 63));
+      u_str[2] = (uint8_t)(0x80 + (code_point & 63));
+      return 3;
+    } else if (code_point <= 0x1ffff) {
+      u_str[0] = (uint8_t)(0xf0 + (code_point >> 18));
+      u_str[1] = (uint8_t)(0x80 + ((code_point >> 12) & 0x3f));
+      u_str[2] = (uint8_t)(0x80 + ((code_point >> 6) & 0x3f));
+      u_str[3] = (uint8_t)(0x80 + (code_point & 0x3f));
+      return 4;
+    }
+  }
+
   size_t strlen( const uint8_t* str ) {
     const uint8_t* iter = str;
     uint32_t state = 0;
