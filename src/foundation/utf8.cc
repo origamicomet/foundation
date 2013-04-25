@@ -79,6 +79,8 @@ namespace utf8 {
     const uint8_t* iter = str;
     uint32_t state = 0;
     size_t len = 0;
+    if (!str)
+      return 0;
     while (*iter != 0) {
       uint32_t code_point = 0;
       uint32_t r = decode(&state, &code_point, *iter);
@@ -92,6 +94,8 @@ namespace utf8 {
     const uint8_t* iter = str;
     uint32_t state = 0;
     size_t len = 0;
+    if (!str)
+      return 0;
     while ((*iter != 0) && (len_--)) {
       uint32_t code_point = 0;
       uint32_t r = decode(&state, &code_point, *iter);

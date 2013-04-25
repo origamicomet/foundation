@@ -14,6 +14,12 @@
 
 namespace foundation {
   namespace Path {
+    const String& seperator()
+    {
+      static String seperator("/");
+      return seperator;
+    }
+
     String basename(
       const String& path )
     {
@@ -23,27 +29,39 @@ namespace foundation {
       auto min = path.begin();
       auto max = path.end();
 
-      // Strip the file extension.
+      // Strip the file extension:
       /* max = */ {
         auto iter = max;
-        uint32_t code_point = 0;
-        while (((code_point = iter.to_code_point()) != '.') && ((--iter).is_valid()));
-        if (iter != path.begin())
-          max = iter;
+        while(iter != min) {
+          switch ((iter--).to_code_point()) {
+            case '/':
+            case '\\':
+              break;
+            case '.': {
+              max = iter;
+              iter = min;
+            } break;
+          }
+        }
       }
 
-      // Strip the leading directories.
+      // Strip the leading directories:
       /* min = */ {
         auto iter = max;
-        uint32_t code_point = 0;
-        while (((code_point = iter.to_code_point())) && ((--iter).is_valid()))
-          if ((code_point == '\\') || (code_point == '/'))
-            break;
-        if (iter != path.begin())
-          min = iter;
+        while (iter != min) {
+          switch ((iter--).to_code_point()) {
+            case '/':
+            case '\\':
+              min = ++iter;
+              break;
+          }
+        }
       }
 
-      return String(path.allocator(), min, max);
+      if (min == max)
+        return String(path.allocator());
+
+      return String(path.allocator(), ++min, max);
     }
 
     String dirname(
@@ -58,12 +76,15 @@ namespace foundation {
       // Strip the file name and file extension.
       /* max = */ {
         auto iter = max;
-        uint32_t code_point = 0;
-        while ((code_point = iter.to_code_point()) && ((--iter).is_valid()))
-          if ((code_point == '\\') || (code_point == '/'))
-            break;
-        if (iter != path.begin())
-          max = iter;
+        while (iter != min) {
+          switch ((iter--).to_code_point()) {
+            case '/':
+            case '\\':
+              max = iter;
+              iter = min;
+              break;
+          }
+        }
       }
 
       return String(path.allocator(), min, max);

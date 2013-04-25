@@ -14,6 +14,8 @@
 
 namespace foundation {
   namespace Path {
+    extern FOUNDATION_EXPORT const String& seperator();
+
     // Returns the |path| stripped of leading directories and extension.
     extern FOUNDATION_EXPORT String basename(
       const String& path );
