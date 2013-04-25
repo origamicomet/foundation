@@ -101,8 +101,9 @@ namespace foundation {
         , _reserved(array._reserved)
         , _ptr((T*)array._allocator.alloc(array._reserved * sizeof(T), max(alignof(T), (size_t)4)))
       {
-        for (size_t idx = 0; idx < array._size; ++idx)
-          _ptr[idx] = array._ptr[idx];
+        for (size_t idx = 0; idx < array._size; ++idx) {
+          new ((void*)(&_ptr[idx])) T(array._ptr[idx]);
+        }
       }
 
       Array<T>& operator= ( const Array<T>& array )
@@ -114,8 +115,9 @@ namespace foundation {
         _reserved = array._reserved;
         _ptr = (T*)_allocator.realloc((void*)_ptr, array._reserved * sizeof(T), max(alignof(T), (size_t)4));
         
-        for (size_t idx = 0; idx < array._size; ++idx)
-          _ptr[idx] = array._ptr[idx];
+        for (size_t idx = 0; idx < array._size; ++idx) {
+          new ((void*)(&_ptr[idx])) T(array._ptr[idx]);
+        }
 
         return *this;
       }
@@ -149,7 +151,7 @@ namespace foundation {
       {
         if (_size == _reserved)
           grow();
-        _ptr[_size++] = item;
+        new ((void*)(&_ptr[_size++])) T(item);
       }
 
       FOUNDATION_INLINE void pop_back()
