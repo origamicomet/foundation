@@ -10,6 +10,7 @@
 #include <foundation/detect.h>
 #include <foundation/compat.h>
 #include <foundation/config.h>
+#include <foundation/assert.h>
 
 namespace foundation {
   namespace File {
@@ -36,6 +37,12 @@ namespace foundation {
       const char* src,
       const char* dest,
       bool overwrite = false );
+
+    // Copies |src| to |dest|.
+    extern FOUNDATION_EXPORT bool copy(
+      FILE* src,
+      FILE* dest,
+      size_t chunk_size = 4096 );
   } // File
 } // foundation
 

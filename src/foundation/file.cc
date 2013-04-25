@@ -149,5 +149,24 @@ namespace foundation {
     #elif defined(FOUNDATION_PLATFORM_POSIX)
     #endif
     }
+
+    bool copy(
+      FILE* src,
+      FILE* dest,
+      size_t chunk_size )
+    {
+      assert(src != nullptr);
+      assert(dest != nullptr);
+
+      void* chunk = alloca(chunk_size);
+      size_t num_bytes = 0;
+
+      while ((num_bytes = fread(chunk, 1, chunk_size, src))) {
+        if (!fwrite(chunk, 1, num_bytes, dest))
+          return false;
+      }
+
+      return true;
+    }
   } // File
 } // foundation
