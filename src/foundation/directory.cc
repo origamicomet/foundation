@@ -164,12 +164,10 @@ namespace foundation {
           Directory::Entry::DIRECTORY : Directory::Entry::FILE;
 
         /* entry.path = */ {
-          const wchar_t* iter_p = pattern;
-          const wchar_t* iter_f = &find_data.cFileName[0];
-          while (*(iter_p++) == *(iter_f));
-
+          const size_t offset = WideCharToMultiByte(
+            CP_UTF8, 0, pattern, wcslen(pattern) - 2, &entry.path[0], 255, 0, 0);
           WideCharToMultiByte(
-            CP_UTF8, 0, iter_f, -1, &entry.path[0], 255, 0, 0
+            CP_UTF8, 0, &find_data.cFileName[0], -1, &entry.path[offset], 255 - offset, 0, 0
           );
         }
 
@@ -200,20 +198,25 @@ namespace foundation {
             continue;
           }
 
-          const size_t len = wcslen(&find_data.cFileName[0]);
+          const size_t len_p = wcslen(pattern);
+          const size_t len_rp = wcslen(&find_data.cFileName[0]);
           wchar_t* recursive_pattern =
-            (wchar_t*)Allocator::scratch().alloc((len + 4) * sizeof(wchar_t));
+            (wchar_t*)Allocator::scratch().alloc((len_p + len_rp + 2) * sizeof(wchar_t));
 
           copy(
-            (void*)recursive_pattern,
-            (const void*)&find_data.cFileName[0],
-            len
-          );
+            (void*)&recursive_pattern[0],
+            (const void*)pattern,
+            (len_p - 2) * sizeof(wchar_t));
 
-          recursive_pattern[len + 0] = '/';
-          recursive_pattern[len + 1] = '*';
-          recursive_pattern[len + 2] = '*';
-          recursive_pattern[len + 3] = '\0';
+          copy(
+            (void*)&recursive_pattern[len_p - 2],
+            (const void*)&find_data.cFileName[0],
+            (len_rp) * sizeof(wchar_t));
+
+          recursive_pattern[(len_p - 2 + len_rp) + 0] = '/';
+          recursive_pattern[(len_p - 2 + len_rp) + 1] = '*';
+          recursive_pattern[(len_p - 2 + len_rp) + 2] = '*';
+          recursive_pattern[(len_p - 2 + len_rp) + 3] = '\0';
 
           if (!win32_scan_directory(recursive_pattern, entries, recursively))
             return false;
