@@ -48,7 +48,8 @@ namespace foundation {
     else len = max._byte - min._byte;
 
     _raw.resize(len + 1);
-    copy((void*)_raw.to_ptr(), (const void*)&min._string._raw[min._byte], len);
+    if (len > 0)
+      copy((void*)_raw.to_ptr(), (const void*)&min._string._raw[min._byte], len);
     _raw[len] = '\0';
   }
 
@@ -77,12 +78,14 @@ namespace foundation {
   String String::operator+ ( char ch ) const
   {
     String str_ = *this;
-    str_._raw.push_back((uint8_t)ch);
+    str_._raw[str_._raw.size() - 1] = (uint8_t)ch;
+    str_._raw.push_back((uint8_t)0);
     return str_;
   }
 
   String String::operator+ ( const char* str ) const
   {
+    assert(str != nullptr);
     String str_ = *this;
     const size_t offset = max((size_t)1, str_._raw.size()) - 1;
     const size_t len = strlen(str);
@@ -103,11 +106,13 @@ namespace foundation {
 
   void String::operator+= ( char ch )
   {
-    _raw.push_back((uint8_t)ch);
+    _raw[_raw.size() - 1] = (uint8_t)ch;
+    _raw.push_back((uint8_t)0);
   }
 
   void String::operator+= ( const char* str )
   {
+    assert(str != nullptr);
     const size_t offset = max((size_t)1, _raw.size()) - 1;
     const size_t len = strlen(str);
     _raw.resize(_raw.size() + len + 1);
@@ -116,8 +121,8 @@ namespace foundation {
 
   void String::operator+= ( const String& str )
   {
-    const size_t offset = max((size_t)1, str._raw.size() - 1);
-    const size_t len = str._raw.size();
+    const size_t offset = max((size_t)1, _raw.size()) - 1;
+    const size_t len = str.size();
     _raw.resize(_raw.size() + len + 1);
     copy((void*)&_raw[offset], (const void*)str.to_ptr(), len + 1);
   }
@@ -128,10 +133,12 @@ namespace foundation {
     auto iter_p = prefix.begin();
 
     while (iter_s.to_code_point() == iter_p.to_code_point()) {
+      if ((iter_s == end()) || (iter_p == prefix.end()))
+        break;
       ++iter_s;
       ++iter_p;
     }
 
-    return String(Allocator::scratch(), begin(), iter_s);
+    return String(Allocator::heap(), iter_s, end());
   }
 } // foundation

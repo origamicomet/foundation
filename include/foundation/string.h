@@ -166,7 +166,7 @@ namespace foundation {
       { return _raw.allocator(); }
 
       FOUNDATION_INLINE bool empty() const
-      { return (_raw.size() == 0); }
+      { return (_raw[0] == '\0'); }
 
       // Returns the length of the string in bytes.
       FOUNDATION_INLINE size_t size() const
