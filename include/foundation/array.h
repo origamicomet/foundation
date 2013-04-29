@@ -22,11 +22,6 @@ namespace foundation {
         friend class Array<T>;
 
         private:
-          Iterator( const Array<T>& array, size_t index )
-            : _array(const_cast<Array<T>&>(array))
-            , _index(index)
-          {}
-
           Iterator( Array<T>& array, size_t index )
             : _array(array)
             , _index(index)
@@ -48,10 +43,10 @@ namespace foundation {
 
         public:
           FOUNDATION_INLINE bool operator== ( const Iterator& iter )
-          { return ((_array == iter._array) && (_index == iter._index)); }
+          { return ((&_array == &iter._array) && (_index == iter._index)); }
 
           FOUNDATION_INLINE bool operator!= ( const Iterator& iter )
-          { return ((_array != iter._array) || (_index != iter._index)); }
+          { return ((&_array != &iter._array) || (_index != iter._index)); }
 
           FOUNDATION_INLINE Iterator operator++ ()
           { _index = min(_index + 1, _array.size()); return *this; }
@@ -94,41 +89,50 @@ namespace foundation {
         _ptr = nullptr;
       }
 
+    private:
+      // You never go full Boost-tard.
+      template <typename T, bool _IsTriviallyCopyable>
+      class copier {
+        public:
+          static void copy( Array<T>* self, const Array<T>& array ) {
+            for (size_t idx = 0; idx < array._size; ++idx)
+              { new ((void*)(&self->_ptr[idx])) T(array._ptr[idx]); }
+          }
+      };
+
+      template <typename T>
+      class copier<T, true> {
+        public:
+          static void copy( Array<T>* self, const Array<T>& array ) {
+            foundation::copy((void*)self->_ptr, (const void*)array._ptr, array._size * sizeof(T));
+          }
+      };
+
+      friend class copier<T, false>;
+      friend class copier<T, true>;
+
     public:
-      Array( const Array<T>& array )
+      FOUNDATION_INLINE Array( const Array<T>& array )
         : _allocator(array._allocator)
         , _size(array._size)
         , _reserved(array._reserved)
         , _ptr((T*)array._allocator.alloc(array._reserved * sizeof(T), max(alignof(T), (size_t)4)))
       {
-        for (size_t idx = 0; idx < array._size; ++idx) {
-          new ((void*)(&_ptr[idx])) T(array._ptr[idx]);
-        }
+        copier<T, is_trivially_copyable<T>::value>::copy(this, array);
       }
 
-      Array<T>& operator= ( const Array<T>& array )
+      FOUNDATION_INLINE Array<T>& operator= ( const Array<T>& array )
       {
-        if (this == &array)
-          return *this;
-
-        _size = array._size;
-        _reserved = array._reserved;
-        _ptr = (T*)_allocator.realloc((void*)_ptr, array._reserved * sizeof(T), max(alignof(T), (size_t)4));
-        
-        for (size_t idx = 0; idx < array._size; ++idx) {
-          new ((void*)(&_ptr[idx])) T(array._ptr[idx]);
-        }
-
-        return *this;
+        if (self == &array)
+          return *self;
+        self->_size = array._size;
+        self->_reserved = array._reserved;
+        self->_ptr = (T*)array._allocator.realloc((void*)self->_ptr, array._reserved * sizeof(T), max(alignof(T), (size_t)4));
+        copier<T, is_trivially_copyable<T>::value>::copy(this, array);
+        return *self;
       }
 
     public:
-      FOUNDATION_INLINE bool operator== ( const Array<T>& array )
-      { return (this == &array); }
-
-      FOUNDATION_INLINE bool operator!= ( const Array<T>& array )
-      { return (this != &array); }
-
       FOUNDATION_INLINE void operator+= ( const T& item )
       { push_back(item); }
 
@@ -161,16 +165,16 @@ namespace foundation {
 
     public:
       FOUNDATION_INLINE Iterator begin() const
-      { const Array<T>& self = *this; return Iterator(self, (size_t)0); }
+      { return Iterator((Array<T>&)*this, (size_t)0); }
 
       FOUNDATION_INLINE Iterator end() const
-      { const Array<T>& self = *this; return Iterator(self, _size); }
+      { return Iterator((Array<T>&)*this, _size); }
 
       FOUNDATION_INLINE Iterator front() const
-      { const Array<T>& self = *this; return Iterator(self, 0); }
+      { return Iterator((Array<T>&)*this, 0); }
 
       FOUNDATION_INLINE Iterator back() const
-      { const Array<T>& self = *this; return Iterator(self, max(_size, (size_t)1) - 1); }
+      { return Iterator((Array<T>&)*this, max(_size, (size_t)1) - 1); }
 
     public:
       FOUNDATION_INLINE Allocator& allocator() const
