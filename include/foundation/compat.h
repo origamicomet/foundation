@@ -13,6 +13,7 @@
 //    dllexport, abstract, override, sealed, et cetra). Furthermore, aliases
 //    C++11 keywords and features like nullptr and alignof.
 //  * Exposes uniform bit manipulation helpers (like clz, ctz, swaps, et cetra).
+//  * Aliases compile time type trait helpers (like align_of, is_pod, et cetra).
 
 #include <foundation/detect.h>
 
@@ -202,6 +203,18 @@
 #elif defined(FOUNDATION_COMPILER_GCC) || defined(FOUNDATION_COMPILER_CLANG)
 #else
   #error ("Compiler does not support important intrinsics!")
+#endif
+
+#if defined(FOUNDATION_COMPILER_MSVC)
+  #if (_MSC_VER >= 1600) // Microsoft Visual Studio 2010, or greater:
+    #include <foundation/compat/c++11_type_traits.h>
+  #else
+    #include <foundation/compat/c++03_type_traits.h>
+  #endif
+#elif defined(FOUNDATION_COMPILER_GCC) || defined(FOUNDATION_COMPILER_CLANG)
+  #include <foundation/compat/c++11_type_traits.h>
+#else
+  #error ("Type traits are not supported!")
 #endif
 
 #endif // _FOUNDATION_COMPAT_H_

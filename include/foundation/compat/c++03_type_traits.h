@@ -1,0 +1,1 @@
+#error ("Type traits are not supported for C++03!")
