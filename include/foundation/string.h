@@ -5,185 +5,195 @@
 #ifndef _FOUNDATION_STRING_H_
 #define _FOUNDATION_STRING_H_
 
-// A flexibly sized UTF-8 std::string equivalent.
+// Provides a flexibly sized string.
 
 #include <foundation/detect.h>
 #include <foundation/compat.h>
 #include <foundation/config.h>
-#include <foundation/assert.h>
 #include <foundation/allocator.h>
-#include <foundation/utf8.h>
-#include <foundation/array.h>
-
-#include <string.h>
-#include <stdarg.h>
+#include <foundation/containers/array.h>
 
 namespace foundation {
-  class FOUNDATION_EXPORT String {
-    friend class Iterator;
-
+  class FOUNDATION_EXPORT String final {
     public:
-      class Iterator {
-        friend class String;
+      class Iterator final {
+        private:
+          friend class String;
 
         private:
-          Iterator( const String& string, size_t byte )
-            : _string(const_cast<String&>(string))
-            , _byte(byte)
-          {}
-
-          Iterator( String& string, size_t byte )
-            : _string(string)
-            , _byte(byte)
+          FOUNDATION_INLINE Iterator(
+            String& str,
+            size_t idx
+          ) : _str(str)
+            , _idx(idx)
           {}
 
         public:
-          Iterator( const Iterator& iter )
-            : _string(iter._string)
-            , _byte(iter._byte)
+          FOUNDATION_INLINE Iterator(
+            const Iterator& iter
+          ) : _str(iter._str)
+            , _idx(iter._idx)
           {}
 
-          Iterator& operator= ( const Iterator& iter )
-          {
-            _string = iter._string;
-            _byte = iter._byte;
-            return *this;
-          }
+          FOUNDATION_INLINE Iterator& operator= (
+            const Iterator& iter )
+          { _str = iter._str; _idx = iter._idx; return *this; }
 
         public:
           FOUNDATION_INLINE bool operator== ( const Iterator& iter )
-          { return ((&_string == &iter._string) && (_byte == iter._byte)); }
+          { return ((&_str == &iter._str) && (_idx == iter._idx)); }
 
           FOUNDATION_INLINE bool operator!= ( const Iterator& iter )
-          { return ((&_string != &iter._string) || (_byte != iter._byte)); }
+          { return ((&_str != &iter._str) || (_idx != iter._idx)); }
 
-          Iterator operator++ () const
-          {
-            size_t byte = min(_byte + 1, max((size_t)1, _string._raw.size()) - 1);
-            while ((_string._raw[byte] != 0) && (!utf8::is_initial_byte(_string._raw[byte])))
-              ++byte;
-            return Iterator(_string, byte);
-          }
-
-          Iterator operator++ ()
-          {
-            size_t byte = min(_byte + 1, max((size_t)1, _string._raw.size()) - 1);
-            while ((_string._raw[byte] != 0) && (!utf8::is_initial_byte(_string._raw[byte])))
-              ++byte;
-            _byte = byte;
-            return *this;
-          }
+        public:
+          Iterator operator++ ();
+          Iterator operator++ () const;
 
           FOUNDATION_INLINE Iterator operator++ ( int )
           { Iterator iter(*this); ++(*this); return iter; }
 
-          Iterator operator-- () const
-          {
-            size_t byte = max(_byte, (size_t)1) - 1;
-            while ((byte > 0) && (!utf8::is_initial_byte(_string._raw[byte])))
-              --byte;
-            return Iterator(_string, byte);
-          }
-
-          Iterator operator-- ()
-          {
-            size_t byte = max(_byte, (size_t)1) - 1;
-            while ((byte > 0) && (!utf8::is_initial_byte(_string._raw[byte])))
-              --byte;
-            _byte = byte;
-            return *this;
-          }
+          Iterator operator-- ();
+          Iterator operator-- () const;
 
           FOUNDATION_INLINE Iterator operator-- ( int )
           { Iterator iter(*this); --(*this); return iter; }
 
         public:
           FOUNDATION_INLINE char& to_ref()
-          { return _string.to_ptr()[_byte]; }
+          { return _str._raw[_idx]; }
+
+          FOUNDATION_INLINE char& operator* ()
+          { return to_ref(); }
 
           FOUNDATION_INLINE const char& to_ref() const
-          { return _string.to_ptr()[_byte]; }
+          { return _str._raw[_idx]; }
 
-          uint32_t to_code_point() const
-          {
-            uint32_t byte = _byte;
-            uint32_t state = 0;
-            uint32_t code_point = 0;
-            uint32_t result = 0;
+          FOUNDATION_INLINE const char& operator* () const
+          { return to_ref(); }
 
-            while (byte < _string._raw.size()) {
-              result = utf8::decode(&state, &code_point, _string._raw[byte]);
-              if (result == utf8::REJECT)
-                return 0;
-              if (result == utf8::ACCEPT)
-                return code_point;
-              ++byte;
-            }
-
-            return 0;
-          }
-        
-          FOUNDATION_INLINE bool is_valid() const
-          { return ((_byte > 0) && (_byte <= _string.size())); }
+          uint32_t to_code_point() const;
 
         private:
-          String& _string;
-          size_t _byte;
+          String& _str;
+          size_t _idx;
       };
 
-    public:
-      String( Allocator& allocator = Allocator::heap(), size_t len = 0 );
-      String( Allocator& allocator, const Iterator& min, const Iterator& max );
-      explicit String( const char* format, ... );
-      String( Allocator& allocator, const char* format, ... );
+    private:
+      friend class Iterator;
 
     public:
-      String( const String& str );
-      String& operator= ( const char* str );
-      String& operator= ( const String& str );
+      explicit String(
+        Allocator& allocator,
+        size_t size = 0 );
 
     public:
-      String operator+ ( char ch ) const;
-      String operator+ ( const char* str ) const;
-      String operator+ ( const String& str ) const;
+      String(
+        const String& str );
 
-      void operator+= ( char ch );
-      void operator+= ( const char* str );
-      void operator+= ( const String& str );
+      String(
+        Allocator& allocator,
+        const char* str );
+
+      String(
+        const Iterator& min,
+        const Iterator& max );
+
+      String(
+        Allocator& allocator,
+        const Iterator& min,
+        const Iterator& max );
+
+      String& operator= (
+        const char* str );
+
+      String& operator= (
+        const String& str );
 
     public:
-      String chomp( const String& prefix );
+      String operator+ (
+        const char ch );
+
+      void operator+= (
+        const char ch );
+
+      String operator+ (
+        const char* str );
+
+      void operator+= (
+        const char* str );
+
+      String operator+ (
+        const String& str );
+
+      void operator+= (
+        const String& str );
 
     public:
       FOUNDATION_INLINE Iterator begin() const
-      { const String& self = *this; return Iterator(self, (size_t)0); }
+      { return Iterator((String&)*this, (size_t)0); }
 
       FOUNDATION_INLINE Iterator end() const
-      { const String& self = *this; return Iterator(self, max(_raw.size(), (size_t)1) - 1); }
+      { return Iterator((String&)*this, _raw.size()); }
+
+    public:
+      static String format(
+        Allocator& allocator,
+        const char* fmt, ... );
+
+    public:
+      FOUNDATION_INLINE Iterator find(
+        const char* needle )
+      { return find(needle, begin()); }
+
+      Iterator find(
+        const char* needle,
+        const Iterator& offset );
+
+      FOUNDATION_INLINE Iterator find(
+        const String& needle )
+      { return find(needle, begin()); }
+
+      Iterator find(
+        const String& needle,
+        const Iterator& offset );
+
+      String replace(
+        const char* needle,
+        const char* with );
+
+      String replace(
+        const String& needle,
+        const String& with );
+
+      String chomp(
+        const char* what );
+
+      String chomp(
+        const String& what );
 
     public:
       FOUNDATION_INLINE Allocator& allocator() const
       { return _raw.allocator(); }
 
+    public:
       FOUNDATION_INLINE bool empty() const
       { return (_raw[0] == '\0'); }
 
-      // Returns the length of the string in bytes.
       FOUNDATION_INLINE size_t size() const
-      { return (_raw.size() * sizeof(char)); }
+      { return _raw.size(); }
 
-      // Returns the length of the string in code points.
-      FOUNDATION_INLINE size_t length() const
-      { return utf8::strnlen(_raw.to_ptr(), _raw.size()); }
+      size_t length() const;
 
-      FOUNDATION_INLINE char* to_ptr()
-      { return (char*)_raw.to_ptr(); }
+    public:
+      FOUNDATION_INLINE char* raw()
+      { return &_raw[0]; }
 
-      FOUNDATION_INLINE const char* to_ptr() const
-      { return (const char*)_raw.to_ptr(); }
+      FOUNDATION_INLINE const char* raw() const
+      { return &_raw[0]; }
 
-    private:
-      Array<uint8_t> _raw;
+    protected:
+      Array<char> _raw;
   };
 } // foundation
 

@@ -5,25 +5,22 @@
 #ifndef _FOUNDATION_ASSERT_H_
 #define _FOUNDATION_ASSERT_H_
 
-// Provides a more powerful assertion macro that provides contextual
-// information: what code failed, on what line, in which file.
+// Provides a more powerful assertion macro that provides contextual information
+// like what code failed, on what line, in which file, and why.
 
+#include <foundation/detect.h>
+#include <foundation/compat.h>
 #include <foundation/config.h>
-#include <foundation/preprocessor.h>
+#include <foundation/logger.h>
 
-#include <signal.h>
-
-// assertf [
 #if defined(_DEBUG)
   #define assertf( _Condition, _Format, ... ) \
-    do { if (!(_Condition)) { FOUNDATION_LOG_CALLBACK(_Format, ##__VA_ARGS__); raise(SIGABRT); } } while (0, 0)
+    do { if (!(_Condition)) { foundation::log(_Format, ##__VA_ARGS__); raise(SIGABRT); } } while (0, 0)
 #else
   #define assertf( _Condition, _Format, ... ) \
     do { (void)sizeof(_Condition); } while(0, 0)
 #endif
-// ]
 
-// assert [
 #ifdef assert
   #undef assert
 #endif
@@ -36,7 +33,5 @@
     "    in `" __foundation_stringify(__FILE__) "` on line " __foundation_stringify(__LINE__) "\n\n", \
     #_Condition \
   )
-// ]
-
 
 #endif // _FOUNDATION_ASSERT_H_

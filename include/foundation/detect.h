@@ -5,17 +5,24 @@
 #ifndef _FOUNDATION_DETECT_H_
 #define _FOUNDATION_DETECT_H_
 
-// Tries to determine the platform, compiler, and architecture from various
-// preprocessor definitions. See foundation/detect/* for more info.
+// Tries to detect the platform, compiler, architecture and supported standards
+// from various preprocessor definitions. See foundation/detect/* for more info.
 //  Platforms:
-//    Windows, Mac OSX, Linux, BSD, iOS, and Android.
+//    Windows, Mac OSX, Linux;
+//    FreeBSD, NetBSD, OpenBSD, DragonFly;
+//    iOS, Android, and NaCl.
 //  Compilers:
-//    Microsoft Visual C/C++, Clang, GCC, and Intel's C/C++ compiler.
+//    Microsoft Visual C/C++;
+//    Clang and GCC;
+//    and Intel's C/C++ compiler.
 //  Architectures:
 //    x86, x86_64, ARM, and Mips.
+//  Supported Standards:
+//    C++11.
 
-#include <foundation/detect/platform.h>
 #include <foundation/detect/compiler.h>
 #include <foundation/detect/architecture.h>
+#include <foundation/detect/platform.h>
+#include <foundation/detect/supported_standards.h>
 
 #endif // _FOUNDATION_DETECT_H_

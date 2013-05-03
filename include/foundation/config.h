@@ -7,6 +7,7 @@
 
 // Provides a central location to modify library form and functionality.
 
+#include <foundation/detect.h>
 #include <foundation/compat.h>
 
 // Uncomment this if you're linking to this library dynamically.
@@ -22,32 +23,15 @@
   #define FOUNDATION_EXPORT
 #endif
 
-// Define this if you're going to use a customized log callback.
-// #define FOUNDATION_CUSTOM_LOG_CALLBACK
+// Uncomment this if you want to track memory usage statistics.
+#define FOUNDATION_TRACK_MEMORY_USAGE 1
 
-#if !defined(FOUNDATION_CUSTOM_LOG_CALLBACK)
-  #include <stdio.h>
-  #include <stdarg.h>
-
-  static void __foundation_default_log_callback( const char* format, ... ) {
-    static const int _unused0 = setvbuf(stdout, nullptr, _IONBF, 0);
-    static const int _unused1 = setvbuf(stderr, nullptr, _IONBF, 0);
-    va_list va;
-    va_start(va, format);
-    vfprintf(stderr, format, va);
-    va_end(va);
-  }
-
-  #define FOUNDATION_LOG_CALLBACK \
-    __foundation_default_log_callback
-#else
-  #define FOUNDATION_LOG_CALLBACK \
-    FOUNDATION_CUSTOM_LOG_CALLBACK
-#endif
-
-#define FOUNDATION_LOG FOUNDATION_LOG_CALLBACK
+// Uncomment this if you want memory usage statistics to be thread safe.
+// This is only required if you register/unregister allocators or query them in
+// a different thread.
+#define FOUNDATION_MEMORY_USAGE_STATISTICS_ARE_THREAD_SAFE 1
 
 // The number of bytes to allocate for the default scratch allocator.
-#define FOUNDATION_DEF_SCRATCH_ALLOCATOR_SIZE 1048575 /* 1mb */
+#define FOUNDATION_DEFAULT_SCRATCH_ALLOCATOR_SIZE 1048575 /* 1mb */
 
 #endif // _FOUNDATION_CONFIG_H_

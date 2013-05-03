@@ -5,22 +5,10 @@
 #ifndef _FOUNDATION_DIGEST_H_
 #define _FOUNDATION_DIGEST_H_
 
-// Provides a collection of hashing functions, like MurmurHash.
+// Provides various hash functions, cyclic redundancy checks, checksums, and
+// cryptographic hash functions.
 
-#include <foundation/detect.h>
-#include <foundation/compat.h>
-#include <foundation/config.h>
-
-namespace foundation {
-  extern FOUNDATION_EXPORT uint32_t murmur_hash(
-    const void* key,
-    size_t key_len,
-    uint32_t seed = 0 );
-
-  extern FOUNDATION_EXPORT uint64_t murmur_hash_64(
-    const void* key,
-    size_t key_len,
-    uint64_t seed = 0 );
-} // foundation
+#include <foundation/digest/murmur_hash.h>
+#include <foundation/digest/cyclic_redundancy_check.h>
 
 #endif // _FOUNDATION_DIGEST_H_
