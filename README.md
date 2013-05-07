@@ -6,11 +6,11 @@ Foundation is a highly configurable and minimalistic library that provides:
   * [Compiler uniformity across partially implemented standards and varying extensions;](include/foundation/compat.h)
   * [Stateful memory allocation and tracking, with various allocation strategies implemented;](include/foundation/allocator.h)
   * [Fast implementations of common containers (and thread safe variants);](include/foundation/containers.h)
-  * [Robust crash handling with detailed error reporting;](include/foundation/crash_handler.h)
+  * [Robust exception and crash handling with detailed error reporting;](include/foundation/debug)
   * [Along with detailed assertions;](include/foundation/assert.h)
-  * [Low-overhead cross-platform wrappers around concurrency primitives;](include/foundation/concurrency.h)
-  * [Cross-platform debugging and symbol information wrappers;](include/foundation/debug_info.h)
-  * [Cross-platform low and high level networking;](include/foundation/network.h)
+  * [Low-overhead cross-platform wrappers around concurrency primitives;](include/foundation/system/concurrency.h)
+  * [Cross-platform debugging and symbol information wrappers;](include/foundation/debug)
+  * [Cross-platform low and high level networking;](include/foundation/system/network.h)
   * [and more.](docs/)
 
 Contributing
