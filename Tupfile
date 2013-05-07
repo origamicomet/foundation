@@ -31,5 +31,5 @@ endif
 SUFFIX = $(SUFFIX)-@(TUP_ARCH)
 
 include deps.tup
-LIBS = $(FOUNDATION_DEPENDENCIES)
-: $(OBJS) |> !ar |> foundation$(SUFFIX)$(LIB_EXT)
+LIBS = $(FOUNDATION_LIBS)
+: $(OBJS) $(FOUNDATION_DEPENDENCIES) |> !ar |> foundation$(SUFFIX)$(LIB_EXT)
