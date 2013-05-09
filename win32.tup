@@ -3,9 +3,11 @@ LD = link
 AR = lib
 AS = nasm
 
-CFLAGS += /nologo /c /W4 /GF /GL /GR- /I"$(TUP_CWD)\include"
-LDFLAGS += /NOLOGO /LTCG
+CFLAGS += /nologo /c /W4 /GF /GL /GR-
+CFLAGS += /I"$(TUP_CWD)\include"
 CFLAGS += /I"@(WINDOWS_SDK_DIR)Include"
+
+LDFLAGS += /NOLOGO /LTCG
 LDFLAGS += /LIBPATH:"@(WINDOWS_SDK_DIR)Lib"
 
 ifeq (@(TUP_ARCH),i386)

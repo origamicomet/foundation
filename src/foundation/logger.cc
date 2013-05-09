@@ -47,7 +47,7 @@ namespace foundation {
   {
     assert(closure != nullptr);
     vfprintf(((FILE*)closure), format, ap);
-    fflush(stdout);
+    fflush(((FILE*)closure));
   }
 } // foundation
 

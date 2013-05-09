@@ -25,7 +25,7 @@ namespace foundation {
     T* dest, const T* src, size_t len,
     typename enable_if<!is_trivially_copyable<T>::value,int>::type = 0 )
   {
-    for (size_t idx = 0; idx < len; ++len)
+    for (size_t idx = 0; idx < len; ++idx)
       new (((void*)&dest[idx])) T(src[idx]);
   }
 } // foundation

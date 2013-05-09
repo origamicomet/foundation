@@ -43,6 +43,23 @@ namespace foundation {
       return *state;
     }
 
+    uint32_t utf8_decode(
+      const char*& str )
+    {
+      const uint8_t*& iter = (const uint8_t*&)str;
+      uint32_t state = 0;
+      uint32_t code_point = 0;
+      uint32_t result = 0;
+      while (*iter) {
+        result = utf8_decode(&state, &code_point, *iter);
+        if (result == UTF8_REJECT)
+          return 0;
+        if (result == UTF8_ACCEPT)
+          return code_point;
+        ++iter; }
+      return 0;
+    }
+
     uint32_t utf8_encode(
       uint32_t code_point,
       const char* str )
@@ -171,7 +188,8 @@ namespace foundation {
     size_t size
   ) : _raw(allocator, size)
   {
-    zero((void*)&_raw[0], size);
+    if (size > 0)
+      zero((void*)&_raw[0], size);
   }
 
   String::String(
@@ -202,6 +220,22 @@ namespace foundation {
   {
   }
 
+  String& String::operator= (
+    const char* str )
+  {
+    _raw.resize(strlen(str) + 1);
+    copy((void*)&_raw[0], (const void*)str, _raw.size());
+    return *this;
+  }
+
+  String& String::operator= (
+    const String& str )
+  {
+    _raw.resize(str.size());
+    copy((void*)&_raw[0], (const void*)&str._raw[0], _raw.size());
+    return *this;
+  }
+
   String String::operator+ (
     const char ch )
   {
@@ -223,7 +257,7 @@ namespace foundation {
   {
     String str_(*this);
     const size_t len = str ? strlen(str) + 1 : 0;
-    const size_t offset = str_._raw.size() - 1;
+    const size_t offset = max(str_._raw.size(), (size_t)1) - 1;
     str_._raw.resize(offset + len);
     copy((void*)&str_._raw[offset], (const void*)str, len);
     return str_;
@@ -233,7 +267,7 @@ namespace foundation {
     const char* str )
   {
     const size_t len = str ? strlen(str) + 1 : 0;
-    const size_t offset = _raw.size() - 1;
+    const size_t offset = max(_raw.size(), (size_t)1) - 1;
     _raw.resize(offset + len);
     copy((void*)&_raw[offset], (const void*)str, len);
   }
@@ -250,7 +284,7 @@ namespace foundation {
     const String& str )
   {
     const size_t len = str._raw.size();
-    const size_t offset = _raw.size() - 1;
+    const size_t offset = max(_raw.size(), (size_t)1) - 1;
     _raw.resize(offset + len);
     copy((void*)&_raw[offset], (const void*)&str._raw[0], len);
   }
@@ -284,22 +318,20 @@ namespace foundation {
     Iterator iter_h = offset;
     while (iter_h != end()) {
       Iterator iter_n = needle.begin();
+      Iterator iter_h_ = iter_h;
       while (iter_h != end()) {
         const uint32_t cp_h = iter_h.to_code_point();
         const uint32_t cp_n = iter_n.to_code_point();
-
         if (cp_h != cp_n)
           break;
-
         if (iter_n == needle.end())
-          return iter_h;
-
+          return iter_h_;
         ++iter_h;
         ++iter_n;
       }
     }
 
-    return iter_h;
+    return end();
   }
 
   String String::replace(
@@ -368,5 +400,55 @@ namespace foundation {
   size_t String::length() const
   {
     return utf8_strnlen(&_raw[0], _raw.size());
+  }
+} // foundation
+
+namespace foundation {
+  const char* next(
+    const char* str )
+  {
+    assert(str != nullptr);
+    const uint8_t* iter = (const uint8_t*)str;
+    while (*iter) {
+      if (utf8_is_initial_byte(*iter))
+        return (const char*)iter;
+      ++iter; }
+    return nullptr;
+  }
+
+  const char* prev(
+    const char* str )
+  {
+    assert(str != nullptr);
+    const uint8_t* iter = (const uint8_t*)str;
+    while (*iter) {
+      if (utf8_is_initial_byte(*iter))
+        return (const char*)iter;
+      --iter; }
+    return nullptr;
+  }
+
+  const char* find(
+    const char* needle,
+    const char* haystack )
+  {
+    assert(needle != nullptr);
+    assert(haystack != nullptr);
+
+    const char* iter_h = haystack;
+    while (*haystack) {
+      const char* iter_n = needle;
+      const char* iter_h_ = iter_h;
+      while (*haystack) {
+        const uint32_t cp_h = utf8_decode(iter_h);
+        const uint32_t cp_n = utf8_decode(iter_n);
+        if (cp_h != cp_n)
+          break;
+        if (*iter_n)
+          return iter_h_;
+      }
+    }
+
+    return nullptr;
   }
 } // foundation

@@ -15,9 +15,9 @@ namespace foundation {
     ExecutionState& exec_state )
   {
   (void)exec_state;
-  #if defined(FOUNDATION_ARCH_X86_64)
+  #if defined(FOUNDATION_ARCHITECTURE_X86_64)
     __foundation_execution_state_x86_64();
-  #elif defined(FOUNDATION_ARCH_X86)
+  #elif defined(FOUNDATION_ARCHITECTURE_X86)
     __foundation_execution_state_x86();
   #endif
   }

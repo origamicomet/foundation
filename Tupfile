@@ -3,6 +3,7 @@ include_rules
 preload src
 preload src/foundation
 preload src/foundation/algorithms
+preload src/foundation/allocators
 preload src/foundation/compat
 preload src/foundation/containers
 preload src/foundation/containers/thread_safe
@@ -15,6 +16,7 @@ preload src/foundation/system/concurrency
 OBJS = src/*.o
 OBJS += src/foundation/*.o
 OBJS += src/foundation/algorithms/*.o
+OBJS += src/foundation/allocators/*.o
 OBJS += src/foundation/compat/*.o
 OBJS += src/foundation/containers/*.o
 OBJS += src/foundation/containers/thread_safe/*.o

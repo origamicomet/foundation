@@ -178,7 +178,7 @@ namespace foundation {
 
     public:
       FOUNDATION_INLINE bool empty() const
-      { return (_raw[0] == '\0'); }
+      { return (_raw.size() == 0) || (_raw[0] == '\0'); }
 
       FOUNDATION_INLINE size_t size() const
       { return _raw.size(); }
@@ -195,6 +195,18 @@ namespace foundation {
     protected:
       Array<char> _raw;
   };
+} // foundation
+
+namespace foundation {
+  extern FOUNDATION_EXPORT const char* next(
+    const char* str );
+
+  extern FOUNDATION_EXPORT const char* prev(
+    const char* str );
+
+  extern FOUNDATION_EXPORT const char* find(
+    const char* needle,
+    const char* haystack );
 } // foundation
 
 #endif // _FOUNDATION_STRING_H_

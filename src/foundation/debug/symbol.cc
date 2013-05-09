@@ -18,8 +18,8 @@ namespace foundation {
       size_t num_search_directories )
     {
     #if defined(FOUNDATION_PLATFORM_WINDOWS)
-      SymSetOptions(SymGetOptions() | SYMOPT_LOAD_LINES | SYMOPT_OMAP_FIND_NEAREST);
       SymCleanup(GetCurrentProcess());
+      SymSetOptions(SymGetOptions() | SYMOPT_LOAD_LINES | SYMOPT_OMAP_FIND_NEAREST);
 
       if (num_search_directories > 0) {
         String search_path(Allocators::scratch());

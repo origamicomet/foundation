@@ -6,7 +6,7 @@
 
 namespace foundation {
   ProxyAllocator::ProxyAllocator(
-    const char* name
+    const char* name,
     Allocator& to
   ) : Allocator(name)
     , _to(to)
@@ -18,12 +18,15 @@ namespace foundation {
   {}
 
   ProxyAllocator::~ProxyAllocator()
-  {}
+  {
+  }
 
   void* ProxyAllocator::alloc(
     size_t num_bytes,
-    size_t alignment ) override
+    size_t alignment )
   {
+    if (num_bytes == 0)
+      return nullptr;
   #if defined(FOUNDATION_TRACK_MEMORY_USAGE)
     _num_of_allocs += 1;
   #endif
@@ -33,7 +36,7 @@ namespace foundation {
   void* ProxyAllocator::realloc(
     void* ptr,
     size_t num_bytes,
-    size_t alignment ) override
+    size_t alignment )
   {
   #if defined(FOUNDATION_TRACK_MEMORY_USAGE)
     if (!ptr)
@@ -47,7 +50,7 @@ namespace foundation {
   }
 
   void ProxyAllocator::free(
-    void* ptr ) override
+    void* ptr )
   {
   #if defined(FOUNDATION_TRACK_MEMORY_USAGE)
     if (ptr)
@@ -56,7 +59,7 @@ namespace foundation {
     _to.free(ptr);
   }
 
-  uint64_t ProxyAllocator::memory_usage() override
+  uint64_t ProxyAllocator::memory_usage()
   {
   #if defined(FOUNDATION_TRACK_MEMORY_USAGE)
     return Allocator::invalid_memory_usage;
@@ -65,12 +68,12 @@ namespace foundation {
   #endif
   }
 
-  bool ProxyAllocator::memory_usage_counts_towards_total() override
+  bool ProxyAllocator::memory_usage_counts_towards_total()
   {
     return true;
   }
 
-  uint64_t ProxyAllocator::num_of_allocations() override
+  uint64_t ProxyAllocator::num_of_allocations()
   {
   #if defined(FOUNDATION_TRACK_MEMORY_USAGE)
     return _num_of_allocs;
@@ -79,7 +82,7 @@ namespace foundation {
   #endif
   }
 
-  uint64_t ProxyAllocator::num_of_reallocations() override
+  uint64_t ProxyAllocator::num_of_reallocations()
   {
   #if defined(FOUNDATION_TRACK_MEMORY_USAGE)
     return _num_of_reallocs;
@@ -88,7 +91,7 @@ namespace foundation {
   #endif
   }
 
-  uint64_t ProxyAllocator::num_of_frees() override
+  uint64_t ProxyAllocator::num_of_frees()
   {
   #if defined(FOUNDATION_TRACK_MEMORY_USAGE)
     return _num_of_frees;

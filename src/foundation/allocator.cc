@@ -41,6 +41,8 @@ namespace foundation {
           size_t num_bytes,
           size_t alignment ) override
         {
+          if (num_bytes == 0)
+            return nullptr;
         #if defined(FOUNDATION_TRACK_MEMORY_USAGE)
           _num_of_allocs += 1;
         #endif
@@ -162,6 +164,7 @@ namespace foundation {
       if (!allocator->memory_usage_counts_towards_total())
         return true;
       *((uint64_t*)closure) += allocator->memory_usage();
+      return true;
     }
 
     uint64_t memory_usage()
@@ -176,6 +179,7 @@ namespace foundation {
     {
       assert(allocator != nullptr);
       *((uint64_t*)closure) += allocator->num_of_allocations();
+      return true;
     }
 
     uint64_t num_of_allocations()
@@ -190,6 +194,7 @@ namespace foundation {
     {
       assert(allocator != nullptr);
       *((uint64_t*)closure) += allocator->num_of_reallocations();
+      return true;
     }
 
     uint64_t num_of_reallocations()
@@ -204,6 +209,7 @@ namespace foundation {
     {
       assert(allocator != nullptr);
       *((uint64_t*)closure) += allocator->num_of_frees();
+      return true;
     }
 
     uint64_t num_of_frees()

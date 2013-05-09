@@ -45,10 +45,10 @@ namespace foundation {
 
       for (auto iter = cs.frames.begin(); iter != cs.frames.end(); ++iter) {
         const Symbol& sym = (*iter).symbol;
-        if (sym.location().path().empty() || (sym.location().line() != Symbol::Location::line_information_unavailable))
+        if (sym.location().path().empty() || (sym.location().line() == Symbol::Location::line_information_unavailable))
           log("  %s\n\n", sym.name().raw());
         else
-          log("  %s\n    in `%s` on line %u\n\n", sym.name(), sym.location().path(), sym.location().line());
+          log("  %s\n    in `%s` on line %u\n\n", sym.name().raw(), sym.location().path().raw(), sym.location().line());
       }
     }
 

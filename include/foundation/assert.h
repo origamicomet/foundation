@@ -30,8 +30,9 @@
     "An assertion failed:\n" \
     "\n" \
     "  `%s`\n" \
-    "    in `" __foundation_stringify(__FILE__) "` on line " __foundation_stringify(__LINE__) "\n\n", \
-    #_Condition \
+    "    in `%s` on line %u\n\n", \
+    __foundation_stringify(_Condition), \
+    __foundation_stringify(__FILE__), __LINE__ \
   )
 
 #endif // _FOUNDATION_ASSERT_H_

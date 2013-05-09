@@ -194,7 +194,7 @@ namespace foundation {
       void operator+= ( const T& obj )
       {
         if (_size == _reserved)
-          reserve(_reserved);
+          reserve(_reserved ? _reserved : 1);
         optimized_copy<T>(&_array[_size++], &obj, 1);
       }
 

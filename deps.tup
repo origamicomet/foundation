@@ -1,4 +1,4 @@
 FOUNDATION_DEPENDENCIES =
 ifeq (@(TUP_PLATFORM),win32)
-  FOUNDATION_LIBS = DebugHelp.lib
+  FOUNDATION_LIBS = DbgHelp.lib
 endif
