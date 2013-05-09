@@ -8,6 +8,23 @@
 #include <foundation/containers.h>
 
 namespace foundation {
+  static FOUNDATION_THREAD_LOCAL_STORAGE LogScope* _log_scope = nullptr;
+
+  LogScope::LogScope(
+    const char* name
+  ) : _parent(_log_scope)
+    , _name(name)
+  {
+    _log_scope = this;
+  }
+
+  LogScope::~LogScope()
+  {
+    _log_scope = _parent;
+  }
+} // foundation
+
+namespace foundation {
   namespace {
     struct _Logger {
       Logger log;
@@ -32,20 +49,26 @@ namespace foundation {
 
   void console_logger(
     void* closure,
+    const LogScope* log_scope,
     const char* format,
     va_list ap )
   {
     (void)closure;
+    if (log_scope)
+      fprintf(stdout, "[%s] ", log_scope->name());
     vfprintf(stdout, format, ap);
     fflush(stdout);
   }
 
   void file_logger(
     void* closure,
+    const LogScope* log_scope,
     const char* format,
     va_list ap )
   {
     assert(closure != nullptr);
+    if (log_scope)
+      fprintf(((FILE*)closure), "[%s] ", log_scope->name());
     vfprintf(((FILE*)closure), format, ap);
     fflush(((FILE*)closure));
   }
@@ -64,15 +87,23 @@ namespace foundation {
 namespace foundation {
   void debug_logger(
     void* closure,
+    const LogScope* log_scope,
     const char* format,
     va_list ap )
   {
   #if defined(FOUNDATION_PLATFORM_WINDOWS)
     (void)closure;
-    size_t len = vsnprintf(nullptr, 0, format, ap) + 1;
-    char* debug_string = (char*)alloca(len);
-    vsnprintf((char*)debug_string, len, format, ap);
-    OutputDebugStringA(debug_string);
+    size_t len = 0;
+    size_t offset = 0;
+    if (log_scope) {
+      len = snprintf(nullptr, 0, "[%s] ", log_scope->name());
+      offset += len; }
+    len += vsnprintf(nullptr, 0, format, ap) + 1;
+    char* dbg_string = (char*)alloca(len);
+    if (log_scope)
+      snprintf(dbg_string, offset + 1, "[%s] ", log_scope->name()) + 1;
+    vsnprintf((char*)&dbg_string[offset], len - offset, format, ap);
+    OutputDebugStringA(dbg_string);
   #elif defined(FOUNDATION_PLATFORM_POSIX)
     assert(closure != nullptr);
     static bool initialized = false;
@@ -90,6 +121,6 @@ namespace foundation {
     va_list ap )
   {
     for (auto iter = loggers().begin(); iter != loggers().end(); ++iter)
-      ((*iter).log)((*iter).closure, format, ap);
+      ((*iter).log)((*iter).closure, _log_scope, format, ap);
   }
 } // foundation

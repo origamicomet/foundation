@@ -17,8 +17,29 @@
 #endif
 
 namespace foundation {
+  class LogScope final {
+    __foundation_trait(LogScope, non_copyable);
+
+    public:
+      LogScope(
+        const char* name );
+
+      ~LogScope();
+
+    public:
+      FOUNDATION_INLINE const char* name() const
+      { return _name; }
+
+    private:
+      LogScope* _parent;
+      const char* _name;
+  };
+} // foundation
+
+namespace foundation {
   typedef void (*Logger)(
     void* closure,
+    const LogScope* log_scope,
     const char* format,
     va_list ap );
 
@@ -28,23 +49,26 @@ namespace foundation {
 
   extern FOUNDATION_EXPORT void console_logger(
     void* closure,
+    const LogScope* log_scope,
     const char* format,
     va_list ap );
 
   extern FOUNDATION_EXPORT void file_logger(
     // The FILE* to use.
     void* closure,
+    const LogScope* log_scope,
     const char* format,
     va_list ap );
 
   extern FOUNDATION_EXPORT void debug_logger(
     // The log identifier to use (used for openlog on POSIX systems).
     void* closure,
+    const LogScope* log_scope,
     const char* format,
     va_list ap );
+} // foundation
 
-  // ============================================================
-
+namespace foundation {
   extern FOUNDATION_EXPORT void log(
     const char* format,
     va_list ap );
