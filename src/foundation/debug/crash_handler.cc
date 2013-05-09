@@ -37,7 +37,12 @@ namespace foundation {
     Exception exception,
     ExecutionState& execution_state )
   {
-    log("Encountered exception: %s!\n", exception_to_string(exception));
+    static size_t recursion = 0;
+
+    if (++recursion > 1)
+      _Exit(EXIT_FAILURE);
+
+    log("\nEncountered exception: %s!\n", exception_to_string(exception));
 
     Callstack cs;
     if (callstack(cs, execution_state)) {
