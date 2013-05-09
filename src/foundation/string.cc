@@ -46,17 +46,15 @@ namespace foundation {
     uint32_t utf8_decode(
       const char*& str )
     {
-      const uint8_t*& iter = (const uint8_t*&)str;
       uint32_t state = 0;
       uint32_t code_point = 0;
       uint32_t result = 0;
-      while (*iter) {
-        result = utf8_decode(&state, &code_point, *iter);
+      while (*str++) {
+        result = utf8_decode(&state, &code_point, ((const uint8_t*)str)[-1]);
         if (result == UTF8_REJECT)
           return 0;
         if (result == UTF8_ACCEPT)
-          return code_point;
-        ++iter; }
+          return code_point; }
       return 0;
     }
 
@@ -409,6 +407,8 @@ namespace foundation {
   {
     assert(str != nullptr);
     const uint8_t* iter = (const uint8_t*)str;
+    if (!*iter++)
+      return nullptr;
     while (*iter) {
       if (utf8_is_initial_byte(*iter))
         return (const char*)iter;
@@ -420,7 +420,7 @@ namespace foundation {
     const char* str )
   {
     assert(str != nullptr);
-    const uint8_t* iter = (const uint8_t*)str;
+    const uint8_t* iter = (const uint8_t*)str - 1;
     while (*iter) {
       if (utf8_is_initial_byte(*iter))
         return (const char*)iter;
@@ -429,22 +429,22 @@ namespace foundation {
   }
 
   const char* find(
-    const char* needle,
-    const char* haystack )
+    const char* haystack,
+    const char* needle )
   {
     assert(needle != nullptr);
     assert(haystack != nullptr);
 
     const char* iter_h = haystack;
-    while (*haystack) {
+    while (*iter_h) {
       const char* iter_n = needle;
       const char* iter_h_ = iter_h;
-      while (*haystack) {
+      while (*iter_h) {
         const uint32_t cp_h = utf8_decode(iter_h);
         const uint32_t cp_n = utf8_decode(iter_n);
         if (cp_h != cp_n)
           break;
-        if (*iter_n)
+        if (!*iter_n)
           return iter_h_;
       }
     }
