@@ -2,8 +2,8 @@
 // Can be licensed under MIT (in case the public domain is not recognized).
 // More information can be found in the LICENSE file.
 
-#ifndef _FOUNDATION_ALGORITHMS_COPY_H_
-#define _FOUNDATION_ALGORITHMS_COPY_H_
+#ifndef _FOUNDATION_ALGORITHMS_OPTIMIZED_COPY_H_
+#define _FOUNDATION_ALGORITHMS_OPTIMIZED_COPY_H_
 
 // Provides an optimized copy that takes into account triviality.
 
@@ -30,4 +30,4 @@ namespace foundation {
   }
 } // foundation
 
-#endif // _FOUNDATION_ALGORITHMS_COPY_H_
+#endif // _FOUNDATION_ALGORITHMS_OPTIMIZED_COPY_H_

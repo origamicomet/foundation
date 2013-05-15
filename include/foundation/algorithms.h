@@ -9,6 +9,7 @@
 
 #include <foundation/algorithms/limit.h>
 #include <foundation/algorithms/optimized_copy.h>
+#include <foundation/algorithms/optimized_destruct.h>
 #include <foundation/algorithms/search.h>
 #include <foundation/algorithms/sort.h>
 
