@@ -15,7 +15,9 @@
 
 #if defined(FOUNDATION_COMPILER_MSVC)
   #include <malloc.h>
-  #undef alloca
+  #if defined(alloca)
+    #undef alloca
+  #endif // defined(alloca)
   #define alloca _alloca
 #else
   #include <alloca.h>
