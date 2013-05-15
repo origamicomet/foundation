@@ -110,6 +110,26 @@ namespace foundation {
       return String(path.allocator(), (++iter), path.end());
     }
 
+    String sans_extension(
+      const String& path )
+    {
+      if (path.empty())
+        return String(path.allocator());
+
+      String::Iterator iter = path.end();
+      uint32_t code_point = 0;
+
+      do {
+        code_point = iter.to_code_point();
+        if ((code_point == '/') || (code_point == '\\'))
+          return String(path.allocator());
+        if (code_point == '.')
+          break;
+      } while((iter--) != path.begin());
+
+      return String(path.allocator(), path.begin(), iter);
+    }
+
     String absolute(
       const String& path )
     {

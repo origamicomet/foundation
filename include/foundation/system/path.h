@@ -29,6 +29,10 @@ namespace foundation {
     extern FOUNDATION_EXPORT String extension(
       const String& path );
 
+    // Returns the |path| sans extension.
+    extern FOUNDATION_EXPORT String sans_extension(
+      const String& path );
+
     // Returns the absolute unixified version of the |path|.
     extern FOUNDATION_EXPORT String absolute(
       const String& path );
