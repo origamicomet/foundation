@@ -5,7 +5,7 @@
 #ifndef _FOUNDATION_CONTAINERS_ARRAY_H_
 #define _FOUNDATION_CONTAINERS_ARRAY_H_
 
-// Provides a templated, flexibly sized array.
+// Provides a generic flexibly sized array.
 
 #include <foundation/detect.h>
 #include <foundation/compat.h>
@@ -17,9 +17,9 @@
 
 namespace foundation {
   template <typename T>
-  class FOUNDATION_EXPORT Array {
+  class FOUNDATION_EXPORT Array final {
     public:
-      class Iterator {
+      class Iterator final {
         private:
           friend class Array<T>;
 
@@ -224,6 +224,8 @@ namespace foundation {
 
       void resize( size_t size )
       {
+        if (size == _reserved) {
+          _size = size; return; }
         _size = _reserved = size;
         _array = (T*)_allocator.realloc(
           (void*)_array, size * sizeof(T), alignment_of<T>::value);

@@ -9,5 +9,7 @@
 
 #include <foundation/containers/array.h>
 #include <foundation/containers/thread_safe/array.h>
+#include <foundation/containers/associative_array.h>
+#include <foundation/containers/hash_table.h>
 
 #endif // _FOUNDATION_CONTAINERS_H_
