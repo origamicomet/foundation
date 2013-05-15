@@ -14,6 +14,7 @@
 #include <foundation/allocator.h>
 #include <foundation/algorithms/limit.h>
 #include <foundation/algorithms/optimized_copy.h>
+#include <foundation/algorithms/optimized_destruct.h>
 
 namespace foundation {
   template <typename T>
@@ -162,6 +163,8 @@ namespace foundation {
       {
         if (&array == this)
           return *this;
+        
+        optimized_destruct<T>(_array, _size);
         _size = array._size;
         _reserved = array._reserved;
         _array = (T*)_allocator.realloc((void*)_array, _reserved * sizeof(T), alignment_of<T>::value);
@@ -180,6 +183,7 @@ namespace foundation {
 
       ~Array()
       {
+        optimized_destruct<T>(_array, _size);
         _allocator.free((void*)_array);
       }
 
