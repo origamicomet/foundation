@@ -5,7 +5,7 @@
 #ifndef _FOUNDATION_LOGGER_H_
 #define _FOUNDATION_LOGGER_H_
 
-// Provides a uniform logging interface
+// Provides a uniform logging interface.
 
 #include <foundation/detect.h>
 #include <foundation/compat.h>
