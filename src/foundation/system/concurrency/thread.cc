@@ -20,6 +20,7 @@
         Thread& thread_ = *((Thread*)thread);
         _endthreadex((unsigned)thread_._entry_point(thread_, thread_._closure));
         __builtin_unreachable();
+        return 0;
       }
     } // foundation
   #else
@@ -30,6 +31,7 @@
         Thread& thread_ = *((Thread*)thread);
         ExitThread((DWORD)thread_._entry_point(thread_, thread_._closure));
         __builtin_unreachable();
+        return 0;
       }
     } // foundation
   #endif
