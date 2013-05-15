@@ -17,6 +17,8 @@ namespace foundation {
     const void* src,
     size_t num_bytes )
   {
+    if ((dest == nullptr) || (src == nullptr) || (num_bytes == 0))
+      return;
     memcpy(dest, src, num_bytes);
   }
 
@@ -25,6 +27,8 @@ namespace foundation {
     const void* src,
     size_t num_bytes )
   {
+    if ((dest == nullptr) || (src == nullptr) || (num_bytes == 0))
+      return;
     memmove(dest, src, num_bytes);
   }
 
@@ -33,6 +37,8 @@ namespace foundation {
     uint8_t b,
     size_t num_bytes )
   {
+    if ((dest == nullptr) || (num_bytes == 0))
+      return;
     memset(dest, b, num_bytes);
   }
 
@@ -40,6 +46,8 @@ namespace foundation {
     void* dest,
     size_t num_bytes )
   {
+    if ((dest == nullptr) || (num_bytes == 0))
+      return;
     fill(dest, 0, num_bytes);
   }
 
