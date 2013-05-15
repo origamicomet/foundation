@@ -171,10 +171,16 @@ namespace foundation {
 
       Array& operator= ( const T array[] )
       {
+        optimized_destruct<T>(_array, _size);
         _size = _reserved = sizeof(array) / sizeof(T);
         _array = (T*)_allocator.realloc((void*)_array, _reserved * sizeof(T), alignment_of<T>::value);
         optimized_copy<T>(_array, &array[0], _size);
         return *this;
+      }
+
+      ~Array()
+      {
+        _allocator.free((void*)_array);
       }
 
     public:
