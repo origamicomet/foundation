@@ -40,15 +40,15 @@
     #pragma intrinsic(_InterlockedExchangeAdd)
     static __forceinline int32_t __sync_fetch_and_add( volatile int32_t* ptr, int32_t val )
     { return _InterlockedExchangeAdd((volatile long*)ptr, (long)val); }
-    static __forceinline int32_t __sync_sub_and_fetch( volatile int32_t* ptr, int32_t val )
+    static __forceinline int32_t __sync_fetch_and_sub( volatile int32_t* ptr, int32_t val )
     { return _InterlockedExchangeAdd((volatile long*)ptr, (long)-val); }
   }
 
   #define __sync_fetch_and_add( _Pointer, _Value ) \
-    foundation::__sync_fetch_and_add(_Pointer, _Value);
+    foundation::__sync_fetch_and_add(_Pointer, _Value)
 
   #define __sync_fetch_and_sub( _Pointer, _Value ) \
-    foundation::__sync_fetch_and_sub(_Pointer, _Value);
+    foundation::__sync_fetch_and_sub(_Pointer, _Value)
 
   namespace foundation {
     #pragma intrinsic(_InterlockedOr)
@@ -57,7 +57,7 @@
   }
 
   #define __sync_fetch_and_or( _Value, _Mask ) \
-    foundation::__sync_fetch_and_or(_Value, _Mask);
+    foundation::__sync_fetch_and_or(_Value, _Mask)
 
   namespace foundation {
     #pragma intrinsic(_InterlockedXor)
@@ -66,7 +66,7 @@
   }
 
   #define __sync_fetch_and_xor( _Value, _Mask ) \
-    foundation::__sync_fetch_and_xor(_Value, _Mask);
+    foundation::__sync_fetch_and_xor(_Value, _Mask)
 
   namespace foundation {
     #pragma intrinsic(_InterlockedAnd)
@@ -77,10 +77,10 @@
   }
 
   #define __sync_fetch_and_and( _Value, _Mask ) \
-    foundation::__sync_fetch_and_and(_Value, _Mask);
+    foundation::__sync_fetch_and_and(_Value, _Mask)
 
   #define __sync_fetch_and_nand( _Value, _Mask ) \
-    foundation::__sync_fetch_and_nand(_Value, _Mask);
+    foundation::__sync_fetch_and_nand(_Value, _Mask)
 
   namespace foundation {
     #pragma intrinsic(_InterlockedCompareExchange)
@@ -91,10 +91,10 @@
   }
 
   #define __sync_bool_compare_and_swap( _Pointer, _Compare, _Swap ) \
-    foundation::__sync_bool_compare_and_swap(_Pointer, _Compare, _Swap);
+    foundation::__sync_bool_compare_and_swap(_Pointer, _Compare, _Swap)
 
   #define __sync_val_compare_and_swap( _Pointer, _Compare, _Swap ) \
-    foundation::__sync_val_compare_and_swap(_Pointer, _Compare, _Swap);
+    foundation::__sync_val_compare_and_swap(_Pointer, _Compare, _Swap)
 
   #define __builtin_expect( _Expression, _Result ) \
     ((_Expression) == (_Result))
@@ -103,7 +103,7 @@
     do { ::raise(SIGABRT); } while (0, 0)
 
   #define __builtin_unreachable() \
-    __builtin_trap();
+    __builtin_trap()
 
   namespace foundation {
     static __forceinline void __builtin___clear_cache( char* begin, char* end ) {
@@ -142,7 +142,7 @@
   } // foundation
 
   #define __builtin_clz( _X ) \
-    foundation::__builtin_clz(_X);
+    foundation::__builtin_clz(_X)
 
   namespace foundation {
     static __forceinline uint32_t __builtin_ctz( uint32_t x ) {
@@ -153,23 +153,23 @@
   } // foundation
 
   #define __builtin_ctz( _X ) \
-    foundation::__builtin_ctz(_X);
+    foundation::__builtin_ctz(_X)
 
   #define __builtin_bswap16( _Short ) \
-    _byteswap_ushort(_Short);
+    _byteswap_ushort(_Short)
 
   #define __builtin_bswap32( _Long ) \
-    _byteswap_ulong(_Long);
+    _byteswap_ulong(_Long)
 
   #define __builtin_bswap64( _LongLong ) \
-    _byteswap_uint64(_LongLong);
+    _byteswap_uint64(_LongLong)
 
   #define __builtin_yield() \
-    __yield();
+    __yield()
 
   #if defined(FOUNDATION_ARCHITECTURE_X86_64) || defined(FOUNDATION_ARCHITECTURE_X86)
     #define __builtin_rdtsc() \
-      __rdtsc();
+      __rdtsc()
 
     #define __builtin_cpuid( _CpuInfo, _InfoType ) \
       do { __cpuid(_CpuInfo, _InfoType); } while (0, 0)
@@ -181,16 +181,16 @@
     } // foundation
 
     #define __builtin_rdtsc() \
-      foundation::__builtin_rdtsc();
+      foundation::__builtin_rdtsc()
 
     #define __builtin_cpuid( _CpuInfo, _InfoType ) \
-      __builtin_trap();
+      __builtin_trap()
   #endif  
 #elif defined(FOUNDATION_COMPILER_CLANG) || defined(FOUNDATION_COMPILER_GCC) || defined(FOUNDATION_COMPILER_ICC)
   #include <mmintrin.h>
 
   #define __builtin_yield() \
-    _mm_pause();
+    _mm_pause()
 
   namespace foundation {
     static __inline__ uint64_t __builtin_rdtsc() {
@@ -209,7 +209,7 @@
   } // foundation
 
   #define __builtin_rdtsc() \
-    foundation::__builtin_rdtsc();
+    foundation::__builtin_rdtsc()
 
   namespace foundation {
     static __inline__ void __builtin_cpuid( int cpu_info[4], int info_type ) {
@@ -223,7 +223,7 @@
         "a" (info_type)
       );
     #else
-      __builtin_trap();
+      __builtin_trap()
     #endif
     }
   } // foundation

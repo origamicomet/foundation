@@ -134,6 +134,11 @@ namespace foundation {
       std::has_trivial_default_constructor<T>::value &&
       std::has_trivial_destructor<T>::value; };
 
+  // Determines if a type |T| is trivially destructable.
+  template <typename T>
+  struct is_trivially_destructable {
+    static const bool value = std::has_trivial_destructor<T>::value; };
+
   // Determines if a type |T| is trivial.
   template <typename T>
   struct is_trivial {
