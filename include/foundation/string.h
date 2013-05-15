@@ -207,6 +207,10 @@ namespace foundation {
   extern FOUNDATION_EXPORT const char* find(
     const char* haystack,
     const char* needle );
+
+  extern FOUNDATION_EXPORT const char* chomp(
+    const char* prefix,
+    const char* str );
 } // foundation
 
 #endif // _FOUNDATION_STRING_H_

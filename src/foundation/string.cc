@@ -451,4 +451,26 @@ namespace foundation {
 
     return nullptr;
   }
+
+  const char* chomp(
+    const char* prefix,
+    const char* str )
+  {
+    assert(prefix != nullptr);
+    assert(str != nullptr);
+
+    const char* iter_p = prefix;
+    const char* iter_s = str;
+
+    while ((*iter_p) && (*iter_s)) {
+      const uint32_t cp_p = utf8_decode(iter_p);
+      const uint32_t cp_s = utf8_decode(iter_s);
+      if (cp_p != cp_s)
+        break;
+      if (!*iter_p)
+        return iter_s;
+    }
+
+    return nullptr;
+  }
 } // foundation
