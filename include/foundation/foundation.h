@@ -18,6 +18,7 @@
 #include <foundation/hash.h>
 #include <foundation/logger.h>
 #include <foundation/pair.h>
+#include <foundation/sjson.h>
 #include <foundation/system.h>
 
 #endif // _FOUNDATION_H_
