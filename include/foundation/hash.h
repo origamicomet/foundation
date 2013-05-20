@@ -24,7 +24,7 @@ namespace foundation {
         const Hash& hash )
       {}
 
-      Hash& operator= (
+      virtual Hash& operator= (
         const Hash& hash )
       { return *this; }
 
@@ -57,6 +57,10 @@ namespace foundation {
     : public Hash<T>
   {
     public:
+      ImmutableHash()
+        : _hash(_Hash((const void*)"", 1, 0))
+      {}
+
       ImmutableHash(
         const void* buffer,
         size_t buffer_len
