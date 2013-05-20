@@ -405,7 +405,7 @@ namespace foundation {
   const char* next(
     const char* str )
   {
-    assert(str != nullptr);
+    if (!str) return nullptr;
     const uint8_t* iter = (const uint8_t*)str;
     if (!*iter++)
       return nullptr;
@@ -419,7 +419,7 @@ namespace foundation {
   const char* prev(
     const char* str )
   {
-    assert(str != nullptr);
+    if (!str) return nullptr;
     const uint8_t* iter = (const uint8_t*)str - 1;
     while (*iter) {
       if (utf8_is_initial_byte(*iter))
