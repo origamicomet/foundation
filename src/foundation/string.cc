@@ -428,6 +428,23 @@ namespace foundation {
     return nullptr;
   }
 
+  uint32_t to_code_point(
+    const char* str )
+  {
+    if (!str) return 0;
+    uint32_t state = 0;
+    uint32_t code_point = 0;
+    uint32_t result = 0;
+    char ch = 0;
+    while (ch = *str++) {
+      result = utf8_decode(&state, &code_point, ch);
+      if (result == UTF8_REJECT)
+        return 0;
+      if (result == UTF8_ACCEPT)
+        return code_point; }
+    return 0;
+  }
+
   const char* find(
     const char* haystack,
     const char* needle )

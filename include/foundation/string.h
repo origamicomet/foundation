@@ -204,6 +204,9 @@ namespace foundation {
   extern FOUNDATION_EXPORT const char* prev(
     const char* str );
 
+  extern FOUNDATION_EXPORT uint32_t to_code_point(
+    const char* str );
+
   extern FOUNDATION_EXPORT const char* find(
     const char* haystack,
     const char* needle );
