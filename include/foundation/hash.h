@@ -26,7 +26,7 @@ namespace foundation {
 
       virtual Hash& operator= (
         const Hash& hash )
-      { return *this; }
+      { (void)hash; return *this; }
 
       virtual ~Hash()
       {}

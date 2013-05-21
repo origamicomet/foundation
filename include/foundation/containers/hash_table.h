@@ -12,13 +12,12 @@
 #include <foundation/config.h>
 #include <foundation/assert.h>
 #include <foundation/pair.h>
-#include <foundation/hash.h>
-#include <foundation/digest.h>
+#include <foundation/containers/array.h>
 
 namespace foundation {
-  template <typename _Hash, typename _Value>
+  template <typename T, typename _Value>
   class FOUNDATION_EXPORT HashTable {
-    typedef Pair<_Hash, _Value> Pair;
+    typedef Pair<T, _Value> Pair;
 
     public:
       explicit HashTable(
@@ -28,12 +27,12 @@ namespace foundation {
       { _ht.resize(size); }
 
       HashTable(
-        const HashTable<_Value, _Hash>& hash_table
+        const HashTable<_Value, T>& hash_table
       ) : _ht(hash_table._ht)
       {}
 
-      HashTable<_Value, _Hash>& operator= (
-        const HashTable<_Value, _Hash>& hash_table )
+      HashTable<_Value, T>& operator= (
+        const HashTable<_Value, T>& hash_table )
       {
         _ht = hash_table._ht;
         return *this;
@@ -41,59 +40,97 @@ namespace foundation {
 
     public:
       bool insert(
-        const _Hash hash,
+        const T hash,
         const _Value& value )
       {
         if ((load() >= 70) || (_ht.size() == 0))
           grow();
-        const size_t idx = hash % _ht.size();
-        for (size_t probe = 0; probe < _ht.size(); ++probe) {
-          const size_t idx_ = (idx + probe) % _ht.size();
-          if (_ht[idx_].key == hash)
-            return end();
-          if (_ht[idx_].key == _Hash("")) {
+        return insert(_ht, hash, value);
+      }
+
+      bool find(
+        const T hash,
+        _Value& value ) const
+      {
+        return find(_ht, hash, value);
+      }
+
+      void remove(
+        const T hash )
+      {
+        remove(_ht, hash);
+      }
+
+    private:
+      bool insert(
+        Array<Pair>& ht,
+        const T hash,
+        const _Value& value )
+      {
+        const size_t idx = hash % ht.size();
+        for (size_t probe = 0; probe < ht.size(); ++probe) {
+          const size_t idx_ = (idx + probe) % ht.size();
+          if (ht[idx_].key == hash)
+            return false;
+          if (ht[idx_].key == ((T)0)) {
             ++_load;
-            _ht[idx_].key = key;
-            _ht[idx_].value = value;
+            ht[idx_].key = hash;
+            ht[idx_].value = value;
             return true; }}
         return false;
       }
 
       bool find(
-        const _Hash hash,
-        const _Value& value ) const
+        const Array<Pair>& ht,
+        const T hash,
+        _Value& value ) const
       {
-        const size_t idx = probe(hash);
+        const size_t idx = probe(ht, hash);
         if (idx == ~((size_t)0))
           return false;
-        _ht[idx] = value;
+        value = ht[idx].value;
         return true;
       }
 
       void remove(
-        const _Hash hash )
+        Array<Pair>& ht,
+        const T hash )
       {
-        const size_t idx = probe(hash);
+        const size_t idx = probe(ht, hash);
         if (idx == ~((size_t)0))
           return;
-        _ht[_idx].key = Hash("");
-        _ht[_idx].value.~_Value();
+        ht[idx].key = ((T)0);
+        ht[idx].value.~_Value();
         --_load;
       }
 
     private:
       FOUNDATION_INLINE size_t load() const
-      { return ((_ht.size() * 100) / (_load ? _load : 1)); }
+      { return (_load / (min(_ht.size(), (size_t)1) * 100)); }
 
       size_t probe(
-        const _Hash hash ) const
+        const Array<Pair>& ht,
+        const T hash ) const
       {
-        const size_t idx = hash % _ht.size();
-        for (size_t probe = 0; probe < _ht.size(); ++probe) {
-          const size_t idx_ = (idx + probe) % _ht.size();
-          if (_ht[idx_].key == hash)
+        const size_t idx = hash % ht.size();
+        for (size_t probe = 0; probe < ht.size(); ++probe) {
+          const size_t idx_ = (idx + probe) % ht.size();
+          if (ht[idx_].key == hash)
             return idx_; }
         return ~((size_t)0);
+      }
+
+      void grow()
+      {
+        Array<Pair> ht(_ht.allocator(), min(_ht.size(), (size_t)1) * 2);
+        ht.resize(ht.size());
+
+        static const T empty;
+        for (auto iter = _ht.begin(); iter != _ht.end(); ++iter) {
+          if ((*iter).key != empty)
+            insert(ht, (*iter).key, (*iter).value); }
+
+        _ht = ht;
       }
 
     private:
