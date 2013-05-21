@@ -20,6 +20,7 @@
 #include <foundation/config.h>
 
 #include <foundation/system/concurrency.h>
+#include <foundation/system/directory.h>
 #include <foundation/system/file.h>
 #include <foundation/system/path.h>
 #include <foundation/system/pipe.h>
