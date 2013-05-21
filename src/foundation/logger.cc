@@ -57,6 +57,7 @@ namespace foundation {
     if (log_scope)
       fprintf(stdout, "[%s] ", log_scope->name());
     vfprintf(stdout, format, ap);
+    fprintf(stdout, "\n");
     fflush(stdout);
   }
 
@@ -70,6 +71,7 @@ namespace foundation {
     if (log_scope)
       fprintf(((FILE*)closure), "[%s] ", log_scope->name());
     vfprintf(((FILE*)closure), format, ap);
+    fprintf(((FILE*)closure), "\n");
     fflush(((FILE*)closure));
   }
 } // foundation
@@ -99,10 +101,12 @@ namespace foundation {
       len = snprintf(nullptr, 0, "[%s] ", log_scope->name());
       offset += len; }
     len += vsnprintf(nullptr, 0, format, ap) + 1;
-    char* dbg_string = (char*)alloca(len);
+    char* dbg_string = (char*)alloca(len + 1);
     if (log_scope)
       snprintf(dbg_string, offset + 1, "[%s] ", log_scope->name()) + 1;
     vsnprintf((char*)&dbg_string[offset], len - offset, format, ap);
+    dbg_string[len - 1] = '\n';
+    dbg_string[len] = '\0';
     OutputDebugStringA(dbg_string);
   #elif defined(FOUNDATION_PLATFORM_POSIX)
     assert(closure != nullptr);
