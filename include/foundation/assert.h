@@ -26,13 +26,14 @@
 #endif
 
 #define assert( _Condition ) \
-  assertf(_Condition, \
-    "An assertion failed:\n" \
-    "\n" \
-    "  `%s`\n" \
-    "    in `%s` on line %u\n\n", \
-    __foundation_stringify(_Condition), \
-    __foundation_stringify(__FILE__), __LINE__ \
-  )
+  do { if (!(_Condition)) { \
+    foundation::log("An assertion failed:"); \
+    foundation::log(""); \
+    foundation::log("  `" __foundation_stringify(_Condition) "`"); \
+    foundation::log("    in `%s` on line %u", __foundation_stringify(__FILE__), __LINE__); \
+    foundation::log(""); \
+    foundation::log(""); \
+    raise(SIGABRT); \
+  } } while (0, 0)
 
 #endif // _FOUNDATION_ASSERT_H_

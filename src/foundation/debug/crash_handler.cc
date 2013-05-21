@@ -42,18 +42,19 @@ namespace foundation {
     if (++recursion > 1)
       _Exit(EXIT_FAILURE);
 
-    log("\nEncountered exception: %s!\n", exception_to_string(exception));
+    log("Encountered exception: %s!", exception_to_string(exception));
 
     Callstack cs;
     if (callstack(cs, execution_state)) {
-      log("\nCallstack:\n\n");
+      log("Callstack:");
+      log("");
 
       for (auto iter = cs.frames.begin(); iter != cs.frames.end(); ++iter) {
         const Symbol& sym = (*iter).symbol;
-        if (sym.location().path().empty() || (sym.location().line() == Symbol::Location::line_information_unavailable))
-          log("  %s\n\n", sym.name().raw());
-        else
-          log("  %s\n    in `%s` on line %u\n\n", sym.name().raw(), sym.location().path().raw(), sym.location().line());
+        log("  %s", sym.name().raw());
+        if (!sym.location().path().empty() && (sym.location().line() != Symbol::Location::line_information_unavailable))
+          log("    in `%s` on line %u", sym.name().raw(), sym.location().path().raw(), sym.location().line());
+        log("");
       }
     }
 
