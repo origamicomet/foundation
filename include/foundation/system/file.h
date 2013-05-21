@@ -60,6 +60,12 @@ namespace foundation {
     extern FOUNDATION_EXPORT void* read_in(
       FILE* file,
       Allocator& allocator );
+
+    // Writes |num_bytes| from |buffer| completly out to |file|.
+    extern FOUNDATION_EXPORT bool write_out(
+      FILE* file,
+      const void* buffer,
+      size_t num_bytes );
   } // File
 } // foundation
 

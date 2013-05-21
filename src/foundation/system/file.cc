@@ -229,5 +229,21 @@ namespace foundation {
         return nullptr; }
       return buf;
     }
+
+    bool write_out(
+      FILE* file,
+      const void* buffer,
+      size_t num_bytes )
+    {
+      assert(file != nullptr);
+      uintptr_t iter = (uintptr_t)buffer;
+      while (num_bytes > 0) {
+        const size_t wrote = fwrite((const void*)buffer, 1, num_bytes, file);
+        if (wrote == 0)
+          return false;
+        num_bytes -= wrote;
+        iter += wrote; }
+      return true;
+    }
   } // File
 } // foundation
