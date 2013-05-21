@@ -73,6 +73,7 @@ namespace sjson {
 
     Nil* nil =
       new ((void*)((uintptr_t)parser._blob + state.blob_offset)) Nil();
+    state.blob_offset += sizeof(Nil);
 
     return nil;
   }
@@ -99,7 +100,7 @@ namespace sjson {
     Boolean* boolean =
       new ((void*)((uintptr_t)parser._blob + state.blob_offset)) Boolean();
     boolean->_value = _from_initial_character(parser._sjson[token.start]);
-    state.blob_offset += boolean->_len;
+    state.blob_offset += sizeof(Boolean);
 
     return boolean;
   }
@@ -122,7 +123,7 @@ namespace sjson {
     Number* num =
       new ((void*)((uintptr_t)parser._blob + state.blob_offset)) Number();
     num->_value = strtod(&str[0], nullptr);
-    state.blob_offset += num->_len;
+    state.blob_offset += sizeof(Number);
 
     return num;
   }
@@ -143,7 +144,7 @@ namespace sjson {
     str->_len += len;
     copy((void*)&str->_raw[0], (const void*)&parser._sjson[token.start], len);
     str->_raw[len] = '\0';
-    state.blob_offset += str->_len;
+    state.blob_offset += sizeof(String) + len;
 
     return str;
   }
@@ -161,7 +162,7 @@ namespace sjson {
     Array* array =
       new ((void*)((uintptr_t)parser._blob + state.blob_offset)) Array();
     array->_size = root.size;
-    state.blob_offset += array->_len;
+    state.blob_offset += sizeof(Array);
     
     for (int element = 0; element < root.size; ++element) {
       if (!Value::parse(array, parser, state))
@@ -177,16 +178,15 @@ namespace sjson {
       return nullptr;
 
     uintptr_t iter = ((uintptr_t)this) + sizeof(Array);
-    const uintptr_t end = iter + _len;
+    const uintptr_t end = ((uintptr_t)this) + _len;
 
-    while (iter < end) {
-      if (--index != 0) {
-        iter += ((Value*)iter)->_len;
-        continue; }
-      return ((Value*)iter);
+    for (; index > 0; --index) {
+      if ((iter + sizeof(Value*)) >= end)
+        return nullptr;
+      iter += ((Value*)iter)->_len;
     }
 
-    return nullptr;
+    return ((Value*)iter);
   }
 
   Value* Object::parse(
