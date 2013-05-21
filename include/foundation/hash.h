@@ -69,7 +69,7 @@ namespace foundation {
 
       ImmutableHash(
         const char* str
-      ) : _hash(_Hash((const void*)str, str ? strlen(str) : 0, 0))
+      ) : _hash(_Hash((const void*)str, str ? (strlen(str) + 1) : 0, 0))
       {}
 
       ImmutableHash(
