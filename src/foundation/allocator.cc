@@ -9,7 +9,9 @@
 
 #if defined(FOUNDATION_TRACK_MEMORY_USAGE)
   namespace foundation {
-    Mutex Allocator::_Statistics::mutex;
+    Mutex& Allocator::_Statistics::mutex() {
+      static Mutex mutex;
+      return mutex; }
     Allocator* Allocator::_Statistics::head = nullptr;
     Allocator* Allocator::_Statistics::tail = nullptr;
   } // foundation
@@ -138,7 +140,7 @@ namespace foundation {
     {
     #if defined(FOUNDATION_TRACK_MEMORY_USAGE)
       #if defined(FOUNDATION_MEMORY_USAGE_STATISTICS_ARE_THREAD_SAFE)
-        Mutex::ScopedLock lock(Allocator::_Statistics::mutex);
+        Mutex::ScopedLock lock(Allocator::_Statistics::mutex());
       #endif
 
       Allocator* allocator = Allocator::_Statistics::head;
@@ -240,7 +242,7 @@ namespace foundation {
 
   #if defined(FOUNDATION_TRACK_MEMORY_USAGE)
     #if defined(FOUNDATION_MEMORY_USAGE_STATISTICS_ARE_THREAD_SAFE)
-      Mutex::ScopedLock lock(Allocator::_Statistics::mutex);
+      Mutex::ScopedLock lock(Allocator::_Statistics::mutex());
     #endif
 
     statistics.name = name;
@@ -276,7 +278,7 @@ namespace foundation {
   {
   #if defined(FOUNDATION_TRACK_MEMORY_USAGE)
     #if defined(FOUNDATION_MEMORY_USAGE_STATISTICS_ARE_THREAD_SAFE)
-      Mutex::ScopedLock lock(Allocator::_Statistics::mutex);
+      Mutex::ScopedLock lock(Allocator::_Statistics::mutex());
     #endif
 
     statistics.prev->statistics.next = statistics.next;
@@ -285,7 +287,7 @@ namespace foundation {
     if (_Statistics::head == this)
       _Statistics::head = nullptr;
     if (_Statistics::tail == this)
-      _Statistics::tail == nullptr;
+      _Statistics::tail = nullptr;
   #endif
   }
 } // foundation

@@ -107,7 +107,7 @@ namespace foundation {
     #if defined(FOUNDATION_TRACK_MEMORY_USAGE)
       struct _Statistics {
       #if defined(FOUNDATION_MEMORY_USAGE_STATISTICS_ARE_THREAD_SAFE)
-        static Mutex mutex;        
+        static Mutex& mutex();
       #endif
         static Allocator *head, *tail;
         const char* name;
