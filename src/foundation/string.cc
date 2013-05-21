@@ -186,6 +186,7 @@ namespace foundation {
     size_t size
   ) : _raw(allocator, size)
   {
+    _raw.resize(size);
     if (size > 0)
       zero((void*)&_raw[0], size);
   }
@@ -206,16 +207,22 @@ namespace foundation {
   String::String(
     const Iterator& min_iter,
     const Iterator& max_iter
-  ) : _raw(min_iter._str._raw.allocator(), (size_t)(max(min_iter._idx, max_iter._idx) - min(min_iter._idx, max_iter._idx)))
+  ) : _raw(min_iter._str._raw.allocator(), max_iter._idx - min_iter._idx + ((max_iter._idx == max_iter._str._raw.size()) ? 0 : 1))
   {
+    _raw.resize(_raw.reserved());
+    copy((void*)&_raw[0], (const void*)&min_iter._str._raw[min_iter._idx], _raw.size());
+    _raw[_raw.size() - 1] = '\0';
   }
 
   String::String(
     Allocator& allocator,
     const Iterator& min_iter,
     const Iterator& max_iter
-  ) : _raw(allocator, (size_t)(max(min_iter._idx, max_iter._idx) - min(min_iter._idx, max_iter._idx)))
+  ) : _raw(allocator, max_iter._idx - min_iter._idx + ((max_iter._idx == max_iter._str._raw.size()) ? 0 : 1))
   {
+    _raw.resize(_raw.reserved());
+    copy((void*)&_raw[0], (const void*)&min_iter._str._raw[min_iter._idx], _raw.size());
+    _raw[_raw.size() - 1] = '\0';
   }
 
   String& String::operator= (
@@ -488,6 +495,6 @@ namespace foundation {
         return iter_s;
     }
 
-    return nullptr;
+    return str;
   }
 } // foundation
