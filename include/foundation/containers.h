@@ -11,7 +11,7 @@
 #include <foundation/containers/thread_safe/array.h>
 #include <foundation/containers/associative_array.h>
 #include <foundation/containers/hash_table.h>
-// #include <foundation/containers/queue.h>
+#include <foundation/containers/queue.h>
 #include <foundation/containers/thread_safe/queue.h>
 
 #endif // _FOUNDATION_CONTAINERS_H_
