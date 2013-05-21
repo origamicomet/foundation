@@ -215,7 +215,8 @@ namespace foundation {
 
     void* read_in(
       FILE* file,
-      Allocator& allocator )
+      Allocator& allocator,
+      size_t* length )
     {
       assert(file != nullptr);
       fseek(file, 0, SEEK_END);
@@ -223,6 +224,7 @@ namespace foundation {
       fseek(file, 0, SEEK_SET);
       if (len <= 0)
         return nullptr;
+      if (length) *length = len;
       void* buf = allocator.alloc(len);
       if (fread(buf, 1, len, file) != len) {
         allocator.free(buf);
