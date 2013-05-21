@@ -212,5 +212,22 @@ namespace foundation {
           return false; }
       return true;
     }
+
+    void* read_in(
+      FILE* file,
+      Allocator& allocator )
+    {
+      assert(file != nullptr);
+      fseek(file, 0, SEEK_END);
+      const long len = ftell(file);
+      fseek(file, 0, SEEK_SET);
+      if (len <= 0)
+        return nullptr;
+      void* buf = allocator.alloc(len);
+      if (fread(buf, 1, len, file) != len) {
+        allocator.free(buf);
+        return nullptr; }
+      return buf;
+    }
   } // File
 } // foundation

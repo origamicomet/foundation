@@ -10,6 +10,7 @@
 #include <foundation/detect.h>
 #include <foundation/compat.h>
 #include <foundation/config.h>
+#include <foundation/allocator.h>
 
 namespace foundation {
   namespace File {
@@ -54,6 +55,11 @@ namespace foundation {
       FILE* src,
       FILE* dest,
       size_t chunk_size = 4096 );
+
+    // Reads |file| in to a buffer allocated using |allocator|.
+    extern FOUNDATION_EXPORT void* read_in(
+      FILE* file,
+      Allocator& allocator );
   } // File
 } // foundation
 
