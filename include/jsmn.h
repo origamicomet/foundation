@@ -23,12 +23,14 @@ typedef enum {
 } jsmntype_t;
 
 typedef enum {
+  /* Invalid arguments were provided */
+  JSMN_ERROR_INVARG = -1,
   /* Not enough tokens were provided */
-  JSMN_ERROR_NOMEM = -1,
+  JSMN_ERROR_NOMEM = -2,
   /* Invalid character inside JSON string */
-  JSMN_ERROR_INVAL = -2,
+  JSMN_ERROR_INVAL = -3,
   /* The string is not a full JSON packet, more bytes expected */
-  JSMN_ERROR_PART = -3,
+  JSMN_ERROR_PART = -4,
   /* Everything was fine */
   JSMN_SUCCESS = 0
 } jsmnerr_t;

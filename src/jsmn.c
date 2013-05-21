@@ -2,6 +2,10 @@
 
 #include "jsmn.h"
 
+#if defined(__cplusplus)
+extern "C" {
+#endif // defined(__cplusplus)
+
 /**
  * Allocates a fresh unused token from the token pull.
  */
@@ -137,6 +141,12 @@ jsmnerr_t jsmn_parse(jsmn_parser *parser, const char *js, jsmntok_t *tokens,
   jsmnerr_t r;
   int i;
   jsmntok_t *token;
+
+  if (!parser || !js)
+    return JSMN_ERROR_INVARG;
+
+  if (!tokens || (num_tokens == 0))
+    return JSMN_ERROR_NOMEM;
 
 #ifndef JSMN_STRICT
   /* Considers code without global parentheses valid */
@@ -274,3 +284,7 @@ void jsmn_init(jsmn_parser *parser) {
   parser->toknext = 0;
   parser->toksuper = -1;
 }
+
+#if defined(__cplusplus)
+}
+#endif // defined(__cplusplus)

@@ -5,236 +5,234 @@
 
 namespace foundation {
 namespace sjson {
-  Value::Value(
-    const Type type,
-    const Hash key,
-    const uint32_t len
-  ) : _type(type)
-    , _key(key)
-    , _len(len)
-  {}
+  const Hash Value::Unnamed("");
 
-  Nil::Nil(
-    const Hash key
-  ) : Value(Value::T_NIL, key, sizeof(Nil))
-  {}
-
-  uint32_t Nil::parse(
-    const Hash key,
-    void* blob,
-    uint32_t blob_len,
-    uint32_t blob_offset,
-    const char* sjson,
-    const jsmntok_t* token )
+  Value* Value::parse(
+    Value* const parent,
+    const Parser& parser,
+    Parser::State& state )
   {
-    (void)sjson;
-    (void)token;
+    Value* value;
+    switch (parser._tokens[state.token].type) {
+      case JSMN_PRIMITIVE:
+        switch (parser._sjson[parser._tokens[state.token].start]) {
+          case 'n': case 'N':
+            if (!(value = Nil::parse(parent, parser, state)))
+              return nullptr;
+            break;
 
-    if ((blob_offset + sizeof(Nil)) > blob_len)
-      return 0;
+          case 't': case 'f': case 'T': case 'F':
+            if (!(value = Boolean::parse(parent, parser, state)))
+              return nullptr;
+            break;
 
-    return (new ((void*)((uintptr_t)blob + blob_offset)) Nil(key))->_len;
+          case '-': case '.':
+          case '0': case '1': case '2': case '4': case '5':
+          case '6': case '7': case '8': case '9':
+            if (!(value = Number::parse(parent, parser, state)))
+              return nullptr;
+            break;
+
+          default:
+            return nullptr; }
+        break;
+
+      case JSMN_OBJECT:
+        if (!(value = Object::parse(parent, parser, state)))
+          return nullptr;
+        break;
+
+      case JSMN_ARRAY:
+        if (!(value = Array::parse(parent, parser, state)))
+          return nullptr;
+        break;
+
+      case JSMN_STRING:
+        if (!(value = String::parse(parent, parser, state)))
+          return nullptr;
+        break;
+
+      default:
+        return nullptr;
+    }
+
+    if (parent)
+      parent->_len += value->_len;
+    return value;
   }
 
-  Boolean::Boolean(
-    const Hash key,
-    const bool value
-  ) : Value(Value::T_BOOLEAN, key, sizeof(Boolean))
-    , _value(value)
-  {}
-
-  uint32_t Boolean::parse(
-    const Hash key,
-    void* blob,
-    uint32_t blob_len,
-    uint32_t blob_offset,
-    const char* sjson,
-    const jsmntok_t* token )
+  Value* Nil::parse(
+    Value* const parent,
+    const Parser& parser,
+    Parser::State& state )
   {
-    if ((blob_offset + sizeof(Boolean)) > blob_len)
-      return 0;
+    const jsmntok_t& token = parser._tokens[state.token++];
 
-    switch (sjson[token->start]) {
+    if ((state.blob_offset + sizeof(Nil)) > parser._blob_len)
+      return false;
+
+    Nil* nil =
+      new ((void*)((uintptr_t)parser._blob + state.blob_offset)) Nil();
+
+    return nil;
+  }
+
+  bool Boolean::_from_initial_character(
+    const char ch )
+  {
+    switch (ch) {
       case 't': case 'T':
-        return (new ((void*)((uintptr_t)blob + blob_offset)) Boolean(key, true))->_len;
-      case 'f': case 'F':
-        return (new ((void*)((uintptr_t)blob + blob_offset)) Boolean(key, true))->_len;
-    }
-
-    return 0;
+        return true; }
+    return false;
   }
 
-  Number::Number(
-    const Hash key,
-    double value
-  ) : Value(Value::T_NUMBER, key, sizeof(Number))
-    , _value(value)
-  {}
-
-  uint32_t Number::parse(
-    const Hash key,
-    void* blob,
-    uint32_t blob_len,
-    uint32_t blob_offset,
-    const char* sjson,
-    const jsmntok_t* token )
+  Value* Boolean::parse(
+    Value* const parent,
+    const Parser& parser,
+    Parser::State& state )
   {
-    if ((blob_offset + sizeof(Number)) > blob_len)
-      return 0;
+    const jsmntok_t& token = parser._tokens[state.token++];
 
-    const size_t len = token->end - token->start;
-    char* buf = (char*)alloca(len + 1);
-    copy((void*)&buf[0], (const void*)&sjson[token->start], len);
-    buf[len - 1] = '\0';
-    return (new ((void*)((uintptr_t)blob + blob_offset)) Number(key, strtod(&buf[0], nullptr)))->_len;
+    if ((state.blob_offset + sizeof(Boolean)) > parser._blob_len)
+      return false;
+
+    Boolean* boolean =
+      new ((void*)((uintptr_t)parser._blob + state.blob_offset)) Boolean();
+    boolean->_value = _from_initial_character(parser._sjson[token.start]);
+    state.blob_offset += boolean->_len;
+
+    return boolean;
   }
 
-  String::String(
-    const Hash key,
-    const char* value
-  ) : Value(Value::T_STRING, key, sizeof(String) - 1 + (value ? strlen(value) : 0))
+  Value* Number::parse(
+    Value* const parent,
+    const Parser& parser,
+    Parser::State& state )
   {
-    copy((void*)&_raw[0], (const void*)value, value ? strlen(value) : 0);
+    const jsmntok_t& token = parser._tokens[state.token++];
+    const uint32_t len = token.end - token.start;
+
+    if ((state.blob_offset + sizeof(Number)) > parser._blob_len)
+      return false;
+
+    char* str = (char*)alloca(len + 1);
+    copy((void*)&str[0], (const void*)&parser._sjson[token.start], len);
+    str[len] = '\0';
+
+    Number* num =
+      new ((void*)((uintptr_t)parser._blob + state.blob_offset)) Number();
+    num->_value = strtod(&str[0], nullptr);
+    state.blob_offset += num->_len;
+
+    return num;
   }
 
-  uint32_t String::parse(
-    const Hash key,
-    void* blob,
-    uint32_t blob_len,
-    uint32_t blob_offset,
-    const char* sjson,
-    const jsmntok_t* token )
+  Value* String::parse(
+    Value* const parent,
+    const Parser& parser,
+    Parser::State& state )
   {
-    const uint32_t len = token->end - token->start + 1;
-    if ((blob_offset + (sizeof(String) - 1 + len)) > blob_len)
-      return 0;
+    const jsmntok_t& token = parser._tokens[state.token++];
+    const uint32_t len = token.end - token.start;
 
-    String* str = new ((void*)((uintptr_t)blob + blob_offset)) String(key, nullptr);
+    if ((state.blob_offset + sizeof(String) + len) > parser._blob_len)
+      return false;
+
+    String* str =
+      new ((void*)((uintptr_t)parser._blob + state.blob_offset)) String();
     str->_len += len;
-    copy((void*)&str->_raw[0], (const void*)&sjson[token->start], len - 1);
-    str->_raw[len - 1] = '\0';
-    return str->_len;
+    copy((void*)&str->_raw[0], (const void*)&parser._sjson[token.start], len);
+    str->_raw[len] = '\0';
+    state.blob_offset += str->_len;
+
+    return str;
   }
 
-  namespace Token {
-    static uint32_t parse(
-      const Hash key,
-      void* blob,
-      uint32_t blob_len,
-      uint32_t blob_offset,
-      const char* sjson,
-      const jsmntok_t* token,
-      const jsmntok_t* value )
-    {
-      switch (value->type) {
-        case JSMN_OBJECT: {
-          return Object::parse(
-            key, blob, blob_len, blob_offset, sjson, value);
-        } break;
-
-        case JSMN_ARRAY: {
-          return Array::parse(
-            key, blob, blob_len, blob_offset, sjson, value);
-        } break;
-
-        case JSMN_STRING: {
-          return String::parse(
-            key, blob, blob_len, blob_offset, sjson, value);
-        } break;
-
-        case JSMN_PRIMITIVE: {
-          switch (sjson[token->start]) {
-            case 'n': case 'N': {
-              return Nil::parse(
-                key, blob, blob_len, blob_offset, sjson, value);
-            } break;
-
-            case 't': case 'T': case 'f': case 'F': {
-              return Boolean::parse(
-                key, blob, blob_len, blob_offset, sjson, value);
-            } break;
-
-            case '-': case '.':
-            case '0': case '1': case '2': case '3': case '4': case '5':
-            case '6': case '7': case '8': case '9': {
-              return Number::parse(
-                key, blob, blob_len, blob_offset, sjson, value);
-            } break;
-          }
-        } break;
-      }
-
-      return 0;
-    }
-  } // Token
-
-  Array::Array(
-    const Hash key,
-    uint32_t num_values
-  ) : Value(Value::T_ARRAY, key, sizeof(Array))
-    , _num_values(num_values)
-  {}
-
-  uint32_t Array::parse(
-    const Hash key,
-    void* blob,
-    uint32_t blob_len,
-    uint32_t blob_offset,
-    const char* sjson,
-    const jsmntok_t* token )
+  Value* Array::parse(
+    Value* const parent,
+    const Parser& parser,
+    Parser::State& state )
   {
-    if ((blob_offset + sizeof(Array)) > blob_len)
-      return 0;
+    const jsmntok_t& root = parser._tokens[state.token++];
 
-    Array* array = new ((void*)((uintptr_t)blob + blob_offset)) Array(key, token->size);
+    if ((state.blob_offset + sizeof(Array)) > parser._blob_len)
+      return false;
 
-    for (int t = 0; t < token->size; ++t) {
-      const uint32_t len = (Token::parse(
-        "", blob, blob_len, blob_offset + array->_len, sjson, token, &token[t + 1]) > 0);
-      if (len == 0)
-        return 0;
-      array->_len += len;
-    }
+    Array* array =
+      new ((void*)((uintptr_t)parser._blob + state.blob_offset)) Array();
+    array->_size = root.size;
+    state.blob_offset += array->_len;
+    
+    for (int element = 0; element < root.size; ++element) {
+      if (!Value::parse(array, parser, state))
+        return false; }
 
-    return array->_len;
+    return array;
   }
 
   const Value* Array::at(
-    uint32_t idx ) const
+    uint32_t index ) const
   {
-    if (idx >= _num_values)
+    if (index >= _size)
       return nullptr;
 
     uintptr_t iter = ((uintptr_t)this) + sizeof(Array);
     const uintptr_t end = iter + _len;
 
     while (iter < end) {
-      if (--idx != 0) {
+      if (--index != 0) {
         iter += ((Value*)iter)->_len;
         continue; }
-      return ((Value*)iter); }
+      return ((Value*)iter);
+    }
 
     return nullptr;
   }
 
-  Object::Object(
-    const Hash key
-  ) : Value(Value::T_OBJECT, key, sizeof(Object))
-  {}
+  Value* Object::parse(
+    Value* const parent,
+    const Parser& parser,
+    Parser::State& state )
+  {
+    const jsmntok_t& root = parser._tokens[state.token++];
+
+    if ((state.blob_offset + sizeof(Object)) > parser._blob_len)
+      return false;
+
+    Object* obj =
+      new ((void*)((uintptr_t)parser._blob + state.blob_offset)) Object();
+    state.blob_offset += obj->_len;
+
+    for (int child = 0; child < root.size; child += 2) {
+      const jsmntok_t& key = parser._tokens[state.token++];
+      if (key.type != JSMN_PRIMITIVE)
+        return false;
+      Value* value = Value::parse(obj, parser, state);
+      if (!value)
+        return false;
+      value->_key = Hash((const void*)&parser._sjson[key.start], key.end - key.start);
+    }
+
+    return obj;
+  }
 
   const Value* Object::find(
-    const char* path ) const
+    const char* const path ) const
   {
-    Value* value = (Value*)this;
-    const char* iter = path;
+    if (!path)
+      return nullptr;
 
+    const Value* value = this;
+    const char* iter = path;
+    const char* const end = path + strlen(path);
+    
     while (iter) {
-      const char* seperator = prev(foundation::find(iter, "."));
-      seperator = seperator ? seperator : (path + strlen(path));
-      
+      const char* seperator = foundation::find(iter, ".");
+      seperator = seperator ? seperator : end;
+
       if (!value->is_object())
         return nullptr;
-      
+
       const Hash key((const void*)iter, seperator - iter);
       uintptr_t iter_ = ((uintptr_t)value + sizeof(Object));
       const uintptr_t end = iter_ + value->_len;
@@ -245,87 +243,70 @@ namespace sjson {
         value = ((Value*)iter_);
         if (!*seperator)
           return value;
-        break; }
+        break;
+      }
 
-      iter = next(next(seperator));
+      iter = next(seperator);
     }
 
     return nullptr;
   }
+} // sjson
+} // foundation
 
-  uint32_t Object::parse(
-    const Hash key,
+namespace foundation {
+namespace sjson {
+  Parser::Parser(
+    Allocator& allocator,
     void* blob,
-    uint32_t blob_len,
-    uint32_t blob_offset,
-    const char* sjson,
-    const jsmntok_t* token )
+    uint32_t blob_len
+  ) : _tokens(allocator, (size_t)0)
+    , _blob(blob)
+    , _blob_len(blob_len)
+    , _sjson(nullptr)
   {
-    if ((blob_offset + sizeof(Object)) > blob_len)
-      return 0;
-
-    Object* obj = new ((void*)((uintptr_t)blob + blob_offset)) Object(key);
-
-    for (int t = 0; t < (token->size - 1); t += 2) {
-      const jsmntok_t* key = &token[t + 1];
-      const jsmntok_t* value = &token[t + 2];
-
-      if (key->type != JSMN_PRIMITIVE)
-        return 0;
-
-      const uint32_t len = Token::parse(
-        Hash((void*)&sjson[key->start], key->end - key->start),
-        blob, blob_len, blob_offset + obj->_len, sjson, token, value);
-      
-      if (len == 0)
-        return 0;
-
-      obj->_len += len;
-    }
-
-    return obj->_len;
+    assert(blob != nullptr);
+    assert(blob_len > 0);
   }
 
-  Object* parse(
-    Allocator& allocator,
-    const char* sjson,
-    void* blob,
-    const uint32_t blob_len )
+  Parser::~Parser()
   {
-    if ((sjson == nullptr) || (blob == nullptr) || (blob_len == 0))
-      return nullptr;
+  }
 
-    size_t num_tokens = 1;
-    jsmntok_t* tokens = nullptr;
+  bool Parser::parse(
+    const char* sjson )
+  {
+    if (!sjson)
+      return false;
+    _sjson = sjson;
 
-    while (true) {
+    _tokens.resize(1);
+    while (_tokens.size() < 0xFFFFFFFFu) {
       jsmn_parser jp;
       jsmn_init(&jp);
 
-      tokens = (jsmntok_t*)allocator.realloc(
-        (void*)tokens, num_tokens * sizeof(jsmntok_t),
-        alignment_of<jsmntok_t>::value);
+      State state;
+      state.token = 0;
+      state.blob_offset = 0;
 
-      switch (jsmn_parse(&jp, sjson, tokens, num_tokens)) {
-        case JSMN_SUCCESS: {
-          const bool succesful = (Object::parse("", blob, blob_len, 0, sjson, &tokens[0]) > 0);
-          allocator.free((void*)tokens);
-          return succesful ? (Object*)blob : nullptr;
-        } break;
+      switch (jsmn_parse(&jp, sjson, &_tokens[0], _tokens.size())) {
+        case JSMN_ERROR_NOMEM:
+          _tokens.resize(_tokens.size() * 2);
+          break;
 
-        case JSMN_ERROR_NOMEM: {
-          num_tokens *= 2;
-        } break;
-
-        default: {
-          allocator.free((void*)tokens);
-          return nullptr;
-        } break;
+        case JSMN_SUCCESS:
+          if (Value::parse(nullptr, *this, state)) {
+            _tokens.resize(0);
+            return true; }
+        
+        default:
+          goto unsuccessful;
       }
     }
 
-    __builtin_unreachable();
-    return nullptr;
+  unsuccessful:
+    _tokens.resize(0);
+    return false;
   }
 } // sjson
 } // foundation
