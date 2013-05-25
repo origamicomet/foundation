@@ -53,7 +53,7 @@ namespace foundation {
         const Symbol& sym = (*iter).symbol;
         log("  %s", sym.name().raw());
         if (!sym.location().path().empty() && (sym.location().line() != Symbol::Location::line_information_unavailable))
-          log("    in `%s` on line %u", sym.name().raw(), sym.location().path().raw(), sym.location().line());
+          log("    in `%s` on line %u", sym.location().path().raw(), sym.location().line());
         log("");
       }
     }
