@@ -56,7 +56,8 @@ namespace sjson {
 
     public:
       bool parse(
-        const char* sjson );
+        const char* sjson,
+        size_t sjson_len = 0 );
 
     private:
       foundation::Array<jsmntok_t> _tokens;

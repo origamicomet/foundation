@@ -57,6 +57,7 @@ typedef struct {
  */
 typedef struct {
   unsigned int pos; /* offset in the JSON string */
+  int size; /* the number of characters in the JSON string */
   int toknext; /* next token to allocate */
   int toksuper; /* superior token node, e.g parent object or array */
 } jsmn_parser;
@@ -70,7 +71,7 @@ void jsmn_init(jsmn_parser *parser);
  * Run JSON parser. It parses a JSON data string into and array of tokens, each describing
  * a single JSON object.
  */
-jsmnerr_t jsmn_parse(jsmn_parser *parser, const char *js, 
+jsmnerr_t jsmn_parse(jsmn_parser *parser, const char *js, int js_len,
     jsmntok_t *tokens, unsigned int num_tokens);
 
 #if defined(__cplusplus)

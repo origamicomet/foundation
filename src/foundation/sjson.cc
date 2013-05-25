@@ -163,7 +163,7 @@ namespace sjson {
       new ((void*)((uintptr_t)parser._blob + state.blob_offset)) Array();
     array->_size = root.size;
     state.blob_offset += sizeof(Array);
-    
+
     for (int element = 0; element < root.size; ++element) {
       if (!Value::parse(array, parser, state))
         return false; }
@@ -225,7 +225,7 @@ namespace sjson {
     const Value* value = this;
     const char* iter = path;
     const char* const end = path + strlen(path);
-    
+
     while (iter) {
       const char* seperator = foundation::find(iter, ".");
       seperator = seperator ? seperator : end;
@@ -274,7 +274,8 @@ namespace sjson {
   }
 
   bool Parser::parse(
-    const char* sjson )
+    const char* sjson,
+    size_t sjson_len )
   {
     if (!sjson)
       return false;
@@ -289,7 +290,7 @@ namespace sjson {
       state.token = 0;
       state.blob_offset = 0;
 
-      switch (jsmn_parse(&jp, sjson, &_tokens[0], _tokens.size())) {
+      switch (jsmn_parse(&jp, sjson, sjson_len, &_tokens[0], _tokens.size())) {
         case JSMN_ERROR_NOMEM:
           _tokens.resize(_tokens.size() * 2);
           break;
@@ -298,7 +299,7 @@ namespace sjson {
           if (Value::parse(nullptr, *this, state)) {
             _tokens.resize(0);
             return true; }
-        
+
         default:
           goto unsuccessful;
       }
