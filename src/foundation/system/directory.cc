@@ -285,9 +285,8 @@ namespace foundation {
             continue;
           }
 
-          if (!recursively) {
-            entries += entry;
-            continue; }
+          if (!recursively)
+            continue;
 
           const size_t len_p = wcslen(pattern);
           const size_t len_rp = wcslen(&fd.cFileName[0]);
@@ -313,9 +312,8 @@ namespace foundation {
             return false;
 
           Allocators::scratch().free((void*)recursive_pattern);
-        }
-
-        entries += entry;
+        } else {
+          entries += entry; }
       } while (FindNextFileW(sh, &fd));
 
       FindClose(sh);
