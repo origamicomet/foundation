@@ -210,7 +210,7 @@ namespace foundation {
 
       T& operator[] ( const size_t idx )
       {
-        assert(idx < _reserved);
+        assert(idx <= _reserved);
         if (idx > _size)
           _size = idx;
         return _array[idx];
@@ -218,7 +218,7 @@ namespace foundation {
 
       const T& operator[] ( const size_t idx ) const
       {
-        assert(idx < _reserved);
+        assert(idx <= _reserved);
         if (idx > _size)
           _size = idx;
         return _array[idx];
