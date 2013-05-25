@@ -17,7 +17,8 @@
 namespace foundation {
   template <typename T, typename _Value>
   class FOUNDATION_EXPORT HashTable {
-    typedef Pair<T, _Value> Pair;
+    public:
+      typedef Pair<T, _Value> Pair;
 
     public:
       explicit HashTable(
@@ -106,7 +107,7 @@ namespace foundation {
 
     private:
       FOUNDATION_INLINE size_t load() const
-      { return (_load / (min(_ht.size(), (size_t)1) * 100)); }
+      { return (_load / (max(_ht.size(), (size_t)1) * 100)); }
 
       size_t probe(
         const Array<Pair>& ht,
@@ -122,8 +123,8 @@ namespace foundation {
 
       void grow()
       {
-        Array<Pair> ht(_ht.allocator(), min(_ht.size(), (size_t)1) * 2);
-        ht.resize(ht.size());
+        Array<Pair> ht(_ht.allocator());
+        ht.resize(max(_ht.size() * 2, (size_t)1));
 
         static const T empty;
         for (auto iter = _ht.begin(); iter != _ht.end(); ++iter) {
@@ -132,6 +133,13 @@ namespace foundation {
 
         _ht = ht;
       }
+
+    public:
+      FOUNDATION_INLINE Array<Pair>& raw()
+      { return _ht; }
+
+      FOUNDATION_INLINE const Array<Pair>& raw() const
+      { return _ht; }
 
     private:
       size_t _load;
