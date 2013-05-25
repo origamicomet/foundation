@@ -232,6 +232,22 @@ namespace foundation {
       return buf;
     }
 
+    bool read_in(
+      FILE* file,
+      void* buffer,
+      size_t num_bytes )
+    {
+      assert(file != nullptr);
+      uintptr_t iter = (uintptr_t)buffer;
+      while (num_bytes > 0) {
+        const size_t read = fread((void*)buffer, 1, num_bytes, file);
+        if (read == 0)
+          return false;
+        num_bytes -= read;
+        iter += read; }
+      return true;
+    }
+
     bool write_out(
       FILE* file,
       const void* buffer,

@@ -62,6 +62,12 @@ namespace foundation {
       Allocator& allocator,
       size_t* length = nullptr );
 
+    // Reads |num_bytes| from |file| completly into |buffer|.
+    extern FOUNDATION_EXPORT bool read_in(
+      FILE* file,
+      void* buffer,
+      size_t num_bytes );
+
     // Writes |num_bytes| from |buffer| completly out to |file|.
     extern FOUNDATION_EXPORT bool write_out(
       FILE* file,
