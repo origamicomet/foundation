@@ -31,7 +31,7 @@
 #if defined(FOUNDATION_COMPILER_MSVC)
   #define WIN32_LEAN_AND_MEAN
   #include <signal.h>
-  #include <windows.h>
+  #include <Windows.h>
   #include <intrin.h>
   #include <mmintrin.h>
   #include <xmmintrin.h>
@@ -185,7 +185,7 @@
 
     #define __builtin_cpuid( _CpuInfo, _InfoType ) \
       __builtin_trap()
-  #endif  
+  #endif
 #elif defined(FOUNDATION_COMPILER_CLANG) || defined(FOUNDATION_COMPILER_GCC) || defined(FOUNDATION_COMPILER_ICC)
   #include <mmintrin.h>
 

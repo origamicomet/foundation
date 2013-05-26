@@ -9,9 +9,9 @@
 
 #if defined(FOUNDATION_PLATFORM_WINDOWS)
   #define WIN32_LEAN_AND_MEAN
-  #include <windows.h>
+  #include <Windows.h>
 #elif defined(FOUNDATION_PLATFORM_POSIX)
-#endif 
+#endif
 
 namespace foundation {
   namespace File {

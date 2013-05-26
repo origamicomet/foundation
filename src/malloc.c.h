@@ -522,7 +522,7 @@ MAX_RELEASE_CHECK_RATE   default: 4095 unless not HAVE_MMAP
 #endif  /* WIN32 */
 #ifdef WIN32
 #define WIN32_LEAN_AND_MEAN
-#include <windows.h>
+#include <Windows.h>
 #include <tchar.h>
 #define HAVE_MMAP 1
 #define HAVE_MORECORE 0
@@ -3374,7 +3374,7 @@ static int init_mparams(void) {
         largepagesize = gethugepagesize_();
     }
 #else /* WIN32 */
-    { 
+    {
       GetLargePageMinimum_t GetLargePageMinimum_ = (GetLargePageMinimum_t) GetProcAddress(GetModuleHandle(__T("kernel32.dll")), "GetLargePageMinimum");
       if(GetLargePageMinimum_)
         largepagesize = GetLargePageMinimum_();

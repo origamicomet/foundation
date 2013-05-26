@@ -6,7 +6,7 @@
 
 #if defined(FOUNDATION_PLATFORM_WINDOWS)
   #define WIN32_LEAN_AND_MEAN
-  #include <windows.h>
+  #include <Windows.h>
   #include <process.h>
   #include <psapi.h>
 #elif defined(FOUNDATION_PLATFORM_POSIX)
