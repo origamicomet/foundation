@@ -63,13 +63,13 @@ namespace foundation {
 
         public:
           FOUNDATION_INLINE T& to_ref()
-          { return _array.to_ptr()[_idx]; }
+          { return _array.raw()[_idx]; }
 
           FOUNDATION_INLINE T& operator* ()
           { return to_ref(); }
 
           FOUNDATION_INLINE const T& to_ref() const
-          { return _array.to_ptr()[_idx]; }
+          { return _array.raw()[_idx]; }
 
           FOUNDATION_INLINE const T& operator* () const
           { return to_ref(); }
@@ -163,7 +163,7 @@ namespace foundation {
       {
         if (&array == this)
           return *this;
-        
+
         optimized_destruct<T>(_array, _size);
         _size = array._size;
         _reserved = array._reserved;
@@ -210,24 +210,24 @@ namespace foundation {
 
       T& operator[] ( const size_t idx )
       {
-        assert(idx <= _reserved);
-        if (idx > _size)
-          _size = idx;
+        assert((idx + 1) <= _reserved);
+        if ((idx + 1) > _size)
+          _size = idx + 1;
         return _array[idx];
       }
 
       const T& operator[] ( const size_t idx ) const
       {
-        assert(idx <= _reserved);
-        if (idx > _size)
-          _size = idx;
+        assert((idx + 1) <= _reserved);
+        if ((idx + 1) > _size)
+          _size = idx + 1;
         return _array[idx];
       }
 
     public:
       FOUNDATION_INLINE Allocator& allocator() const
       { return _allocator; }
-    
+
     public:
       FOUNDATION_INLINE size_t size() const
       { return _size; }
@@ -253,10 +253,10 @@ namespace foundation {
       }
 
     public:
-      FOUNDATION_EXPORT T* to_ptr()
+      FOUNDATION_EXPORT T* raw()
       { return _array; }
 
-      FOUNDATION_INLINE const T* to_ptr() const
+      FOUNDATION_INLINE const T* raw() const
       { return _array; }
 
     protected:
