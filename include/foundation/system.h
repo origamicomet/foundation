@@ -10,6 +10,7 @@
 //  * Services (aka daemons) managment;
 //  * Memory management;
 //  * Networking;
+//  * High resolution timers;
 //  * Shared libraries (dlopen, dlsym, etc.);
 //  * Capability queries (number of cores, supported instruction sets, etc);
 //  * Environment variables;
@@ -27,6 +28,7 @@
 #include <foundation/system/process.h>
 #include <foundation/system/service.h>
 #include <foundation/system/shared_library.h>
+#include <foundation/system/timer.h>
 // #include <foundation/system/network.h>
 
 namespace foundation {

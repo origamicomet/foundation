@@ -39,7 +39,7 @@ namespace foundation {
       { close(); }
     #elif defined(FOUNDATION_PLATFORM_POSIX)
     #endif
-      
+
     public:
       static bool open(
         const char* path,

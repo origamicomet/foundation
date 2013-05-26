@@ -35,7 +35,7 @@ namespace foundation {
       {}
     #elif defined(FOUNDATION_PLATFORM_POSIX)
     #endif
-      
+
     public:
       // Gets this process.
       static Process& current();
