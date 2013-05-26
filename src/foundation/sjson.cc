@@ -235,8 +235,8 @@ namespace sjson {
 
       const Hash key((const void*)iter, seperator - iter);
       uintptr_t iter_ = ((uintptr_t)value + sizeof(Object));
-      const uintptr_t end = iter_ + value->_len;
-      while (iter_ < end) {
+      const uintptr_t end_ = ((uintptr_t)value) + value->_len;
+      while (iter_ < end_) {
         if (((Value*)iter_)->_key != key) {
           iter_ += ((Value*)iter_)->_len;
           continue; }
@@ -277,9 +277,13 @@ namespace sjson {
     const char* sjson,
     size_t sjson_len )
   {
-    if (!sjson)
-      return false;
     _sjson = sjson;
+
+    if (!_sjson) {
+      if (sizeof(Object) > _blob_len)
+        return false;
+      new (_blob) Object();
+      return true; }
 
     _tokens.resize(1);
     while (_tokens.size() < 0xFFFFFFFFu) {

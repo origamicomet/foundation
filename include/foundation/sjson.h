@@ -277,6 +277,7 @@ namespace sjson {
 
     private:
       friend class Value;
+      friend class Parser;
 
     private:
       Object()
