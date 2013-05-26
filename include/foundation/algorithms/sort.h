@@ -31,7 +31,9 @@ namespace foundation {
     T* array,
     size_t array_len )
   {
-    qsort((const void*)array, array_len, sizeof(T), &__sort_comparator<T>);
+    if (array_len == 0)
+      return;
+    qsort((void*)array, array_len, sizeof(T), &__sort_comparator<T>);
   }
 } // foundation
 
