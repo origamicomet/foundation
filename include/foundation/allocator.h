@@ -121,8 +121,8 @@ namespace foundation {
 
 #define make_new( _Type, _Allocator ) \
   new ((_Allocator.alloc(sizeof(_Type), foundation::alignment_of<_Type>::value))) _Type
-  
+
 #define make_delete( _Type, _Allocator, _Instance ) \
-  do { _Instance->~_Type(); _Allocator.free((void*)_Instance); } while (0, 0)
+  do { (_Instance)->~_Type(); _Allocator.free((void*)(_Instance)); } while (0, 0)
 
 #endif // _FOUNDATION_ALLOCATOR_H_
