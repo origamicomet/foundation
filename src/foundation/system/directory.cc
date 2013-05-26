@@ -120,11 +120,11 @@ namespace foundation {
             (const void*)watched_dir->p.raw(),
             watched_dir->p.size() - 1);
 
-          path.raw()[watched_dir->p.size()] = '/';
+          path.raw()[watched_dir->p.size() - 1] = '/';
 
           WideCharToMultiByte(
-            CP_UTF8, 0, &notify->FileName[0], -1, &path.raw()[watched_dir->p.size() + 1], len, 0, 0);
-          
+            CP_UTF8, 0, &notify->FileName[0], -1, &path.raw()[watched_dir->p.size()], len, 0, 0);
+
           path.raw()[path.size() - 1] = '\0';
 
           Event event;
@@ -148,7 +148,7 @@ namespace foundation {
         } while (notify->NextEntryOffset != 0 && !watched_dir->s);
       }
 
-      if (!watched_dir->s)
+      if (watched_dir->s)
         return;
 
       ReadDirectoryChangesW(
@@ -179,7 +179,7 @@ namespace foundation {
         FILE_SHARE_READ | FILE_SHARE_WRITE,
         NULL,
         OPEN_EXISTING,
-        FILE_FLAG_BACKUP_SEMANTICS, /* Don't ask me. */
+        FILE_FLAG_OVERLAPPED | FILE_FLAG_BACKUP_SEMANTICS,
         NULL);
 
       if (sys_handle == INVALID_HANDLE_VALUE)
@@ -188,12 +188,13 @@ namespace foundation {
       HANDLE event = CreateEvent(NULL, TRUE, FALSE, NULL);
 
       Watched* watched_dir = make_new(Watched, Allocators::heap())();
-      zero((void*)watched_dir, sizeof(Watched));
       watched_dir->sh = sys_handle;
       watched_dir->oio.hEvent = event;
       watched_dir->p = path;
+      zero((void*)&watched_dir->fni[0], sizeof(8192));
       watched_dir->oeh = handler;
       watched_dir->oehc = closure;
+      watched_dir->s = false;
 
       static const bool successful = ReadDirectoryChangesW(
         watched_dir->sh, (void*)&watched_dir->fni[0], 8192,
@@ -255,7 +256,7 @@ namespace foundation {
 
       do {
         Entry entry;
-        
+
         /* entry.path = */ {
           const size_t offset = WideCharToMultiByte(
             CP_UTF8, 0, pattern, wcslen(pattern) - 2, &entry.path[0], 255, 0, 0);
@@ -329,7 +330,7 @@ namespace foundation {
       assert(path != nullptr);
     #if defined(FOUNDATION_PLATFORM_WINDOWS)
       wchar_t* pattern; {
-        const String pattern_ = String::format(Allocators::scratch(), "%s/**", path); 
+        const String pattern_ = String::format(Allocators::scratch(), "%s/**", path);
         const size_t len = MultiByteToWideChar(
           CP_UTF8, 0, pattern_.raw(), pattern_.size(), nullptr, 0);
         pattern = (wchar_t*)alloca(len * sizeof(wchar_t));
