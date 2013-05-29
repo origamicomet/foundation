@@ -14,7 +14,7 @@
 
 namespace foundation {
   template <typename _Key, typename _Value>
-  class FOUNDATION_EXPORT Pair {
+  struct FOUNDATION_EXPORT Pair {
     public:
       Pair(
         const _Key& key,
@@ -39,7 +39,7 @@ namespace foundation {
         value = pair.value;
         return *this;
       }
-    
+
     public:
       _Key key;
       _Value value;

@@ -234,7 +234,7 @@ namespace foundation {
 
       void resize( size_t size )
       {
-        if (size == _reserved) {
+        if ((size <= _reserved) && (size != 0)) {
           _size = size; return; }
         _size = _reserved = size;
         _array = (T*)_allocator.realloc(

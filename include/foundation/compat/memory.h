@@ -5,7 +5,7 @@
 #ifndef _FOUNDATION_COMPAT_MEMORY_H_
 #define _FOUNDATION_COMPAT_MEMORY_H_
 
-// Provides memory manipulation functions. 
+// Provides memory manipulation functions.
 
 #include <foundation/detect.h>
 
@@ -42,13 +42,23 @@ namespace foundation {
     memset(dest, b, num_bytes);
   }
 
-  FOUNDATION_INLINE void zero( 
+  FOUNDATION_INLINE void zero(
     void* dest,
     size_t num_bytes )
   {
     if ((dest == nullptr) || (num_bytes == 0))
       return;
     fill(dest, 0, num_bytes);
+  }
+
+  FOUNDATION_INLINE bool compare(
+    const void* a,
+    const void* b,
+    size_t num_bytes )
+  {
+    if ((a == nullptr) || (b == nullptr) || (num_bytes == 0))
+      return false;
+    return (memcmp(a, b, num_bytes) == 0);
   }
 
   // Moves a pointer up to align on |alignment| byte boundry.

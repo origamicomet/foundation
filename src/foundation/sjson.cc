@@ -235,7 +235,7 @@ namespace sjson {
 
       const Hash key((const void*)iter, seperator - iter);
       uintptr_t iter_ = ((uintptr_t)value + sizeof(Object));
-      const uintptr_t end_ = ((uintptr_t)value) + value->_len;
+      const uintptr_t end_ = ((uintptr_t)value + value->_len);
       while (iter_ < end_) {
         if (((Value*)iter_)->_key != key) {
           iter_ += ((Value*)iter_)->_len;

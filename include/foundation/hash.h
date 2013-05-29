@@ -14,83 +14,61 @@
 #include <foundation/string.h>
 
 namespace foundation {
-  template <typename T>
-  class FOUNDATION_EXPORT Hash abstract {
-    protected:
-      Hash()
-      {}
-
-      Hash(
-        const Hash& hash )
-      {}
-
-      virtual Hash& operator= (
-        const Hash& hash )
-      { (void)hash; return *this; }
-
-      virtual ~Hash()
-      {}
-
-    public:
-      FOUNDATION_INLINE bool operator== (
-        const Hash<T>& hash ) const
-      { return (((T)*this) == ((T)hash)); }
-
-      FOUNDATION_INLINE bool operator!= (
-        const Hash<T>& hash ) const
-      { return (((T)*this) != ((T)hash)); }
-
-      FOUNDATION_INLINE bool operator< (
-        const Hash<T>& hash ) const
-      { return (((T)*this) < ((T)hash)); }
-
-      FOUNDATION_INLINE bool operator> (
-        const Hash<T>& hash ) const
-      { return (((T)*this) > ((T)hash)); }
-
-    public:
-      virtual operator T() const = 0;
-  };
-
   template <typename T, T (*_Hash)( const void*, size_t, T )>
-  class FOUNDATION_EXPORT ImmutableHash final
-    : public Hash<T>
+  class FOUNDATION_EXPORT Hash final
   {
     public:
-      ImmutableHash()
+      Hash()
         : _hash(_Hash((const void*)"", 1, 0))
       {}
 
-      ImmutableHash(
+      Hash(
         const void* buffer,
         size_t buffer_len
       ) : _hash(_Hash(buffer, buffer_len, 0))
       {}
 
-      ImmutableHash(
+      Hash(
         const char* str
       ) : _hash(_Hash((const void*)str, str ? (strlen(str) + 1) : 0, 0))
       {}
 
-      ImmutableHash(
+      Hash(
         const String& str
       ) : _hash(_Hash((const void*)str.raw(), str.size(), 0))
       {}
 
-      ImmutableHash(
-        const ImmutableHash<T, _Hash>& hash
-      ) : _hash(hash._hash)
+      Hash(
+        const Hash<T, _Hash>& h
+      ) : _hash(h._hash)
       {}
 
-      ImmutableHash& operator= (
-        const ImmutableHash<T, _Hash>& hash )
+      Hash& operator= (
+        const Hash<T, _Hash>& h )
       {
-        _hash = hash._hash;
+        _hash = h._hash;
         return *this;
       }
 
     public:
-      operator T() const override
+      FOUNDATION_INLINE bool operator== (
+        const Hash<T, _Hash>& h ) const
+      { return (_hash == h._hash); }
+
+      FOUNDATION_INLINE bool operator!= (
+        const Hash<T, _Hash>& h ) const
+      { return (_hash != h._hash); }
+
+      FOUNDATION_INLINE bool operator< (
+        const Hash<T, _Hash>& h ) const
+      { return (_hash < h._hash); }
+
+      FOUNDATION_INLINE bool operator> (
+        const Hash<T, _Hash>& h ) const
+      { return (_hash > h._hash); }
+
+    public:
+      operator T() const
       { return _hash; }
 
     private:

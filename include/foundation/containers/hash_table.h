@@ -73,7 +73,7 @@ namespace foundation {
           const size_t idx_ = (idx + probe) % ht.size();
           if (ht[idx_].key == hash)
             return false;
-          if (ht[idx_].key == ((T)0)) {
+          if (ht[idx_].key == T()) {
             ++_load;
             ht[idx_].key = hash;
             ht[idx_].value = value;
@@ -100,7 +100,7 @@ namespace foundation {
         const size_t idx = probe(ht, hash);
         if (idx == ~((size_t)0))
           return;
-        ht[idx].key = ((T)0);
+        ht[idx].key = T();
         ht[idx].value.~_Value();
         --_load;
       }

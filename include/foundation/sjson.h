@@ -18,7 +18,7 @@
 
 namespace foundation {
 namespace sjson {
-  typedef ImmutableHash<uint32_t, murmur_hash> Hash;
+  typedef Hash<uint32_t, murmur_hash> Hash;
 
   class Value;
   class Nil;
