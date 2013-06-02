@@ -19,7 +19,7 @@ namespace foundation {
       case EXCEPTION_INVALID_INSTRUCTION:
         return "invalid or privledged instruction";
       case EXCEPTION_ABNORMAL_PROGRAM_TERMINATION:
-        return "abnormally terminating";
+        return "abnormal termination";
       case EXCEPTION_ERRONEOUS_ARITHMETIC_OPERATION:
         return "erroneous arithmetic operation";
       case EXCEPTION_MEMORY_ALLOCATION_FAILED:
