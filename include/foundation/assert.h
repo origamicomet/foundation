@@ -12,10 +12,14 @@
 #include <foundation/compat.h>
 #include <foundation/config.h>
 #include <foundation/logger.h>
+#include <foundation/die.h>
 
 #if defined(_DEBUG)
   #define assertf( _Condition, _Format, ... ) \
-    do { if (!(_Condition)) { foundation::log(_Format, ##__VA_ARGS__); raise(SIGABRT); } } while (0, 0)
+    do { if (!(_Condition)) { \
+      foundation::log(_Format, ##__VA_ARGS__); \
+      foundation::die(true); \
+    } } while (0, 0)
 #else
   #define assertf( _Condition, _Format, ... ) \
     do { (void)sizeof(_Condition); } while(0, 0)
@@ -33,7 +37,7 @@
     foundation::log("    in `%s` on line %u", __foundation_stringify(__FILE__), __LINE__); \
     foundation::log(""); \
     foundation::log(""); \
-    raise(SIGABRT); \
+    foundation::die(true); \
   } } while (0, 0)
 
 #endif // _FOUNDATION_ASSERT_H_

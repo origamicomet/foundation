@@ -14,6 +14,7 @@
 #include <foundation/containers.h>
 #include <foundation/debug.h>
 #include <foundation/detect.h>
+#include <foundation/die.h>
 #include <foundation/digest.h>
 #include <foundation/hash.h>
 #include <foundation/logger.h>
