@@ -113,6 +113,7 @@ namespace foundation {
         const Array<Pair>& ht,
         const T hash ) const
       {
+        if (hash == T()) return ~((size_t)0);
         const size_t idx = hash % ht.size();
         for (size_t probe = 0; probe < ht.size(); ++probe) {
           const size_t idx_ = (idx + probe) % ht.size();
