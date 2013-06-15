@@ -128,7 +128,7 @@ namespace foundation {
     #endif
     }
 
-    bool destroy(
+    bool remove(
       const char* path )
     {
     #if defined(FOUNDATION_PLATFORM_WINDOWS)
@@ -213,7 +213,7 @@ namespace foundation {
       return true;
     }
 
-    void* read_in(
+    void* read(
       FILE* file,
       Allocator& allocator,
       size_t* length )
@@ -232,7 +232,7 @@ namespace foundation {
       return buf;
     }
 
-    bool read_in(
+    bool read(
       FILE* file,
       void* buffer,
       size_t num_bytes )
@@ -248,7 +248,7 @@ namespace foundation {
       return true;
     }
 
-    bool write_out(
+    bool write(
       FILE* file,
       const void* buffer,
       size_t num_bytes )

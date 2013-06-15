@@ -19,15 +19,15 @@
 
 namespace foundation {
   namespace Directory {
+    extern FOUNDATION_EXPORT bool exists(
+      const char* path );
+
     extern FOUNDATION_EXPORT bool create(
       const char* path );
 
-    extern FOUNDATION_EXPORT bool destroy(
+    extern FOUNDATION_EXPORT bool remove(
       const char* path,
       bool recursively = false );
-
-    extern FOUNDATION_EXPORT bool exists(
-      const char* path );
 
     enum Event {
       CREATED   = 1,

@@ -36,7 +36,7 @@ namespace foundation {
       const char* mode );
 
     // Destroys |file| if it exists.
-    extern FOUNDATION_EXPORT bool destroy(
+    extern FOUNDATION_EXPORT bool remove(
       const char* file );
 
     // Moves |src| to |dest| if it exists.
@@ -57,19 +57,19 @@ namespace foundation {
       size_t chunk_size = 4096 );
 
     // Reads |file| in to a buffer allocated using |allocator|.
-    extern FOUNDATION_EXPORT void* read_in(
+    extern FOUNDATION_EXPORT void* read(
       FILE* file,
       Allocator& allocator,
       size_t* length = nullptr );
 
     // Reads |num_bytes| from |file| completly into |buffer|.
-    extern FOUNDATION_EXPORT bool read_in(
+    extern FOUNDATION_EXPORT bool read(
       FILE* file,
       void* buffer,
       size_t num_bytes );
 
     // Writes |num_bytes| from |buffer| completly out to |file|.
-    extern FOUNDATION_EXPORT bool write_out(
+    extern FOUNDATION_EXPORT bool write(
       FILE* file,
       const void* buffer,
       size_t num_bytes );

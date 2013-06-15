@@ -13,6 +13,25 @@
 
 namespace foundation {
   namespace Directory {
+    bool exists(
+      const char* path )
+    {
+      assert(path != nullptr);
+    #if defined(FOUNDATION_PLATFORM_WINDOWS)
+      wchar_t* native_path; {
+        const size_t len = MultiByteToWideChar(
+          CP_UTF8, 0, path, -1, nullptr, 0);
+        native_path = (wchar_t*)alloca(len * sizeof(wchar_t));
+        MultiByteToWideChar(
+          CP_UTF8, 0, path, -1, native_path, len);
+      }
+
+      const DWORD attrib = GetFileAttributesW(native_path);
+      return ((attrib != INVALID_FILE_ATTRIBUTES) && (attrib & FILE_ATTRIBUTE_DIRECTORY));
+    #elif defined(FOUNDATION_PLATFORM_POSIX)
+    #endif
+    }
+
     bool create(
       const char* path )
     {
@@ -31,7 +50,7 @@ namespace foundation {
     #endif
     }
 
-    bool destroy(
+    bool remove(
       const char* path,
       bool recursively )
     {
@@ -62,25 +81,6 @@ namespace foundation {
         L"" };
 
       return (SHFileOperationW(&op) == 0);
-    #elif defined(FOUNDATION_PLATFORM_POSIX)
-    #endif
-    }
-
-    bool exists(
-      const char* path )
-    {
-      assert(path != nullptr);
-    #if defined(FOUNDATION_PLATFORM_WINDOWS)
-      wchar_t* native_path; {
-        const size_t len = MultiByteToWideChar(
-          CP_UTF8, 0, path, -1, nullptr, 0);
-        native_path = (wchar_t*)alloca(len * sizeof(wchar_t));
-        MultiByteToWideChar(
-          CP_UTF8, 0, path, -1, native_path, len);
-      }
-
-      const DWORD attrib = GetFileAttributesW(native_path);
-      return ((attrib != INVALID_FILE_ATTRIBUTES) && (attrib & FILE_ATTRIBUTE_DIRECTORY));
     #elif defined(FOUNDATION_PLATFORM_POSIX)
     #endif
     }
