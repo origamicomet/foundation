@@ -135,9 +135,9 @@
 
   namespace foundation {
     static __forceinline uint32_t __builtin_clz( uint32_t x ) {
-      uint32_t r = 0;
-      _BitScanForward((unsigned long*)&r, x);
-      return r;
+      unsigned long r = 0;
+      _BitScanReverse(&r, x);
+      return (32 - r);
     }
   } // foundation
 
@@ -146,8 +146,8 @@
 
   namespace foundation {
     static __forceinline uint32_t __builtin_ctz( uint32_t x ) {
-      uint32_t r = 0;
-      _BitScanReverse((unsigned long*)&r, x);
+      unsigned long r = 0;
+      _BitScanForward(&r, x);
       return r;
     }
   } // foundation
