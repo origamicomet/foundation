@@ -286,7 +286,7 @@ namespace foundation {
           const FILETIME ft = fd.ftLastWriteTime;
           const uint64_t epoch =
             (((uint64_t)ft.dwHighDateTime) << 32) | ((uint64_t)ft.dwLowDateTime);
-          entry.last_modified = (time_t)epoch / 10000000LL - 11644473600LL;
+          entry.last_modified = (time_t)(epoch / 10000000LL - 11644473600LL);
         }
 
         if (fd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) {

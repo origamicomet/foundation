@@ -41,7 +41,7 @@ namespace foundation {
       const char* path );
 
     struct Watched;
-    
+
     extern FOUNDATION_EXPORT Watched* watch(
       const char* path,
       OnEventHandler handler,
