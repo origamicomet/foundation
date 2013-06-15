@@ -44,7 +44,8 @@ namespace foundation {
         const T hash,
         const _Value& value )
       {
-        if ((load() >= 70) || (_ht.size() == 0))
+        const size_t load = (_load / (max(_ht.size(), (size_t)1) * 100));
+        if ((load >= 70) || (_ht.size() == 0))
           grow();
         return insert(_ht, hash, value);
       }
@@ -76,7 +77,7 @@ namespace foundation {
           if (ht[idx_].key == T()) {
             ++_load;
             ht[idx_].key = hash;
-            ht[idx_].value = value;
+            new ((void*)&ht[idx_].value) _Value(value);
             return true; }}
         return false;
       }
@@ -106,9 +107,6 @@ namespace foundation {
       }
 
     private:
-      FOUNDATION_INLINE size_t load() const
-      { return (_load / (max(_ht.size(), (size_t)1) * 100)); }
-
       size_t probe(
         const Array<Pair>& ht,
         const T hash ) const
@@ -118,7 +116,9 @@ namespace foundation {
         for (size_t probe = 0; probe < ht.size(); ++probe) {
           const size_t idx_ = (idx + probe) % ht.size();
           if (ht[idx_].key == hash)
-            return idx_; }
+            return idx_;
+          if (ht[idx_].key == T())
+            return ~((size_t)0); }
         return ~((size_t)0);
       }
 
@@ -136,6 +136,9 @@ namespace foundation {
       }
 
     public:
+      FOUNDATION_INLINE size_t load() const
+      { return _load; }
+
       FOUNDATION_INLINE Array<Pair>& raw()
       { return _ht; }
 

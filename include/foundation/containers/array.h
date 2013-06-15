@@ -14,6 +14,7 @@
 #include <foundation/allocator.h>
 #include <foundation/algorithms/limit.h>
 #include <foundation/algorithms/optimized_copy.h>
+#include <foundation/algorithms/optimized_construct.h>
 #include <foundation/algorithms/optimized_destruct.h>
 
 namespace foundation {
@@ -211,16 +212,18 @@ namespace foundation {
       T& operator[] ( const size_t idx )
       {
         assert((idx + 1) <= _reserved);
-        if ((idx + 1) > _size)
-          _size = idx + 1;
+        if ((idx + 1) > _size) {
+          optimized_construct<T>(&_array[_size], (idx + 1) - _size);
+          _size = idx + 1; }
         return _array[idx];
       }
 
       const T& operator[] ( const size_t idx ) const
       {
         assert((idx + 1) <= _reserved);
-        if ((idx + 1) > _size)
-          _size = idx + 1;
+        if ((idx + 1) > _size) {
+          optimized_construct<T>(&_array[_size], (idx + 1) - _size);
+          _size = idx + 1; }
         return _array[idx];
       }
 
@@ -235,7 +238,10 @@ namespace foundation {
       void resize( size_t size )
       {
         if ((size <= _reserved) && (size != 0)) {
-          _size = size; return; }
+          optimized_construct<T>(&_array[_size], size - _size);
+          _size = size;
+          return; }
+        optimized_construct<T>(&_array[_size], size - _size);
         _size = _reserved = size;
         _array = (T*)_allocator.realloc(
           (void*)_array, size * sizeof(T), alignment_of<T>::value);
