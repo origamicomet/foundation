@@ -221,7 +221,7 @@ namespace foundation {
   ) : _raw(allocator, max_iter._idx - min_iter._idx + ((max_iter._idx == max_iter._str._raw.size()) ? 0 : 1))
   {
     _raw.resize(_raw.reserved());
-    copy((void*)&_raw[0], (const void*)&min_iter._str._raw[min_iter._idx], _raw.size());
+    copy((void*)_raw.raw(), (const void*)&min_iter._str._raw[min_iter._idx], _raw.size());
     _raw[_raw.size() - 1] = '\0';
   }
 
@@ -229,7 +229,7 @@ namespace foundation {
     const char* str )
   {
     _raw.resize(strlen(str) + 1);
-    copy((void*)&_raw[0], (const void*)str, _raw.size());
+    copy((void*)_raw.raw(), (const void*)str, _raw.size());
     return *this;
   }
 
@@ -237,7 +237,7 @@ namespace foundation {
     const String& str )
   {
     _raw.resize(str.size());
-    copy((void*)&_raw[0], (const void*)&str._raw[0], _raw.size());
+    copy((void*)_raw.raw(), (const void*)str._raw.raw(), _raw.size());
     return *this;
   }
 
@@ -377,7 +377,7 @@ namespace foundation {
         str_._raw.resize(str_._raw.size() - diff); }
       copy((void*)&str_._raw[offset._idx], (const void*)&with._raw[0], len_w);
       offset = str_.find(needle, ++offset); }
-      
+
     return str_;
   }
 

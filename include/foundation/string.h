@@ -187,10 +187,10 @@ namespace foundation {
 
     public:
       FOUNDATION_INLINE char* raw()
-      { return &_raw[0]; }
+      { return _raw.raw(); }
 
       FOUNDATION_INLINE const char* raw() const
-      { return &_raw[0]; }
+      { return _raw.raw(); }
 
     protected:
       Array<char> _raw;
