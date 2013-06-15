@@ -7,6 +7,7 @@
 #if defined(FOUNDATION_PLATFORM_WINDOWS)
   #define WIN32_LEAN_AND_MEAN
   #include <Windows.h>
+  #include <ShellAPI.h>
 #elif defined(FOUNDATION_PLATFORM_POSIX)
 #endif
 
@@ -31,19 +32,36 @@ namespace foundation {
     }
 
     bool destroy(
-      const char* path )
+      const char* path,
+      bool recursively )
     {
       assert(path != nullptr);
     #if defined(FOUNDATION_PLATFORM_WINDOWS)
       wchar_t* native_path; {
         const size_t len = MultiByteToWideChar(
           CP_UTF8, 0, path, -1, nullptr, 0);
-        native_path = (wchar_t*)alloca(len * sizeof(wchar_t));
+        native_path = (wchar_t*)alloca((len + 1) * sizeof(wchar_t));
+        zero((void*)native_path, (len + 1) * sizeof(wchar_t));
         MultiByteToWideChar(
           CP_UTF8, 0, path, -1, native_path, len);
       }
 
-      return (RemoveDirectoryW(native_path) != FALSE);
+      if (!recursively)
+        return (RemoveDirectoryW(native_path) != FALSE);
+
+      SHFILEOPSTRUCTW op = {
+        NULL,
+        FO_DELETE,
+        native_path,
+        L"",
+        FOF_NOCONFIRMATION |
+        FOF_NOERRORUI |
+        FOF_SILENT,
+        false,
+        0,
+        L"" };
+
+      return (SHFileOperationW(&op) == 0);
     #elif defined(FOUNDATION_PLATFORM_POSIX)
     #endif
     }

@@ -23,7 +23,8 @@ namespace foundation {
       const char* path );
 
     extern FOUNDATION_EXPORT bool destroy(
-      const char* path );
+      const char* path,
+      bool recursively = false );
 
     extern FOUNDATION_EXPORT bool exists(
       const char* path );
