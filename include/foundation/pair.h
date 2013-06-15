@@ -16,6 +16,9 @@ namespace foundation {
   template <typename _Key, typename _Value>
   struct FOUNDATION_EXPORT Pair {
     public:
+      Pair()
+      {}
+
       Pair(
         const _Key& key,
         const _Value& value
