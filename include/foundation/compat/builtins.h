@@ -88,6 +88,28 @@
     { return (_InterlockedCompareExchange((volatile long*)ptr, (long)swap, (long)compare) == compare); }
     static __forceinline int32_t __sync_val_compare_and_swap( volatile int32_t* ptr, int32_t compare, int32_t swap )
     { return _InterlockedCompareExchange((volatile long*)ptr, (long)swap, (long)compare); }
+    #pragma intrinsic(_InterlockedCompareExchange64)
+    static __forceinline bool __sync_bool_compare_and_swap( volatile int64_t* ptr, int64_t compare, int64_t swap )
+    { return (_InterlockedCompareExchange64((volatile __int64*)ptr, (__int64)swap, (__int64)compare) == compare); }
+    static __forceinline int64_t __sync_val_compare_and_swap( volatile int64_t* ptr, int64_t compare, int64_t swap )
+    { return _InterlockedCompareExchange64((volatile __int64*)ptr, (__int64)swap, (__int64)compare); }
+
+    template <size_t _Size> bool __sync_bool_compare_and_swap__ptr( volatile void**, void*, void* );
+    template <> static __forceinline bool __sync_bool_compare_and_swap__ptr<4>( volatile void** ptr, void* compare, void* swap )
+    { return (_InterlockedCompareExchange((volatile long*)ptr, (long)swap, (long)compare) == (long)compare); }
+    template <> static __forceinline bool __sync_bool_compare_and_swap__ptr<8>( volatile void** ptr, void* compare, void* swap )
+    { return (_InterlockedCompareExchange64((volatile __int64*)ptr, (__int64)swap, (__int64)compare) == (long)compare); }
+    static __forceinline bool __sync_bool_compare_and_swap( volatile void** ptr, void* compare, void* swap )
+    { return __sync_bool_compare_and_swap__ptr<sizeof(void*)>(ptr, compare, swap); }
+
+    template <size_t _Size>
+    void* __sync_val_compare_and_swap__ptr( volatile void**, void*, void* );
+    template <> static __forceinline void* __sync_val_compare_and_swap__ptr<4>( volatile void** ptr, void* compare, void* swap )
+    { return (void*)_InterlockedCompareExchange((volatile long*)ptr, (long)swap, (long)compare); }
+    template <> static __forceinline void* __sync_val_compare_and_swap__ptr<8>( volatile void** ptr, void* compare, void* swap )
+    { return (void*)_InterlockedCompareExchange64((volatile __int64*)ptr, (__int64)swap, (__int64)compare); }
+    static __forceinline void* __sync_val_compare_and_swap( volatile void** ptr, void* compare, void* swap )
+    { return __sync_val_compare_and_swap__ptr<sizeof(void*)>(ptr, compare, swap); }
   }
 
   #define __sync_bool_compare_and_swap( _Pointer, _Compare, _Swap ) \
