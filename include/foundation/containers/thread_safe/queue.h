@@ -82,7 +82,7 @@ namespace thread_safe {
         _mutex.lock();
         // if (_queue < _dequeue)
         //   _dequeue = _dequeue % _size;
-        if ((_dequeue - _queue) == _size)
+        while ((_dequeue - _queue) == _size)
           while (!_has_room.wait(_mutex));
         _ring_buffer[(_queue++) % _size] = value;
         _has_element.signal();
@@ -93,7 +93,7 @@ namespace thread_safe {
         T& value )
       {
         _mutex.lock();
-        if ((_dequeue - _queue) == 0)
+        while ((_dequeue - _queue) == 0)
           while (!_has_element.wait(_mutex));
         value = _ring_buffer[(_dequeue++) % _size];
         _has_room.signal();
