@@ -12,6 +12,7 @@ preload src/foundation/detect
 preload src/foundation/digest
 preload src/foundation/system
 preload src/foundation/system/concurrency
+preload src/foundation/thread_safe
 
 OBJS = src/*.o
 OBJS += src/foundation/*.o
@@ -25,6 +26,7 @@ OBJS += src/foundation/detect/*.o
 OBJS += src/foundation/digest/*.o
 OBJS += src/foundation/system/*.o
 OBJS += src/foundation/system/concurrency/*.o
+OBJS += src/foundation/thread_safe/*.o
 
 ifeq (@(FOUNDATION_BUILD),debug)
 SUFFIX = -dbg

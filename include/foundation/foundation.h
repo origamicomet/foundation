@@ -22,5 +22,6 @@
 #include <foundation/pointers.h>
 #include <foundation/sjson.h>
 #include <foundation/system.h>
+#include <foundation/thread_safe.h>
 
 #endif // _FOUNDATION_H_
