@@ -10,9 +10,18 @@
 
 #if defined(FOUNDATION_TRACK_MEMORY_USAGE)
   namespace foundation {
-    Mutex& Allocator::_Statistics::mutex() {
+    static Mutex& __mutex_initializer() {
       static Mutex mutex;
-      return mutex; }
+      return mutex;
+    }
+
+    static const thread_safe::Static< Mutex >
+      __ts_mutex(&__mutex_initializer);
+
+    Mutex& Allocator::_Statistics::mutex() {
+      return __ts_mutex();
+    }
+
     Allocator* Allocator::_Statistics::head = nullptr;
     Allocator* Allocator::_Statistics::tail = nullptr;
   } // foundation
