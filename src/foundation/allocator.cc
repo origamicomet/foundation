@@ -6,6 +6,7 @@
 
 #include <foundation/assert.h>
 #include <foundation/allocators/proxy.h>
+#include <foundation/thread_safe/static.h>
 
 #if defined(FOUNDATION_TRACK_MEMORY_USAGE)
   namespace foundation {
@@ -122,14 +123,28 @@ namespace foundation {
 
 namespace foundation {
   namespace Allocators {
-    Allocator& heap() {
+    static Allocator& __heap_initializer() {
       static HeapAllocator heap;
       return heap;
     }
 
-    Allocator& scratch() {
+    static const thread_safe::Static< Allocator >
+      __ts_heap(&__heap_initializer);
+
+    Allocator& heap() {
+      return __ts_heap();
+    }
+
+    static Allocator& __scratch_initializer() {
       static ProxyAllocator scratch("scratch", heap());
       return scratch;
+    }
+
+    static const thread_safe::Static< Allocator >
+      __ts_scratch(&__scratch_initializer);
+
+    Allocator& scratch() {
+      return __ts_scratch();
     }
 
     void for_each(
