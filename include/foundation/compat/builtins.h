@@ -42,6 +42,18 @@
     { return _InterlockedExchangeAdd((volatile long*)ptr, (long)val); }
     static __forceinline int32_t __sync_fetch_and_sub( volatile int32_t* ptr, int32_t val )
     { return _InterlockedExchangeAdd((volatile long*)ptr, (long)-val); }
+  #if defined(FOUNDATION_ARCHITECTURE_X86_64)
+    #pragma intrinsic(_InterlockedExchangeAdd64)
+    static __forceinline int64_t __sync_fetch_and_add( volatile int64_t* ptr, int64_t val )
+    { return _InterlockedExchangeAdd64((volatile __int64*)ptr, (__int64)val); }
+    static __forceinline int64_t __sync_fetch_and_sub( volatile int64_t* ptr, int64_t val )
+    { return _InterlockedExchangeAdd64((volatile __int64*)ptr, (__int64)-val); }
+  #elif defined(FOUNDATION_ARCHITECTURE_X86)
+    static __forceinline int64_t __sync_fetch_and_add( volatile int64_t* ptr, int64_t val )
+    { return InterlockedExchangeAdd64((volatile __int64*)ptr, (__int64)val); }
+    static __forceinline int64_t __sync_fetch_and_sub( volatile int64_t* ptr, int64_t val )
+    { return InterlockedExchangeAdd64((volatile __int64*)ptr, (__int64)-val); }
+  #endif
   }
 
   #define __sync_fetch_and_add( _Pointer, _Value ) \
