@@ -47,7 +47,7 @@ namespace foundation {
           if (num_bytes == 0)
             return nullptr;
         #if defined(FOUNDATION_TRACK_MEMORY_USAGE)
-          _num_of_allocs += 1;
+          __sync_fetch_and_add(&_num_of_allocs, 1);
         #endif
           return nedmalloc2(num_bytes, alignment, 0);
         }
@@ -62,7 +62,7 @@ namespace foundation {
           if (num_bytes == 0)
             { free(ptr); return nullptr; }
         #if defined(FOUNDATION_TRACK_MEMORY_USAGE)
-          _num_of_reallocs += 1;
+          __sync_fetch_and_add(&_num_of_reallocs, 1);
         #endif
           return nedrealloc2(ptr, num_bytes, alignment, 0);
         }
@@ -73,49 +73,49 @@ namespace foundation {
           if (!ptr)
             return;
         #if defined(FOUNDATION_TRACK_MEMORY_USAGE)
-          _num_of_frees += 1;
+          __sync_fetch_and_add(&_num_of_frees, 1);
         #endif
           nedfree2(ptr, 0);
         }
 
       public:
       #if defined(FOUNDATION_TRACK_MEMORY_USAGE)
-        uint64_t memory_usage() override
+        int64_t memory_usage() override
         { return nedmalloc_footprint(); }
 
         bool memory_usage_counts_towards_total() override
         { return true; }
 
-        uint64_t num_of_allocations() override
+        int64_t num_of_allocations() override
         { return _num_of_allocs; }
 
-        uint64_t num_of_reallocations() override
+        int64_t num_of_reallocations() override
         { return _num_of_reallocs; }
 
-        uint64_t num_of_frees() override
+        int64_t num_of_frees() override
         { return _num_of_frees; }
       #else
-        uint64_t memory_usage() override
+        int64_t memory_usage() override
         { return Allocator::invalid_memory_usage; }
 
         bool memory_usage_counts_towards_total() override
         { return true; }
 
-        uint64_t num_of_allocations() override
+        int64_t num_of_allocations() override
         { return 0; }
 
-        uint64_t num_of_reallocations() override
+        int64_t num_of_reallocations() override
         { return 0; }
 
-        uint64_t num_of_frees() override
+        int64_t num_of_frees() override
         { return 0; }
       #endif
 
       private:
       #if defined(FOUNDATION_TRACK_MEMORY_USAGE)
-        uint64_t _num_of_allocs;
-        uint64_t _num_of_reallocs;
-        uint64_t _num_of_frees;
+        int64_t _num_of_allocs;
+        int64_t _num_of_reallocs;
+        int64_t _num_of_frees;
       #endif
     };
   }
@@ -180,13 +180,13 @@ namespace foundation {
         return true;
       if (!allocator->memory_usage_counts_towards_total())
         return true;
-      *((uint64_t*)closure) += allocator->memory_usage();
+      *((int64_t*)closure) += allocator->memory_usage();
       return true;
     }
 
-    uint64_t memory_usage()
+    int64_t memory_usage()
     {
-      uint64_t mem_usage = 0;
+      int64_t mem_usage = 0;
       for_each(&__memory_usage_for_each, (void*)&mem_usage);
       return mem_usage;
     }
@@ -195,13 +195,13 @@ namespace foundation {
       Allocator* allocator, void* closure )
     {
       assert(allocator != nullptr);
-      *((uint64_t*)closure) += allocator->num_of_allocations();
+      *((int64_t*)closure) += allocator->num_of_allocations();
       return true;
     }
 
-    uint64_t num_of_allocations()
+    int64_t num_of_allocations()
     {
-      uint64_t num_of_allocs = 0;
+      int64_t num_of_allocs = 0;
       for_each(&__num_of_allocations_for_each, (void*)&num_of_allocs);
       return num_of_allocs;
     }
@@ -210,13 +210,13 @@ namespace foundation {
       Allocator* allocator, void* closure )
     {
       assert(allocator != nullptr);
-      *((uint64_t*)closure) += allocator->num_of_reallocations();
+      *((int64_t*)closure) += allocator->num_of_reallocations();
       return true;
     }
 
-    uint64_t num_of_reallocations()
+    int64_t num_of_reallocations()
     {
-      uint64_t num_of_reallocs = 0;
+      int64_t num_of_reallocs = 0;
       for_each(&__num_of_reallocations_for_each, (void*)&num_of_reallocs);
       return num_of_reallocs;
     }
@@ -225,13 +225,13 @@ namespace foundation {
       Allocator* allocator, void* closure )
     {
       assert(allocator != nullptr);
-      *((uint64_t*)closure) += allocator->num_of_frees();
+      *((int64_t*)closure) += allocator->num_of_frees();
       return true;
     }
 
-    uint64_t num_of_frees()
+    int64_t num_of_frees()
     {
-      uint64_t num_of_frees = 0;
+      int64_t num_of_frees = 0;
       for_each(&__num_of_frees_for_each, (void*)&num_of_frees);
       return num_of_frees;
     }

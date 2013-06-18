@@ -32,16 +32,16 @@ namespace foundation {
       void* closure = nullptr );
 
     // Returns the total number of actively used bytes, across all allocators.
-    extern FOUNDATION_EXPORT uint64_t memory_usage();
+    extern FOUNDATION_EXPORT int64_t memory_usage();
 
     // Returns the total number of allocations, across all allocators.
-    extern FOUNDATION_EXPORT uint64_t num_of_allocations();
+    extern FOUNDATION_EXPORT int64_t num_of_allocations();
 
     // Returns the total number of reallocations, across all allocators.
-    extern FOUNDATION_EXPORT uint64_t num_of_reallocations();
+    extern FOUNDATION_EXPORT int64_t num_of_reallocations();
 
     // Returns the total number of frees, across all allocators.
-    extern FOUNDATION_EXPORT uint64_t num_of_frees();
+    extern FOUNDATION_EXPORT int64_t num_of_frees();
   } // Allocators
 } // foundation
 
@@ -84,7 +84,7 @@ namespace foundation {
 
     public:
       // Returns the total number of actively used bytes.
-      virtual uint64_t memory_usage() = 0;
+      virtual int64_t memory_usage() = 0;
 
       // Determines if this allocator's memory usage contributes toward the
       // total memory usage that Allocators::memory_usage() determines.
@@ -92,16 +92,16 @@ namespace foundation {
 
       // Returned by Allocator::memory_usage to indicate memory usage statistics
       // are not available.
-      static const uint64_t invalid_memory_usage = 0xFFFFFFFFFFFFFFFFull;
+      static const int64_t invalid_memory_usage = -1ll;
 
       // Returns the total number of allocations.
-      virtual uint64_t num_of_allocations() = 0;
+      virtual int64_t num_of_allocations() = 0;
 
       // Returns the total number of reallocations.
-      virtual uint64_t num_of_reallocations() = 0;
+      virtual int64_t num_of_reallocations() = 0;
 
       // Returns the total number of frees.
-      virtual uint64_t num_of_frees() = 0;
+      virtual int64_t num_of_frees() = 0;
 
     private:
     #if defined(FOUNDATION_TRACK_MEMORY_USAGE)

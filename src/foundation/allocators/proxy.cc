@@ -28,7 +28,7 @@ namespace foundation {
     if (num_bytes == 0)
       return nullptr;
   #if defined(FOUNDATION_TRACK_MEMORY_USAGE)
-    _num_of_allocs += 1;
+    __sync_fetch_and_add(&_num_of_allocs, 1);
   #endif
     return _to.alloc(num_bytes, alignment);
   }
@@ -40,11 +40,11 @@ namespace foundation {
   {
   #if defined(FOUNDATION_TRACK_MEMORY_USAGE)
     if (!ptr)
-      _num_of_allocs += 1;
+      __sync_fetch_and_add(&_num_of_allocs, 1);
     else if (num_bytes == 0)
-      _num_of_frees += 1;
+      __sync_fetch_and_add(&_num_of_frees, 1);
     else
-      _num_of_reallocs += 1;
+      __sync_fetch_and_add(&_num_of_reallocs, 1);
   #endif
     return _to.realloc(ptr, num_bytes, alignment);
   }
@@ -54,12 +54,12 @@ namespace foundation {
   {
   #if defined(FOUNDATION_TRACK_MEMORY_USAGE)
     if (ptr)
-      _num_of_frees += 1;
+      __sync_fetch_and_add(&_num_of_frees, 1);
   #endif
     _to.free(ptr);
   }
 
-  uint64_t ProxyAllocator::memory_usage()
+  int64_t ProxyAllocator::memory_usage()
   {
   #if defined(FOUNDATION_TRACK_MEMORY_USAGE)
     return Allocator::invalid_memory_usage;
@@ -73,7 +73,7 @@ namespace foundation {
     return true;
   }
 
-  uint64_t ProxyAllocator::num_of_allocations()
+  int64_t ProxyAllocator::num_of_allocations()
   {
   #if defined(FOUNDATION_TRACK_MEMORY_USAGE)
     return _num_of_allocs;
@@ -82,7 +82,7 @@ namespace foundation {
   #endif
   }
 
-  uint64_t ProxyAllocator::num_of_reallocations()
+  int64_t ProxyAllocator::num_of_reallocations()
   {
   #if defined(FOUNDATION_TRACK_MEMORY_USAGE)
     return _num_of_reallocs;
@@ -91,7 +91,7 @@ namespace foundation {
   #endif
   }
 
-  uint64_t ProxyAllocator::num_of_frees()
+  int64_t ProxyAllocator::num_of_frees()
   {
   #if defined(FOUNDATION_TRACK_MEMORY_USAGE)
     return _num_of_frees;

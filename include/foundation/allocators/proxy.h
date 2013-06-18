@@ -39,20 +39,20 @@ namespace foundation {
         void* ptr ) override;
 
     public:
-      uint64_t memory_usage() override;
+      int64_t memory_usage() override;
       bool memory_usage_counts_towards_total() override;
-      uint64_t num_of_allocations() override;
-      uint64_t num_of_reallocations() override;
-      uint64_t num_of_frees() override;
+      int64_t num_of_allocations() override;
+      int64_t num_of_reallocations() override;
+      int64_t num_of_frees() override;
 
     private:
       Allocator& _to;
 
     private:
     #if defined(FOUNDATION_TRACK_MEMORY_USAGE)
-      uint64_t _num_of_allocs;
-      uint64_t _num_of_reallocs;
-      uint64_t _num_of_frees;
+      int64_t _num_of_allocs;
+      int64_t _num_of_reallocs;
+      int64_t _num_of_frees;
     #endif
   };
 } // foundation
