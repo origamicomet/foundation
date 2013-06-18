@@ -4,6 +4,8 @@
 
 #include <foundation/system/concurrency/thread.h>
 
+#include <foundation/allocator.h>
+
 #if defined(FOUNDATION_PLATFORM_WINDOWS)
   #if defined(FOUNDATION_COMPILER_MSVC)
     #include <process.h>
@@ -15,10 +17,12 @@
   #if defined(FOUNDATION_COMPILER_MSVC)
     namespace foundation {
       unsigned __stdcall Thread::__stub(
-        void* thread )
+        void* copy )
       {
-        Thread& thread_ = *((Thread*)thread);
-        _endthreadex((unsigned)thread_._entry_point(thread_, thread_._closure));
+        Thread::Copy* copy_ = ((Thread::Copy*)copy);
+        Thread::Copy copy__ = *copy_;
+        make_delete(Copy, Allocators::heap(), copy_);
+        _endthreadex((unsigned)copy__.entry_point(copy__.closure));
         __builtin_unreachable();
         return 0;
       }
@@ -26,10 +30,12 @@
   #else
     namespace foundation {
       DWORD __stdcall Thread::__stub(
-        void* thread )
+        void* copy )
       {
-        Thread& thread_ = *((Thread*)thread);
-        ExitThread((DWORD)thread_._entry_point(thread_, thread_._closure));
+        Thread::Copy* copy_ = ((Thread::Copy*)copy);
+        Thread::Copy copy__ = *copy_;
+        make_delete(Copy, Allocators::heap(), copy_);
+        ExitThread((DWORD)copy__.entry_point(copy__.closure));
         __builtin_unreachable();
         return 0;
       }
@@ -47,13 +53,18 @@ namespace foundation {
     , _affinity(Thread::default_affinity)
     , _sys_handle(nullptr)
   {
+    // If the thread is allocated on the stack it might be destructed/destroyed
+    // prior to the stub calling the entry point.  Thus a copy is required.
+    Copy* copy = make_new(Copy, Allocators::heap())();
+    copy->entry_point = entry_point;
+    copy->closure = closure;
   #if defined(FOUNDATION_PLATFORM_WINDOWS)
     #if defined(FOUNDATION_COMPILER_MSVC)
       _sys_handle = (HANDLE)_beginthreadex(
-        NULL, 0, &Thread::__stub, (void*)this, CREATE_SUSPENDED, NULL);
+        NULL, 0, &Thread::__stub, (void*)copy, CREATE_SUSPENDED, NULL);
     #else
       _sys_handle = (HANDLE)CreateThread(
-        NULL, 0, &Thread::__stub, (void*)this, CREATE_SUSPENDED, NULL);
+        NULL, 0, &Thread::__stub, (void*)copy, CREATE_SUSPENDED, NULL);
     #endif
   #elif defined(FOUNDATION_PLATFORM_POSIX)
   #endif
@@ -95,7 +106,7 @@ namespace foundation {
   #if defined(FOUNDATION_PLATFORM_WINDOWS)
     if (!_sys_handle)
       return;
-    ResumeThread(_sys_handle);  
+    ResumeThread(_sys_handle);
     CloseHandle(_sys_handle);
     _sys_handle = nullptr;
   #elif defined(FOUNDATION_PLATFORM_POSIX)

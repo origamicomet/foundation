@@ -32,17 +32,22 @@ namespace foundation {
 
     public:
       typedef Return (*Entry)(
-        Thread& thread,
         void* closure );
+
+    private:
+      struct Copy {
+        Entry entry_point;
+        void* closure;
+      };
 
     private:
     #if defined(FOUNDATION_PLATFORM_WINDOWS)
       #if defined(FOUNDATION_COMPILER_MSVC)
         static unsigned __stdcall __stub(
-          void* thread );
+          void* copy );
       #else
         static DWORD __stdcall __stub(
-          void* thread );
+          void* copy );
       #endif
     #elif defined(FOUNDATION_PLATFORM_POSIX)
     #endif
