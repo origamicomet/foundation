@@ -172,6 +172,50 @@ namespace foundation {
     #endif
     }
 
+    struct Stats {
+      int64_t memory_usage;
+      int64_t num_of_allocations;
+      int64_t num_of_reallocations;
+      int64_t num_of_frees;
+    };
+
+    static bool __stats_for_each(
+      Allocator* allocator, void* closure )
+    {
+      assert(allocator != nullptr);
+
+      if (allocator->memory_usage() != Allocator::invalid_memory_usage)
+        if (allocator->memory_usage_counts_towards_total())
+          ((Stats*)closure)->memory_usage += allocator->memory_usage();
+
+      ((Stats*)closure)->num_of_allocations = allocator->num_of_allocations();
+      ((Stats*)closure)->num_of_reallocations = allocator->num_of_reallocations();
+      ((Stats*)closure)->num_of_frees = allocator->num_of_frees();
+
+      return true;
+    }
+
+    void stats(
+      int64_t& memory_usage,
+      int64_t& num_of_allocations,
+      int64_t& num_of_reallocations,
+      int64_t& num_of_frees )
+    {
+      Stats stats;
+
+      stats.memory_usage = 0;
+      stats.num_of_allocations = 0;
+      stats.num_of_reallocations = 0;
+      stats.num_of_frees = 0;
+
+      for_each(&__stats_for_each, (void*)&stats);
+
+      memory_usage = stats.memory_usage;
+      num_of_allocations = stats.num_of_allocations;
+      num_of_reallocations = stats.num_of_reallocations;
+      num_of_frees = stats.num_of_frees;
+    }
+
     static bool __memory_usage_for_each(
       Allocator* allocator, void* closure )
     {

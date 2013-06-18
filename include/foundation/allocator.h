@@ -31,6 +31,13 @@ namespace foundation {
         void* closure ),
       void* closure = nullptr );
 
+    // Returns the total number of actively used bytes, allocations, reallocations, and frees.
+    extern FOUNDATION_EXPORT void stats(
+      int64_t& memory_usage,
+      int64_t& num_of_allocations,
+      int64_t& num_of_reallocations,
+      int64_t& num_of_frees );
+
     // Returns the total number of actively used bytes, across all allocators.
     extern FOUNDATION_EXPORT int64_t memory_usage();
 
