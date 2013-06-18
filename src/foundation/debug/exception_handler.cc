@@ -10,40 +10,51 @@ namespace foundation {
   static ExceptionHandler _exception_handler = nullptr;
 
 #if defined(FOUNDATION_PLATFORM_WINDOWS)
+  static void get_execution_state_from_ep(
+    ExecutionState& es,
+    EXCEPTION_POINTERS* ep )
+  {
+    if (ep) {
+      zero((void*)&es, sizeof(ExecutionState));
+    #if defined(FOUNDATION_ARCHITECTURE_X86_64)
+      es.RAX = ep->ContextRecord->Rax;
+      es.RCX = ep->ContextRecord->Rcx;
+      es.RDX = ep->ContextRecord->Rdx;
+      es.RBX = ep->ContextRecord->Rbx;
+      es.RSP = ep->ContextRecord->Rsp;
+      es.RBP = ep->ContextRecord->Rbp;
+      es.RSI = ep->ContextRecord->Rsi;
+      es.RDI = ep->ContextRecord->Rdi;
+      es.R8 = ep->ContextRecord->R8;
+      es.R9 = ep->ContextRecord->R9;
+      es.R10 = ep->ContextRecord->R10;
+      es.R11 = ep->ContextRecord->R11;
+      es.R12 = ep->ContextRecord->R12;
+      es.R13 = ep->ContextRecord->R13;
+      es.R14 = ep->ContextRecord->R14;
+      es.R15 = ep->ContextRecord->R15;
+      es.RIP = ep->ContextRecord->Rip;
+    #elif defined(FOUNDATION_ARCHITECTURE_X86)
+      es.EAX = ep->ContextRecord->Eax;
+      es.ECX = ep->ContextRecord->Ecx;
+      es.EDX = ep->ContextRecord->Edx;
+      es.EBX = ep->ContextRecord->Ebx;
+      es.ESP = ep->ContextRecord->Esp;
+      es.EBP = ep->ContextRecord->Ebp;
+      es.ESI = ep->ContextRecord->Esi;
+      es.EDI = ep->ContextRecord->Edi;
+      es.EIP = ep->ContextRecord->Eip;
+    #endif
+    } else {
+      get_execution_state(es);
+    }
+  }
+
   static long __stdcall __unhandled_exception_filter(
     EXCEPTION_POINTERS* ep )
   {
     ExecutionState es;
-
-  #if defined(FOUNDATION_ARCH_X86_64)
-    es.RAX = ep->ContextRecord->Rax;
-    es.RCX = ep->ContextRecord->Rcx;
-    es.RDX = ep->ContextRecord->Rdx;
-    es.RBX = ep->ContextRecord->Rbx;
-    es.RSP = ep->ContextRecord->Rsp;
-    es.RBP = ep->ContextRecord->Rbp;
-    es.RSI = ep->ContextRecord->Rsi;
-    es.RDI = ep->ContextRecord->Rdi;
-    es.R8 = ep->ContextRecord->R8;
-    es.R9 = ep->ContextRecord->R9;
-    es.R10 = ep->ContextRecord->R10;
-    es.R11 = ep->ContextRecord->R11;
-    es.R12 = ep->ContextRecord->R12;
-    es.R13 = ep->ContextRecord->R13;
-    es.R14 = ep->ContextRecord->R14;
-    es.R15 = ep->ContextRecord->R15;
-    es.RIP = ep->ContextRecord->Rip;
-  #elif defined(FOUNDATION_ARCH_X86)
-    es.EAX = ep->ContextRecord->Rax;
-    es.ECX = ep->ContextRecord->Rcx;
-    es.EDX = ep->ContextRecord->Rdx;
-    es.EBX = ep->ContextRecord->Rbx;
-    es.ESP = ep->ContextRecord->Rsp;
-    es.EBP = ep->ContextRecord->Rbp;
-    es.ESI = ep->ContextRecord->Rsi;
-    es.EDI = ep->ContextRecord->Rdi;
-    es.EIP = ep->ContextRecord->Rip;
-  #endif
+    get_execution_state_from_ep(es, ep);
 
     switch (ep->ExceptionRecord->ExceptionCode) {
       case windows::exception_access_violation:
@@ -76,11 +87,17 @@ namespace foundation {
     }
 
     _Exit(EXIT_FAILURE);
+    __builtin_unreachable();
   }
 
   static void __signal_handler( int sig ) {
     ExecutionState es;
-    get_execution_state(es);
+
+  #if defined(FOUNDATION_COMPILER_MSVC)
+    get_execution_state_from_ep(es, (EXCEPTION_POINTERS*)_pxcptinfoptrs);
+  #else
+    get_execution_state_from_ep(es, nullptr);
+  #endif
 
     switch (sig) {
       case SIGTERM:
@@ -141,6 +158,7 @@ namespace foundation {
       _set_new_mode(1);
       _set_purecall_handler(&__pure_virtual_call_handler);
     #endif
+      SetUnhandledExceptionFilter(&__unhandled_exception_filter);
     } else {
       signal(SIGTERM, SIG_DFL);
       signal(SIGSEGV, SIG_DFL);
@@ -153,6 +171,7 @@ namespace foundation {
       _set_new_mode(0);
       _set_purecall_handler(nullptr);
     #endif
+      SetUnhandledExceptionFilter(nullptr);
     }
   #elif defined(FOUNDATION_PLATFORM_POSIX)
     // http://stackoverflow.com/questions/2485028/signal-handling-in-c
