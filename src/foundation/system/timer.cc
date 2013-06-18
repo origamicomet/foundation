@@ -32,8 +32,8 @@ namespace foundation {
 
 #if defined(FOUNDATION_PLATFORM_WINDOWS)
   static LARGE_INTEGER frequency() {
-    static LARGE_INTEGER freq;
-    static const bool _ = QueryPerformanceFrequency(&freq);
+    LARGE_INTEGER freq;
+    QueryPerformanceFrequency(&freq);
     return freq;
   }
 #elif defined(FOUNDATION_PLATFORM_POSIX)
