@@ -6,7 +6,7 @@ Foundation is a highly configurable and minimalistic library that provides:
   * [Compiler uniformity across partially implemented standards and varying extensions;](include/foundation/compat.h)
   * [Stateful memory allocation and tracking, with various allocation strategies implemented;](include/foundation/allocator.h)
   * [Fast implementations of common containers (and thread safe variants);](include/foundation/containers.h)
-  * [Robust exception and crash handling with detailed error reporting;](include/foundation/debug)
+  * [Robust exception and crash handling with detailed error reporting;](include/foundation/debug/exception_handler.h)
   * [Along with detailed assertions;](include/foundation/assert.h)
   * [Low-overhead cross-platform wrappers around concurrency primitives;](include/foundation/system/concurrency.h)
   * [Cross-platform debugging and symbol information wrappers;](include/foundation/debug)
@@ -37,12 +37,12 @@ Then shell-fu:
 
 ```
 $ ruby configure {debug,release}
-$ build.bat (Windows) or ./build.sh (POSIX)
+$ env.bat (Windows) or ./env.sh (POSIX)
 $ tup init
 $ tup upd
 ```
 
-**Note:** if you're using Windows you'll need to make sure you set `VCINSTALLDIR` to something like `C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC`.
+**Note:** if you're using Windows you'll need to make sure you set `VCINSTALLDIR` to something like `C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC`.  The configure script should automagically handle the Windows SDK, if not, set `WindowsSdkDir` to something like `C:\Program Files (x86)\Microsoft SDKs\Windows\v7.0A`.
 
 Linking Against
 ---
