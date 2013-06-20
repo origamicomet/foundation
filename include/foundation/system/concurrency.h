@@ -5,7 +5,7 @@
 #ifndef _FOUNDATION_SYSTEM_CONCURRENCY_H_
 #define _FOUNDATION_SYSTEM_CONCURRENCY_H_
 
-// Provides a low-overhead cross-platform around concurrency primitives.
+// Provides a low-overhead cross-platform wrapper around concurrency primitives.
 
 #include <foundation/system/concurrency/mutex.h>
 #include <foundation/system/concurrency/condition_variable.h>
