@@ -5,7 +5,7 @@
 #ifndef _FOUNDATION_SYSTEM_NETWORK_H_
 #define _FOUNDATION_SYSTEM_NETWORK_H_
 
-// Provides a low-overhead cross-platform around network.
+// Provides a low-overhead cross-platform wrapper around networking.
 
 #include <foundation/system/network/address.h>
 #include <foundation/system/network/socket.h>
