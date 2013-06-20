@@ -23,13 +23,13 @@
 #include <foundation/system/concurrency.h>
 #include <foundation/system/directory.h>
 #include <foundation/system/file.h>
+#include <foundation/system/network.h>
 #include <foundation/system/path.h>
 #include <foundation/system/pipe.h>
 #include <foundation/system/process.h>
 #include <foundation/system/service.h>
 #include <foundation/system/shared_library.h>
 #include <foundation/system/timer.h>
-// #include <foundation/system/network.h>
 
 namespace foundation {
   enum ProcessorArchitecture {
