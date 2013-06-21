@@ -10,8 +10,10 @@ preload src/foundation/containers/thread_safe
 preload src/foundation/debug
 preload src/foundation/detect
 preload src/foundation/digest
+preload src/foundation/network
 preload src/foundation/system
 preload src/foundation/system/concurrency
+preload src/foundation/system/network
 preload src/foundation/thread_safe
 
 OBJS = src/*.o
@@ -24,8 +26,10 @@ OBJS += src/foundation/containers/thread_safe/*.o
 OBJS += src/foundation/debug/*.o
 OBJS += src/foundation/detect/*.o
 OBJS += src/foundation/digest/*.o
+OBJS += src/foundation/network/*.o
 OBJS += src/foundation/system/*.o
 OBJS += src/foundation/system/concurrency/*.o
+OBJS += src/foundation/system/network/*.o
 OBJS += src/foundation/thread_safe/*.o
 
 ifeq (@(FOUNDATION_BUILD),debug)
