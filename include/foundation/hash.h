@@ -19,7 +19,7 @@ namespace foundation {
   {
     public:
       Hash()
-        : _hash(_Hash((const void*)"", 1, 0))
+        : _hash(0)
       {}
 
       Hash(
