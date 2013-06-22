@@ -37,12 +37,20 @@ namespace foundation {
     Exception exception,
     ExecutionState& execution_state )
   {
-    static size_t recursion = 0;
+    static FOUNDATION_THREAD_LOCAL_STORAGE size_t recursion = 0;
 
     if (++recursion > 1)
       _Exit(EXIT_FAILURE);
 
+    log("");
     log("Encountered exception: %s!", exception_to_string(exception));
+
+    switch (exception) {
+      // Not actually crashes...
+      case EXCEPTION_TERMINATION_REQUESTED:
+      case EXCEPTION_EXTERNAL_INTERRUPT:
+        _Exit(EXIT_FAILURE);
+    }
 
     Callstack cs;
     if (callstack(cs, execution_state)) {
