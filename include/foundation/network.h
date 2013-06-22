@@ -8,5 +8,6 @@
 // Provides a high-leveling networking solutions (packets, protocols, etc.).
 
 #include <foundation/network/packet.h>
+#include <foundation/network/protocol.h>
 
 #endif // _FOUNDATION_NETWORK_H_
