@@ -24,18 +24,23 @@ namespace foundation {
       explicit HashTable(
         Allocator& allocator,
         size_t size = 0
-      ) : _ht(allocator, size)
+      ) : _load(0)
+        , _ht(allocator, size)
       { _ht.resize(size); }
 
       HashTable(
-        const HashTable<_Value, T>& hash_table
-      ) : _ht(hash_table._ht)
+        const HashTable<_Value, T>& ht
+      ) : _load(ht._load)
+        , _ht(ht._ht)
       {}
 
       HashTable<_Value, T>& operator= (
-        const HashTable<_Value, T>& hash_table )
+        const HashTable<_Value, T>& ht )
       {
-        _ht = hash_table._ht;
+        if (&ht == this)
+          return *this;
+        _load = ht._load;
+        _ht = ht._ht;
         return *this;
       }
 
