@@ -18,6 +18,7 @@
 #include <foundation/digest.h>
 #include <foundation/hash.h>
 #include <foundation/logger.h>
+#include <foundation/network.h>
 #include <foundation/pair.h>
 #include <foundation/pointers.h>
 #include <foundation/sjson.h>

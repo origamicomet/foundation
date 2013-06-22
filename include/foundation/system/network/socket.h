@@ -41,7 +41,10 @@ namespace foundation {
 
       public:
         bool connect(
-          const Address& addr );
+          const Address& addr,
+          const int timeout = -1 );
+
+        void disconnect();
 
         bool bind(
           const Address& addr,
@@ -64,12 +67,20 @@ namespace foundation {
           const void* buffer,
           size_t num_of_bytes );
 
+        bool send_all(
+          const void* buffer,
+          size_t num_of_bytes );
+
         int send(
           const Address& to,
           const void* buffer,
           size_t num_of_bytes );
 
         int receive(
+          void* buffer,
+          size_t num_of_bytes );
+
+        bool receive_all(
           void* buffer,
           size_t num_of_bytes );
 
@@ -102,7 +113,7 @@ namespace foundation {
 
       private:
         SOCKET _s;
-        mutable bool _owns;
+        int32_t* _refs;
         bool _ipv6;
     };
   } // Network

@@ -20,22 +20,26 @@ namespace foundation {
     {
       assert(str != nullptr);
 
+      zero((void*)&addr, sizeof(Address));
+
       try_ipv6: {
         struct sockaddr_in6 sa;
+        zero((void*)&sa, sizeof(struct sockaddr_in6));
         if (!inet_pton(AF_INET6, str, &sa.sin6_addr))
           goto try_ipv4;
         copy((void*)&addr._addr.ipv6, (const void*)&sa.sin6_addr, sizeof(IPv6));
-        addr._port = sa.sin6_port;
+        addr._port = ntohs(sa.sin6_port);
         addr._ipv6 = true;
         return true;
       }
 
       try_ipv4: {
         struct sockaddr_in sa;
+        zero((void*)&sa, sizeof(struct sockaddr_in));
         if (!inet_pton(AF_INET, str, &(sa.sin_addr)))
           goto failed;
         copy((void*)&addr._addr.ipv4, (const void*)&sa.sin_addr, sizeof(IPv4));
-        addr._port = sa.sin_port;
+        addr._port = ntohs(sa.sin_port);
         addr._ipv6 = false;
         return true;
       }
@@ -50,8 +54,9 @@ namespace foundation {
     {
       assert(hostname != nullptr);
 
+      zero((void*)&addr, sizeof(Address));
+
       struct addrinfo* ai;
-      zero((void*)&ai, sizeof(struct addrinfo));
       if (getaddrinfo(hostname, NULL, NULL, &ai) != 0)
         goto failed;
       if (ai->ai_family == AF_INET6)
@@ -59,14 +64,14 @@ namespace foundation {
 
     ipv4:
       copy((void*)&addr._addr.ipv4, (const void*)&((struct sockaddr_in*)ai->ai_addr)->sin_addr, sizeof(IPv4));
-      addr._port = ((struct sockaddr_in*)ai->ai_addr)->sin_port;
+      addr._port = ntohs(((struct sockaddr_in*)ai->ai_addr)->sin_port);
       freeaddrinfo(ai);
       addr._ipv6 = false;
       return true;
 
     ipv6:
       copy((void*)&addr._addr.ipv6, (const void*)&((struct sockaddr_in6*)ai->ai_addr)->sin6_addr, sizeof(IPv6));
-      addr._port = ((struct sockaddr_in6*)ai->ai_addr)->sin6_port;
+      addr._port = ntohs(((struct sockaddr_in6*)ai->ai_addr)->sin6_port);
       freeaddrinfo(ai);
       addr._ipv6 = true;
       return true;

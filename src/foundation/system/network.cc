@@ -27,5 +27,13 @@ namespace foundation {
     #elif defined(FOUNDATION_PLATFORM_POSIX)
     #endif
     }
+
+    int get_last_error()
+    {
+    #if defined(FOUNDATION_PLATFORM_WINDOWS)
+      return WSAGetLastError();
+    #elif defined(FOUNDATION_PLATFORM_POSIX)
+    #endif
+    }
   } // Network
 } // foundation
