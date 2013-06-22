@@ -104,6 +104,9 @@ namespace thread_safe {
       FOUNDATION_INLINE Allocator& allocator() const
       { return _allocator; }
 
+      FOUNDATION_INLINE bool empty() const
+      { return ((_dequeue - _queue) == 0); }
+
     private:
       Allocator& _allocator;
       Mutex _mutex;
