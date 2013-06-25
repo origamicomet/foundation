@@ -51,9 +51,9 @@ namespace foundation {
 
     while (data != end) {
       uint64_t k = *data++;
-      k *= m; 
-      k ^= k >> r; 
-      k *= m; 
+      k *= m;
+      k ^= k >> r;
+      k *= m;
       h ^= k;
       h *= m; }
 
@@ -67,7 +67,7 @@ namespace foundation {
       case 2: h ^= uint64_t(data2[1]) << 8;
       case 1: h ^= uint64_t(data2[0]);
               h *= m; };
-   
+
     h ^= h >> r;
     h *= m;
     h ^= h >> r;
