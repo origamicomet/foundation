@@ -38,8 +38,7 @@ namespace foundation {
       const Protocol& protocol,
       Socket socket )
     {
-      socket.set_sending_timeout(10);
-      socket.set_receiving_timeout(10);
+      socket.set_non_blocking(true);
       return make_new(Connection, allocator())(protocol, socket);
     }
 
@@ -62,6 +61,7 @@ namespace foundation {
       Packet packet(allocator());
       packet.write(Packet::Field("__type"), (uint32_t)type);
       ctor(closure, packet, ap);
+
       va_end(ap);
 
       const uint32_t len = (uint32_t)packet.length();
@@ -76,26 +76,26 @@ namespace foundation {
     bool Protocol::Connection::update(
       void* closure )
     {
-      Protocol::Type type;
+      uint32_t len;
 
       int r;
-      if ((r = _remote.receive((void*)&type, sizeof(Protocol::Type)) < sizeof(Protocol::Type))) {
+      if ((r = _remote.receive((void*)&len, sizeof(uint32_t)) < sizeof(uint32_t)) <= 0) {
         const int err = Network::get_last_error();
         if ((err == EWOULDBLOCK) || (err == EAGAIN))
           return true; /* No remote-to-local to process. */
         return false; /* Disconnect, or other error. */
       }
 
-      uint32_t len;
-      if ((!_remote.receive_all((void*)&len, sizeof(uint32_t))) || (len == 0))
-        return false; /* Disconnect, or other error. */
-
       Packet packet(allocator(), len);
       if (!_remote.receive_all((void*)packet.raw(), len))
         return false; /* Disconnect, or other error. */
 
+      uint32_t type;
+      if (!packet.read<uint32_t>("__type", type))
+        return false; /* Malformed packet. */
+
       Protocol::Handler handler;
-      if (!_protocol._remote_to_local.find(type, handler))
+      if (!_protocol._remote_to_local.find(*((Type*)type), handler))
         return true; /* Skip. */
 
       handler(closure, packet);
@@ -150,6 +150,7 @@ namespace foundation {
       const Type type,
       Constructor constructor )
     {
+      assert(type != nullptr);
       assert(constructor != nullptr);
       _local_to_remote.insert(type, constructor);
       return *this;
@@ -159,6 +160,7 @@ namespace foundation {
       const Type type,
       Handler handler )
     {
+      assert(type != nullptr);
       assert(handler != nullptr);
       _remote_to_local.insert(type, handler);
       return *this;
