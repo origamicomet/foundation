@@ -73,7 +73,7 @@ namespace foundation {
         //   _dequeue = _dequeue % _size;
         if ((_dequeue - _queue) == _size)
           return false;
-        _ring_buffer[(_queue++) % _size] = value;
+        new ((void*)(&_ring_buffer[(_queue++) % _size])) T(value);
         return true;
       }
 
