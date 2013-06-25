@@ -54,7 +54,7 @@ namespace foundation {
     {
       if (_s != Socket::invalid)
         return false;
-      _s = ::socket(addr.ipv4() ? AF_INET : AF_INET6, SOCK_STREAM, IPPROTO_TCP);
+      _s = ::socket(addr.is_ipv4() ? AF_INET : AF_INET6, SOCK_STREAM, IPPROTO_TCP);
       if (_s == Socket::invalid)
         return false;
       *(_refs) = 1;
@@ -131,7 +131,7 @@ namespace foundation {
       if (_s != Socket::invalid)
         return false;
       _s = ::socket(
-        addr.ipv4() ? AF_INET : AF_INET6,
+        addr.is_ipv4() ? AF_INET : AF_INET6,
         tcp ? SOCK_STREAM : SOCK_DGRAM,
         tcp ? IPPROTO_TCP : IPPROTO_UDP);
       if (_s == Socket::invalid)
@@ -303,7 +303,13 @@ namespace foundation {
     bool Socket::set_non_blocking(
       const bool non_blocking )
     {
-      return false;
+      if (_s == Socket::invalid)
+        return false;
+    #if defined(FOUNDATION_PLATFORM_WINDOWS)
+      unsigned long v = non_blocking ? 1 : 0;
+      return (ioctlsocket(_s, FIONBIO, &v) == 0);
+    #elif defined(FOUNDATION_PLATFORM_POSIX)
+    #endif
     }
 
     bool Socket::set_broadcasting(

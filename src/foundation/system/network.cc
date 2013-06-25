@@ -31,7 +31,12 @@ namespace foundation {
     int get_last_error()
     {
     #if defined(FOUNDATION_PLATFORM_WINDOWS)
-      return WSAGetLastError();
+      int err = WSAGetLastError();
+      switch (err) {
+        case WSAEWOULDBLOCK:
+          return EWOULDBLOCK;
+        default:
+          return err; }
     #elif defined(FOUNDATION_PLATFORM_POSIX)
     #endif
     }
