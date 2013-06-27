@@ -20,6 +20,7 @@
 #include <foundation/detect.h>
 
 #include <stdlib.h>
+#include <float.h>
 #include <foundation/compat/stdio.h>
 #include <foundation/compat/stdint.h>
 #include <foundation/compat/inttypes.h>
