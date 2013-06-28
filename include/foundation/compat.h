@@ -5,17 +5,21 @@
 #ifndef _FOUNDATION_COMPAT_H_
 #define _FOUNDATION_COMPAT_H_
 
-// Tries to level the playing field across different platforms and compilers:
-//  * Introduces stdint and inttypes definitions while working around broken
-//    compilers and standard libraries (like Microsoft Visual Studio.)
-//  * Provides minimal overhead safe variants of standard input/output functions
-//    like snprintf.
-//  * Aliases compiler specific extensions like __declspec and __attribute__,
-//    as well as keywords like abstract, override, sealed, etc.
-//  * Aliases (and provides fallbacks) for built-in functions and intrinsics.
-//  * Aliases (and provides fallbacks) for C++11 type_trait information.
-//  * Provides preprocessor macros like __foundation_stringify or
-//    __foundation_source to aid in preprocessor use and magic.
+/*!
+	\brief Tries to level the playing field across different platforms and compilers.
+
+	Tries to level the playing field across different platforms and compilers:
+	 * Introduces stdint and inttypes definitions while working around broken
+	   compilers and standard libraries (like Microsoft Visual Studio.)
+	 * Provides minimal overhead safe variants of standard input/output functions
+	   like snprintf.
+	 * Aliases compiler specific extensions like __declspec and __attribute__,
+	   as well as keywords like abstract, override, sealed, etc.
+	 * Aliases (and provides fallbacks) for built-in functions and intrinsics.
+	 * Aliases (and provides fallbacks) for C++11 type_trait information.
+	 * Provides preprocessor macros like __foundation_stringify or
+	   __foundation_source to aid in preprocessor use and magic.
+*/
 
 #include <foundation/detect.h>
 

@@ -5,14 +5,23 @@
 #ifndef _FOUNDATION_ASSERT_H_
 #define _FOUNDATION_ASSERT_H_
 
-// Provides a more powerful assertion macro that provides contextual information
-// like what code failed, on what line, in which file, and why.
+/*!
+  \file Provides a more powerful assertion macro that provides contextual
+        information like what code failed, on what line, in which file, and why.
+*/
 
 #include <foundation/detect.h>
 #include <foundation/compat.h>
 #include <foundation/config.h>
 #include <foundation/logger.h>
 #include <foundation/die.h>
+
+/*
+  \def assertf(_Condiation, _Format, ...)
+  If |_Condition| evaluates to false a message is written (following |_Format|)
+  using foundation::log() and then foundation::die() is called to provide
+  contextual information.
+*/
 
 #if defined(_DEBUG)
   #define assertf( _Condition, _Format, ... ) \
@@ -28,6 +37,13 @@
 #ifdef assert
   #undef assert
 #endif
+
+/*!
+  \def assert(_Condition)
+  If |_Condition| evaluates to false a message is written using
+  foundation::log() and then foundation::die() is called to provide contextual
+  information.
+*/
 
 #define assert( _Condition ) \
   do { if (!(_Condition)) { \

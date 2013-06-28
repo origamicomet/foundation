@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # foundation documentation build configuration file, created by
-# sphinx-quickstart on Fri Jun 28 13:57:25 2013.
+# sphinx-quickstart on Fri Jun 28 14:56:01 2013.
 #
 # This file is execfile()d with the current directory set to its
 # containing dir.
@@ -29,11 +29,11 @@ import os
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
 extensions = [
-    'sphinx.ext.viewcode',
+    'sphinx.ext.viewcode'
 ]
 
 # Add any paths that contain templates here, relative to this directory.
-templates_path = ['ytemplates']
+templates_path = ['_templates']
 
 # The suffix of source filenames.
 source_suffix = '.rst'
@@ -46,7 +46,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'foundation'
-copyright = u'2013, Michael \'devbug\' Williams'
+copyright = u'2013, Michael Williams'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -69,7 +69,7 @@ release = '1.0'
 
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
-exclude_patterns = []
+exclude_patterns = ['_build']
 
 # The reST default role (used for this markup: `text`) to use for all
 # documents.
@@ -129,7 +129,7 @@ html_theme = 'default'
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
-html_static_path = ['ystatic']
+html_static_path = ['_static']
 
 # If not '', a 'Last updated on:' timestamp is inserted at every page bottom,
 # using the given strftime format.
@@ -194,7 +194,7 @@ latex_elements = {
 #  author, documentclass [howto/manual]).
 latex_documents = [
   ('index', 'foundation.tex', u'foundation Documentation',
-   u'Michael \'devbug\' Williams', 'manual'),
+   u'Michael Williams', 'manual'),
 ]
 
 # The name of an image file (relative to this directory) to place at the top of
@@ -224,7 +224,7 @@ latex_documents = [
 # (source start file, name, description, authors, manual section).
 man_pages = [
     ('index', 'foundation', u'foundation Documentation',
-     [u'Michael \'devbug\' Williams'], 1)
+     [u'Michael Williams'], 1)
 ]
 
 # If true, show URL addresses after external links.
@@ -238,7 +238,7 @@ man_pages = [
 #  dir menu entry, description, category)
 texinfo_documents = [
   ('index', 'foundation', u'foundation Documentation',
-   u'Michael \'devbug\' Williams', 'foundation', 'One line description of project.',
+   u'Michael Williams', 'foundation', 'One line description of project.',
    'Miscellaneous'),
 ]
 
