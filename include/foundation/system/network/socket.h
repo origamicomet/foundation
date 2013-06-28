@@ -25,7 +25,7 @@
 namespace foundation {
   namespace Network {
     class FOUNDATION_EXPORT Socket final {
-      private:
+      public:
         static const unsigned invalid = ~0u;
 
       public:
@@ -110,6 +110,10 @@ namespace foundation {
 
         bool set_receiving_timeout(
           const size_t miliseconds );
+
+      public:
+        FOUNDATION_INLINE SOCKET fd() const
+        { return _s; }
 
       private:
         SOCKET _s;
