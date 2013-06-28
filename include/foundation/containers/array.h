@@ -202,6 +202,35 @@ namespace foundation {
       { return Iterator((Array<T>&)*this, max(_size, (size_t)1) - 1); }
 
     public:
+      void swap( const size_t a, const size_t b )
+      {
+        assert(a <= _size);
+        assert(b <= _size);
+        if (a == b) return;
+        char temp[sizeof(T)];
+        copy((void*)&temp[0], (const void*)&_array[a], sizeof(T));
+        copy((void*)&_array[a], (const void*)&_array[b], sizeof(T));
+        copy((void*)&_array[b], (const void*)&temp[0], sizeof(T));
+      }
+
+      FOUNDATION_INLINE void swap( const Iterator a, const Iterator b )
+      { swap(a._idx, b._idx); }
+
+      FOUNDATION_INLINE void remove( const size_t idx )
+      { swap(size(), idx); resize(max(size(), (size_t)1) - 1); }
+
+      FOUNDATION_INLINE void remove( const Iterator iter )
+      { swap(end(), iter); resize(max(size(), (size_t)1) - 1); }
+
+      const Iterator find( const T& v ) const
+      {
+        for (auto iter = begin(); iter != end(); ++iter) {
+          if ((*iter) == v)
+            return iter; }
+        return end();
+      }
+
+    public:
       void operator+= ( const T& obj )
       {
         if (_size == _reserved)
@@ -241,10 +270,13 @@ namespace foundation {
           optimized_construct<T>(&_array[_size], size - _size);
           _size = size;
           return; }
-        optimized_construct<T>(&_array[_size], size - _size);
+        if (size < _size)
+          optimized_destruct<T>(&_array[size], _size - size);
         _size = _reserved = size;
         _array = (T*)_allocator.realloc(
           (void*)_array, size * sizeof(T), alignment_of<T>::value);
+        if (size > _size)
+          optimized_construct<T>(&_array[_size], size - _size);
       }
 
     public:
