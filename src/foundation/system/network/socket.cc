@@ -192,7 +192,7 @@ namespace foundation {
           return false;
         addr._ipv6 = false;
         addr._port = ntohs(sa.sin_port);
-        copy((void*)&addr._addr.ipv4, (const void*&)sa.sin_addr, 4);
+        copy((void*)&addr._addr.ipv4, (const void*)&sa.sin_addr, 4);
         socket._s = accepted;
         *(socket._refs) = 1;
         socket._ipv6 = false;
