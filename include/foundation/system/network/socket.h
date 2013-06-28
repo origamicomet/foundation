@@ -48,7 +48,8 @@ namespace foundation {
 
         bool bind(
           const Address& addr,
-          const bool tcp = false );
+          const bool tcp = true,
+          const bool reuse = true );
 
         static const int unlimited = -1;
 

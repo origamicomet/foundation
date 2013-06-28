@@ -126,7 +126,8 @@ namespace foundation {
 
     bool Socket::bind(
       const Address& addr,
-      const bool tcp )
+      const bool tcp,
+      const bool reuse )
     {
       if (_s != Socket::invalid)
         return false;
@@ -137,6 +138,7 @@ namespace foundation {
       if (_s == Socket::invalid)
         return false;
       *(_refs) = 1;
+      set_reusing_address(reuse);
       _ipv6 = addr.is_ipv6();
 
       if (addr.is_ipv4()) {
@@ -145,7 +147,7 @@ namespace foundation {
         sa.sin_family = AF_INET;
         sa.sin_port = htons(addr.port());
         copy((void*)&sa.sin_addr, (const void*)&addr.ipv4(), 4);
-        if (::bind(_s, (struct sockaddr*)&sa, sizeof(struct sockaddr_in)))
+        if (::bind(_s, (struct sockaddr*)&sa, sizeof(struct sockaddr_in)) == 0)
           return true;
       } else {
         struct sockaddr_in6 sa;
@@ -153,7 +155,7 @@ namespace foundation {
         sa.sin6_family = AF_INET6;
         sa.sin6_port = htons(addr.port());
         copy((void*)&sa.sin6_addr, (const void*)&addr.ipv6(), 16);
-        if (::bind(_s, (struct sockaddr*)&sa, sizeof(struct sockaddr_in6)))
+        if (::bind(_s, (struct sockaddr*)&sa, sizeof(struct sockaddr_in6)) == 0)
           return true;
       }
 
@@ -168,9 +170,9 @@ namespace foundation {
     {
       if (_s == Socket::invalid)
         return false;
-      if (::listen(_s, (backlog < 0) ? SOMAXCONN : backlog) != 0)
-        return false;
-      return true;
+      if (::listen(_s, (backlog < 0) ? SOMAXCONN : backlog) == 0)
+        return true;
+      return false;
     }
 
     bool Socket::accept(
