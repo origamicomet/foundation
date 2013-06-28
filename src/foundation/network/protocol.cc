@@ -95,8 +95,11 @@ namespace foundation {
         return false; /* Malformed packet. */
 
       Protocol::Handler handler;
-      if (!_protocol._remote_to_local.find(*((Type*)type), handler))
+      if (!_protocol._remote_to_local.find(*((Type*)type), handler)) {
+        if (_protocol._unhandled)
+          _protocol._unhandled(closure, *((Type*)type));
         return true; /* Skip. */
+      }
 
       handler(closure, packet);
       return true;
@@ -107,6 +110,9 @@ namespace foundation {
       const uint32_t version
     ) : _name(name)
       , _version(version)
+      , _connect(nullptr)
+      , _disconnect(nullptr)
+      , _unhandled(nullptr)
       , _local_to_remote(allocator(), 8)
       , _remote_to_local(allocator(), 8)
     {
@@ -116,6 +122,9 @@ namespace foundation {
       const Protocol& proto
     ) : _name(proto._name)
       , _version(proto._version)
+      , _connect(proto._connect)
+      , _disconnect(proto._disconnect)
+      , _unhandled(proto._unhandled)
       , _local_to_remote(proto._local_to_remote)
       , _remote_to_local(proto._remote_to_local)
     {
@@ -131,19 +140,36 @@ namespace foundation {
         return *this;
       _name = proto._name;
       _version = proto._version;
+      _connect = proto._connect;
+      _disconnect = proto._disconnect;
+      _unhandled = proto._unhandled;
       _local_to_remote = proto._local_to_remote;
       _remote_to_local = proto._remote_to_local;
       return *this;
     }
 
-    Protocol::Connection* Protocol::connect(
-      const Network::Address& address,
-      const uint32_t timeout ) const
+    Protocol& Protocol::connected(
+      OnConnected handler )
     {
-      Socket remote;
-      if (!remote.connect(address, (timeout > 0) ? timeout : -1))
-        return nullptr;
-      return Connection::create(*this, remote);
+      assert(handler != nullptr);
+      _connect = handler;
+      return *this;
+    }
+
+    Protocol& Protocol::disconnected(
+      OnDisconnected handler )
+    {
+      assert(handler != nullptr);
+      _disconnect = handler;
+      return *this;
+    }
+
+    Protocol& Protocol::unhandled(
+      Unhandled handler )
+    {
+      assert(handler != nullptr);
+      _unhandled = handler;
+      return *this;
     }
 
     Protocol& Protocol::local_to_remote(
@@ -164,6 +190,67 @@ namespace foundation {
       assert(handler != nullptr);
       _remote_to_local.insert(type, handler);
       return *this;
+    }
+
+    Protocol::Connection* Protocol::connect(
+      const Network::Address& address,
+      const uint32_t timeout ) const
+    {
+      Socket remote;
+      if (!remote.connect(address, (timeout > 0) ? timeout : -1))
+        return nullptr;
+      return Connection::create(*this, remote);
+    }
+
+    bool Protocol::host(
+      void (*tick)( void ),
+      const Network::Address& host,
+      const int backlog ) const
+    {
+      Socket h;
+      if (!h.bind(host))
+        return false;
+      if (!h.listen(backlog))
+        return false;
+
+      Array< Pair<Connection*, void*> > connections(allocator());
+      SocketSet readable;
+
+      while (true) {
+        readable.zero();
+        readable.set(h);
+
+        for (auto iter = connections.begin(); iter != connections.end(); ++iter)
+          readable.set((*iter).key->remote());
+
+        if (!Network::select(&readable, nullptr, nullptr, 10))
+          goto skip;
+
+        if (readable.is_set(h)) {
+          Socket remote;
+          Network::Address addr;
+          if (!h.accept(remote, addr))
+            return false;
+          Connection* conn = Connection::create(*this, remote);
+          connections += Pair<Connection*, void*>(conn, _connect ? _connect(conn, addr) : nullptr);
+        }
+
+        for (auto iter = connections.begin(); iter != connections.end(); ++iter) {
+          if (!readable.is_set(((*iter).key)->remote()))
+            continue;
+          if ((*iter).key->update((*iter).value))
+            continue;
+          if (_disconnect)
+            _disconnect((*iter).value);
+          connections.remove(iter);
+        }
+
+      skip:
+        if (tick)
+          tick();
+      }
+
+      return true;
     }
   } // Network
 } // foundation

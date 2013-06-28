@@ -135,18 +135,18 @@ class Protocol:
   def __init__(self, name, version):
     self.name = name
     self.version = version
-    self._connect = None
-    self._disconnect = None
+    self._connected = None
+    self._disconnected = None
     self._unhandled = None
     self._local_to_remote = {}
     self._remote_to_local = {}
 
-  def connect(self, handler):
-    self._connect = handler
+  def connected(self, handler):
+    self._connecteded = handler
     return self
 
-  def disconnect(self, handler):
-    self._disconnect = handler
+  def disconnected(self, handler):
+    self._disconnecteded = handler
     return self
 
   def unhandled(self, handler):
@@ -161,6 +161,24 @@ class Protocol:
     h = murmur_hash(bytearray(type), len(type) + 1, 0)
     self._remote_to_local[h] = handler
     return self
+
+  def connect(self, remote, port, timeout=0.0):
+    r = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+
+    if timeout > 0.0:
+      r.setblocking(0)
+
+    r.connect((remote, port))
+
+    if timeout > 0.0:
+      r.setblocking(1)
+      readable, writeable, errored = select.select([r], [], [r], timeout)
+      if len(readable) == 0:
+        raise socket.timeout()
+
+    r.setblocking(0)
+
+    return Connection(self, r)
 
   def host(self, host, port, backlog=1):
     h = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -177,10 +195,10 @@ class Protocol:
           remote, addr = h.accept()
           conn = Connection.create(self, remote)
           sockets.append(remote)
-          remotes[remote] = (conn, self._connect(conn))
+          remotes[remote] = (conn, self._connected(conn))
         else:
           if not remotes[s][0].update(remotes[s][1]):
-            self._disconnect(remotes[s][0], remotes[s][1])
+            self._disconnected(remotes[s][0], remotes[s][1])
             remotes[s][0].disconnect()
             del remotes[s]
             sockets.remove(s)
@@ -214,7 +232,7 @@ class Connection:
 
     return True
 
-  def update(self, closure):
+  def update(self, closure=None):
     try:
       len = struct.unpack('<L', self._remote.recv(4))[0]
     except socket.timeout:

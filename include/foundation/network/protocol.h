@@ -23,15 +23,6 @@ namespace foundation {
       public:
         typedef Hash<uint32_t, murmur_hash> Type;
 
-        typedef void (*Constructor)(
-          void* closure,
-          Packet& packet,
-          va_list ap );
-
-        typedef void (*Handler)(
-          void* closure,
-          Packet& packet );
-
       public:
         class Connection;
         friend class Connection;
@@ -64,10 +55,35 @@ namespace foundation {
             bool update(
               void* closure );
 
+          public:
+            FOUNDATION_INLINE Socket& remote()
+            { return _remote; }
+
           private:
             const Protocol& _protocol;
             Socket _remote;
         };
+
+      public:
+        typedef void* (*OnConnected)(
+          Connection* conn,
+          const Network::Address& addr );
+
+        typedef void (*OnDisconnected)(
+          void* closure );
+
+        typedef void (*Unhandled)(
+          void* closure,
+          const Type type );
+
+        typedef void (*Constructor)(
+          void* closure,
+          Packet& packet,
+          va_list ap );
+
+        typedef void (*Handler)(
+          void* closure,
+          Packet& packet );
 
       public:
         Protocol(
@@ -83,11 +99,15 @@ namespace foundation {
           const Protocol& proto );
 
       public:
-        Connection* connect(
-          const Network::Address& address,
-          const uint32_t timeout = 10000 ) const;
+        Protocol& connected(
+          OnConnected handler );
 
-      public:
+        Protocol& disconnected(
+          OnDisconnected handler );
+
+        Protocol& unhandled(
+          Unhandled handler );
+
         Protocol& local_to_remote(
           const Type type,
           Constructor constructor );
@@ -96,9 +116,22 @@ namespace foundation {
           const Type type,
           Handler handler );
 
+      public:
+        Connection* connect(
+          const Network::Address& address,
+          const uint32_t timeout = 10000 ) const;
+
+        bool host(
+          void (*tick)( void ),
+          const Network::Address& host,
+          const int backlog = Socket::unlimited ) const;
+
       private:
         const char* _name;
         uint32_t _version;
+        OnConnected _connect;
+        OnDisconnected _disconnect;
+        Unhandled _unhandled;
         HashTable<Type, Constructor> _local_to_remote;
         HashTable<Type, Handler> _remote_to_local;
     };
