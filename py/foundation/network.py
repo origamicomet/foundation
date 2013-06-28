@@ -4,6 +4,7 @@
 import struct
 import socket
 import select
+import errno
 from cStringIO import StringIO
 from Queue import Queue
 from .digest import (murmur_hash, murmur_hash_64)
@@ -234,17 +235,29 @@ class Connection:
 
   def update(self, closure=None):
     try:
-      len = struct.unpack('<L', self._remote.recv(4))[0]
+      l = struct.unpack('<L', self._remote.recv(4))[0]
     except socket.timeout:
       return True
+    except socket.error as (e, msg):
+      if (e == errno.EWOULDBLOCK) or (e == errno.EAGAIN):
+        return True
+      return False
     except:
       return False
 
-    try:
-      packet = Packet(self._remote.recv(len))
-      type = packet.read_uint32("__type")
-    except:
-      return False
+    data = StringIO()
+    while (l > 0):
+      try:
+        received = self._remote.recv(l)
+        data.write(received)
+        l -= len(received)
+      except socket.error as (e, msg):
+        if (e == errno.EWOULDBLOCK) or (e == errno.EAGAIN):
+          continue
+        return False
+
+    packet = Packet(data.getvalue())
+    type = packet.read_uint32("__type")
 
     try:
       self._protocol._remote_to_local[type](closure, packet)
