@@ -179,7 +179,7 @@ class Protocol:
 
     r.setblocking(0)
 
-    return Connection(self, r)
+    return Connection.create(self, r)
 
   def host(self, host, port, backlog=1):
     h = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -217,7 +217,7 @@ class Connection:
   def disconnect(self):
     if self._remote is not None:
       self._remote.shutdown(socket.SHUT_RDWR)
-      del self._remote
+      # del self._remote
 
   def send(self, type, closure, *args):
     try:
@@ -260,7 +260,8 @@ class Connection:
     type = packet.read_uint32("__type")
 
     try:
-      self._protocol._remote_to_local[type](closure, packet)
+      handler = self._protocol._remote_to_local[type]
+      handler(closure, packet)
     except:
       try:
         self._protocol._unhandled(closure, type)
@@ -273,3 +274,7 @@ class Connection:
   @property
   def address(self):
     return self._remote.getpeername()
+
+  @property
+  def local_port(self):
+    return self._remote.getsockname()[1]

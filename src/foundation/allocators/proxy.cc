@@ -70,7 +70,7 @@ namespace foundation {
 
   bool ProxyAllocator::memory_usage_counts_towards_total()
   {
-    return true;
+    return false;
   }
 
   int64_t ProxyAllocator::num_of_allocations()
