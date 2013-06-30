@@ -25,4 +25,12 @@
 #include <foundation/system.h>
 #include <foundation/thread_safe.h>
 
+#ifdef near
+  #undef near
+#endif
+
+#ifdef far
+  #undef far
+#endif
+
 #endif // _FOUNDATION_H_
