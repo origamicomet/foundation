@@ -214,6 +214,17 @@ namespace foundation {
   extern FOUNDATION_EXPORT const char* chomp(
     const char* prefix,
     const char* str );
+
+  extern FOUNDATION_EXPORT char* replace_all(
+    char* str,
+    char a,
+    char b );
+
+  extern FOUNDATION_EXPORT const char* replace_all(
+    Allocator& allocator,
+    const char* str,
+    char a,
+    char b );
 } // foundation
 
 #endif // _FOUNDATION_STRING_H_

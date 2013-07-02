@@ -497,4 +497,31 @@ namespace foundation {
 
     return str;
   }
+
+  char* replace_all(
+    char* str,
+    char a,
+    char b )
+  {
+    assert(str != nullptr);
+    char needle[2] = { a, '\0' };
+    char* iter = (char*)find((const char*)str, &needle[0]);
+    while (iter) {
+      *iter = b;
+      iter = (char*)find((const char*)str, &needle[0]); }
+    return str;
+  }
+
+  const char* replace_all(
+    Allocator& allocator,
+    const char* str,
+    char a,
+    char b )
+  {
+    assert(str != nullptr);
+    const size_t len = strlen(str) + 1;
+    char* str_ = (char*)allocator.alloc(strlen(str) + 1);
+    copy((void*)&str_[0], (const void*)&str[0], len);
+    return (const char*)replace_all(str_, a, b);
+  }
 } // foundation
