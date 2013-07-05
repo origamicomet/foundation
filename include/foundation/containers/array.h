@@ -204,6 +204,8 @@ namespace foundation {
     public:
       void swap( const size_t a, const size_t b )
       {
+        // TODO: use is_trivially_copyable<T> and make use of the assignment
+        //       operator if required?
         assert(a <= _size);
         assert(b <= _size);
         if (a == b) return;
@@ -272,11 +274,11 @@ namespace foundation {
           return; }
         if (size < _size)
           optimized_destruct<T>(&_array[size], _size - size);
-        _size = _reserved = size;
         _array = (T*)_allocator.realloc(
           (void*)_array, size * sizeof(T), alignment_of<T>::value);
         if (size > _size)
           optimized_construct<T>(&_array[_size], size - _size);
+        _size = _reserved = size;
       }
 
     public:
@@ -297,7 +299,7 @@ namespace foundation {
       FOUNDATION_INLINE const T* raw() const
       { return _array; }
 
-    protected:
+    private:
       Allocator& _allocator;
       mutable size_t _size, _reserved;
       T* _array;
