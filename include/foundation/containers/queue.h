@@ -61,7 +61,9 @@ namespace foundation {
 
       ~Queue()
       {
-        optimized_destruct<T>(&_ring_buffer[_dequeue % _size], _queue - _dequeue);
+        const size_t left = _queue - _dequeue;
+        optimized_destruct<T>(&_ring_buffer[_dequeue % _size], min(left, _size - (_dequeue % _size)));
+        optimized_destruct<T>(&_ring_buffer[0], left - min(left, _size - (_dequeue % _size)));
         _allocator.free((void*)_ring_buffer);
       }
 
