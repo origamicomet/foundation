@@ -8,6 +8,9 @@ extern "C" {
 // Uncomment this for improved performance but more memory usage.
 #define JSMN_PARENT_LINKS 1
 
+// Uncomment this to allow single-line comments (//).
+#define JSMN_ALLOW_COMMENTS 1
+
 /**
  * JSON type identifier. Basic types are:
  *  o Object

@@ -133,6 +133,54 @@ static jsmnerr_t jsmn_parse_string(jsmn_parser *parser, const char *js,
   return JSMN_ERROR_PART;
 }
 
+#ifdef JSMN_ALLOW_COMMENTS
+/**
+ * Tries to match and skip a comment.
+ */
+static jsmnerr_t jsmn_parse_comment(jsmn_parser *parser, const char* js) {
+  char expecting;
+  int start = parser->pos;
+
+  parser->pos++;
+
+  if (js[parser->pos] == '\0') {
+    parser->pos = start;
+    return JSMN_ERROR_PART;
+  }
+
+  if (js[parser->pos] == '/')
+    goto single_line;
+  else if (js[parser->pos] == '*')
+    goto multi_line;
+  else {
+    parser->pos = start;
+    return JSMN_ERROR_INVAL;
+  }
+
+single_line:
+  for (; (js[parser->pos] != '\0') && ((parser->size - parser->pos) > 0); parser->pos++) {
+    if (js[parser->pos] == '\n')
+      break;
+  }
+
+  return JSMN_SUCCESS;
+
+multi_line:
+  expecting = '*';
+  for (; (js[parser->pos] != '\0') && ((parser->size - parser->pos) > 0); parser->pos++) {
+    if (js[parser->pos] == expecting) {
+      if (expecting == '/') {
+        return JSMN_SUCCESS;
+      }
+      expecting = '/';
+    }
+  }
+
+  parser->pos = start;
+  return JSMN_ERROR_PART;
+}
+#endif
+
 /**
  * Parse JSON string and fill tokens.
  */
@@ -240,6 +288,12 @@ jsmnerr_t jsmn_parse(jsmn_parser *parser, const char *js, int js_len,
         break;
       case '\t' : case '\r' : case '\n' : case ':' : case '=' : case ',': case ' ':
         break;
+#ifdef JSMN_ALLOW_COMMENTS
+      case '/':
+        r = jsmn_parse_comment(parser, js);
+        if (r < 0) return r;
+        break;
+#endif
 #ifdef JSMN_STRICT
       /* In strict mode primitives are: numbers and booleans */
       case '-': case '0': case '1' : case '2': case '3' : case '4':
