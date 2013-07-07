@@ -263,6 +263,9 @@ namespace foundation {
       { return _allocator; }
 
     public:
+      FOUNDATION_INLINE bool empty() const
+      { return (_size == 0); }
+
       FOUNDATION_INLINE size_t size() const
       { return _size; }
 
