@@ -265,4 +265,7 @@
   #error ("Unknown or unsupported compiler!")
 #endif
 
+#define __builtin_nop() \
+  do {} while (0, 0)
+
 #endif // _FOUNDATION_COMPAT_BUILTINS_H_
