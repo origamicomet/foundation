@@ -17,8 +17,7 @@ namespace foundation {
     T* objs, size_t len,
     typename enable_if<is_trivially_destructable<T>::value,int>::type = 0 )
   {
-    (void)objs;
-    (void)len;
+    zero((void*)objs, len * sizeof(T));
   }
 
   template <typename T>
