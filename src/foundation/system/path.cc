@@ -130,6 +130,42 @@ namespace foundation {
       return String(path.allocator(), path.begin(), iter);
     }
 
+    String expand(
+      const String& path )
+    {
+      if (path.empty())
+        return String(path.allocator());
+
+    #if defined(FOUNDATION_PLATFORM_WINDOWS)
+      wchar_t* native_path; {
+        const size_t len = MultiByteToWideChar(
+          CP_UTF8, 0, path.raw(), path.size(), nullptr, 0);
+        native_path = (wchar_t*)alloca(len * sizeof(wchar_t));
+        MultiByteToWideChar(
+          CP_UTF8, 0, path.raw(), path.size(), native_path, len);
+      }
+
+      String expanded_path(path.allocator()); {
+        size_t expanded_path_len_ = 0;
+        wchar_t* expanded_path_; {
+          expanded_path_len_ = ExpandEnvironmentStringsW(native_path, NULL, 0);
+          expanded_path_ = (wchar_t*)alloca(expanded_path_len_ * sizeof(wchar_t));
+          ExpandEnvironmentStringsW(native_path, expanded_path_, expanded_path_len_);
+        }
+
+        const size_t len = WideCharToMultiByte(
+          CP_UTF8, 0, expanded_path_, expanded_path_len_, nullptr, 0, 0, 0);
+        expanded_path = String(Allocators::heap(), len);
+        WideCharToMultiByte(
+          CP_UTF8, 0, expanded_path_, expanded_path_len_,
+          (char*)expanded_path.raw(), len, 0, 0);
+      }
+
+      return expanded_path;
+    #elif defined(FOUNDATION_PLATFORM_POSIX)
+    #endif
+    }
+
     String absolute(
       const String& path )
     {

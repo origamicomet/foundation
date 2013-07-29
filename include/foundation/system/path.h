@@ -33,6 +33,12 @@ namespace foundation {
     extern FOUNDATION_EXPORT String sans_extension(
       const String& path );
 
+    // Returns the expanded version of the |path|, that is, environment variables
+    // are replaced with their values. For example, $HOME/.settings might become
+    // /home/mike/.settings.
+    extern FOUNDATION_EXPORT String expand(
+      const String& path );
+
     // Returns the absolute unixified version of the |path|.
     extern FOUNDATION_EXPORT String absolute(
       const String& path );
