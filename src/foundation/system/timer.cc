@@ -48,4 +48,14 @@ namespace foundation {
   #elif defined(FOUNDATION_PLATFORM_POSIX)
   #endif
   }
+
+  uint64_t Timer::microseconds() const
+  {
+  #if defined(FOUNDATION_PLATFORM_WINDOWS)
+    LARGE_INTEGER counter;
+    QueryPerformanceCounter(&counter);
+    return (counter.QuadPart - _epoch) / (frequency().QuadPart / 1000000);
+  #elif defined(FOUNDATION_PLATFORM_POSIX)
+  #endif
+  }
 } // foundation

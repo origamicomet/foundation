@@ -26,6 +26,8 @@ namespace foundation {
 
       uint64_t miliseconds() const;
 
+      uint64_t microseconds() const;
+
     private:
       uint64_t _epoch;
   };
