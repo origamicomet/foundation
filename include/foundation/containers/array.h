@@ -215,14 +215,18 @@ namespace foundation {
         copy((void*)&_array[b], (const void*)&temp[0], sizeof(T));
       }
 
-      FOUNDATION_INLINE void swap( const Iterator a, const Iterator b )
+      FOUNDATION_INLINE void swap( const Iterator& a, const Iterator& b )
       { swap(a._idx, b._idx); }
 
       FOUNDATION_INLINE void remove( const size_t idx )
-      { swap(size(), idx); resize(max(size(), (size_t)1) - 1); }
+      {
+        if (idx < (_size - 1))
+          swap(_size - 1, idx);
+        resize(max(_size, (size_t)1) - 1);
+      }
 
-      FOUNDATION_INLINE void remove( const Iterator iter )
-      { swap(end(), iter); resize(max(size(), (size_t)1) - 1); }
+      FOUNDATION_INLINE void remove( const Iterator& iter )
+      { remove(iter._idx); }
 
       const Iterator find( const T& v ) const
       {
@@ -271,7 +275,7 @@ namespace foundation {
 
       void resize( size_t size )
       {
-        if ((size <= _reserved) && (size != 0)) {
+        if ((size <= _reserved) && (size >= _size)) {
           optimized_construct<T>(&_array[_size], size - _size);
           _size = size;
           return; }
