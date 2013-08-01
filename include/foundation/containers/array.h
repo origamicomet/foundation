@@ -275,17 +275,19 @@ namespace foundation {
 
       void resize( size_t size )
       {
-        if ((size <= _reserved) && (size >= _size)) {
+        if ((size <= _reserved) && (size > _size)) {
           optimized_construct<T>(&_array[_size], size - _size);
           _size = size;
           return; }
         if (size < _size)
           optimized_destruct<T>(&_array[size], _size - size);
-        _array = (T*)_allocator.realloc(
-          (void*)_array, size * sizeof(T), alignment_of<T>::value);
+        if (size > _reserved) {
+          _array = (T*)_allocator.realloc(
+            (void*)_array, max(size, _reserved) * sizeof(T), alignment_of<T>::value); }
         if (size > _size)
           optimized_construct<T>(&_array[_size], size - _size);
-        _size = _reserved = size;
+        _size = size;
+        _reserved = max(size, _reserved);
       }
 
     public:
