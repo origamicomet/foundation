@@ -14,5 +14,6 @@
 #include <foundation/algorithms/optimized_destruct.h>
 #include <foundation/algorithms/search.h>
 #include <foundation/algorithms/sort.h>
+#include <foundation/algorithms/arithmetic_mean.h>
 
 #endif // _FOUNDATION_ALGORITHMS_H_
