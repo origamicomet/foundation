@@ -209,7 +209,7 @@ namespace foundation {
       watched_dir->sh = sys_handle;
       watched_dir->oio.hEvent = event;
       watched_dir->p = path;
-      zero((void*)&watched_dir->fni[0], sizeof(8192));
+      zero((void*)&watched_dir->fni[0], 8192);
       watched_dir->oeh = handler;
       watched_dir->oehc = closure;
       watched_dir->s = false;
