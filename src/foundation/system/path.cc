@@ -111,23 +111,27 @@ namespace foundation {
     }
 
     String sans_extension(
-      const String& path )
+      const String& path,
+      const bool greedy )
     {
       if (path.empty())
         return String(path.allocator());
 
       String::Iterator iter = path.end();
+      String::Iterator max = path.end();
       uint32_t code_point = 0;
 
       do {
         code_point = iter.to_code_point();
-        if ((code_point == '/') || (code_point == '\\'))
-          return String(path.allocator());
-        if (code_point == '.')
-          break;
+        if ((code_point == '/') || (code_point == '\\')) {
+          if (greedy) break;
+          else return String(path.allocator()); }
+        if (code_point == '.') {
+          if (greedy) max = iter--;
+          else break; }
       } while((iter--) != path.begin());
 
-      return String(path.allocator(), path.begin(), iter);
+      return String(path.allocator(), path.begin(), greedy ? max : iter);
     }
 
     String expand(

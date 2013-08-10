@@ -29,9 +29,11 @@ namespace foundation {
     extern FOUNDATION_EXPORT String extension(
       const String& path );
 
-    // Returns the |path| sans extension.
+    // Returns the |path| sans extension. Specify |greedy| to remove superfluous
+    // extensions (eg foo.bar.baz => foo).
     extern FOUNDATION_EXPORT String sans_extension(
-      const String& path );
+      const String& path,
+      const bool greedy = false );
 
     // Returns the expanded version of the |path|, that is, environment variables
     // are replaced with their values. For example, $HOME/.settings might become
