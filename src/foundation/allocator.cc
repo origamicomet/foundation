@@ -10,9 +10,8 @@
 
 #if defined(FOUNDATION_TRACK_MEMORY_USAGE)
   namespace foundation {
-    static Mutex& __mutex_initializer() {
-      static Mutex mutex;
-      return mutex;
+    static Mutex* __mutex_initializer() {
+      return new Mutex();
     }
 
     static const thread_safe::Static< Mutex >
@@ -132,9 +131,8 @@ namespace foundation {
 
 namespace foundation {
   namespace Allocators {
-    static Allocator& __heap_initializer() {
-      static HeapAllocator heap;
-      return heap;
+    static Allocator* __heap_initializer() {
+      return new HeapAllocator();
     }
 
     static const thread_safe::Static< Allocator >
@@ -144,9 +142,8 @@ namespace foundation {
       return __ts_heap();
     }
 
-    static Allocator& __scratch_initializer() {
-      static ProxyAllocator scratch("scratch", heap());
-      return scratch;
+    static Allocator* __scratch_initializer() {
+      return new ProxyAllocator("scratch", heap());
     }
 
     static const thread_safe::Static< Allocator >

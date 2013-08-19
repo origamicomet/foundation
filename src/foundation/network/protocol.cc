@@ -9,9 +9,8 @@
 
 namespace foundation {
   namespace Network {
-    static Allocator& __allocator_initializer() {
-      static ProxyAllocator allocator("protocols", Allocators::heap());
-      return allocator;
+    static Allocator* __allocator_initializer() {
+      return new ProxyAllocator("protocols", Allocators::heap());
     }
 
     static const thread_safe::Static< Allocator >

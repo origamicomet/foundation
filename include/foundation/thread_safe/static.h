@@ -19,7 +19,7 @@ namespace thread_safe {
     __foundation_trait(Static, non_copyable);
 
     public:
-      typedef T& (*Initializer)( void );
+      typedef T* (*Initializer)( void );
 
     private:
       typedef T* (*Getter)(
@@ -47,7 +47,7 @@ namespace thread_safe {
       static T* __initialize( const Static<T>* s ) {
         if (!__sync_bool_compare_and_swap((volatile void**)&s->_getter, (void*)&Static<T>::__initialize, (void*)&Static<T>::__initializing))
           return s->_getter(s);
-        __sync_val_compare_and_swap((volatile void**)&s->_value, (void*)nullptr, (void*)&s->_initializer());
+        __sync_val_compare_and_swap((volatile void**)&s->_value, (void*)nullptr, (void*)s->_initializer());
         return s->_value;
       }
 
