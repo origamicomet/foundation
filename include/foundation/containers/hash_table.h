@@ -55,6 +55,16 @@ namespace foundation {
         return insert(_ht, hash, value);
       }
 
+      bool insert(
+        const T hash,
+        _Value*& ptr )
+      {
+        const size_t load = (_load / (max(_ht.size(), (size_t)1) * 100));
+        if ((load >= 70) || (_ht.size() == 0))
+          grow();
+        return (insert(_ht, hash, ptr) ? (++_load, true) : false);
+      }
+
       bool find(
         const T hash,
         _Value& value ) const
@@ -62,14 +72,22 @@ namespace foundation {
         return find(_ht, hash, value);
       }
 
+      bool find(
+        const T hash,
+        _Value*& ptr )
+      {
+        return find(_ht, hash, ptr);
+      }
+
       void remove(
         const T hash )
       {
-        remove(_ht, hash);
+        if (remove(_ht, hash))
+          --_load;
       }
 
     private:
-      bool insert(
+      static bool insert(
         Array<Pair>& ht,
         const T hash,
         const _Value& value )
@@ -80,17 +98,34 @@ namespace foundation {
           if (ht[idx_].key == hash)
             return false;
           if (ht[idx_].key == T()) {
-            ++_load;
             ht[idx_].key = hash;
             new ((void*)&ht[idx_].value) _Value(value);
             return true; }}
         return false;
       }
 
-      bool find(
+      static bool insert(
+        Array<Pair>& ht,
+        const T hash,
+        _Value*& ptr )
+      {
+        const size_t idx = hash % ht.size();
+        for (size_t probe = 0; probe < ht.size(); ++probe) {
+          const size_t idx_ = (idx + probe) % ht.size();
+          if (ht[idx_].key == hash)
+            return false;
+          if (ht[idx_].key == T()) {
+            ht[idx_].key = hash;
+            new ((void*)&ht[idx_].value) _Value();
+            ptr = &ht[idx_].value;
+            return true; }}
+        return false;
+      }
+
+      static bool find(
         const Array<Pair>& ht,
         const T hash,
-        _Value& value ) const
+        _Value& value )
       {
         const size_t idx = probe(ht, hash);
         if (idx == ~((size_t)0))
@@ -99,22 +134,34 @@ namespace foundation {
         return true;
       }
 
-      void remove(
+      static bool find(
+        Array<Pair>& ht,
+        const T hash,
+        _Value*& ptr )
+      {
+        const size_t idx = probe(ht, hash);
+        if (idx == ~((size_t)0))
+          return false;
+        ptr = &ht[idx].value;
+        return true;
+      }
+
+      static bool remove(
         Array<Pair>& ht,
         const T hash )
       {
         const size_t idx = probe(ht, hash);
         if (idx == ~((size_t)0))
-          return;
+          return false;
         ht[idx].key = T();
         ht[idx].value.~_Value();
-        --_load;
+        return true;
       }
 
     private:
-      size_t probe(
+      static size_t probe(
         const Array<Pair>& ht,
-        const T hash ) const
+        const T hash )
       {
         if ((hash == T()) || ht.empty()) return ~((size_t)0);
         const size_t idx = hash % ht.size();
