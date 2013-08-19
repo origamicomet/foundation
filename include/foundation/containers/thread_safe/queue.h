@@ -74,6 +74,7 @@ namespace thread_safe {
         optimized_destruct<T>(&_ring_buffer[_dequeue % _size], min(left, _size - (_dequeue % _size)));
         optimized_destruct<T>(&_ring_buffer[0], left - min(left, _size - (_dequeue % _size)));
         _allocator.free((void*)_ring_buffer);
+        _queue = _dequeue = _size = 0;
         _mutex.unlock();
       }
 
