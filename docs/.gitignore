@@ -1,7 +1,0 @@
-*
-!.gitignore
-!conf.doxygen
-!conf.py
-!index.rst
-!_static
-!_templates
