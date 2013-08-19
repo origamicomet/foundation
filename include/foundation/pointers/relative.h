@@ -39,10 +39,10 @@ namespace foundation {
 
     public:
       FOUNDATION_INLINE operator T() const
-      { return (_offs == 0) ? nullptr : (T)(((uintptr_t)this) + _offs); }
+      { return (_offs == 0) ? nullptr : (T)(((intptr_t)this) + _offs); }
 
       FOUNDATION_INLINE T operator ->() const
-      { return (_offs == 0) ? nullptr : (T)(((uintptr_t)this) + _offs); }
+      { return (_offs == 0) ? nullptr : (T)(((intptr_t)this) + _offs); }
 
     private:
       int64_t _offs;
