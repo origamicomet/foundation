@@ -6,6 +6,7 @@
 
 #include <foundation/assert.h>
 #include <foundation/allocator.h>
+#include <foundation/string.h>
 
 #if defined(FOUNDATION_PLATFORM_WINDOWS)
   #define WIN32_LEAN_AND_MEAN
@@ -262,6 +263,76 @@ namespace foundation {
         num_bytes -= wrote;
         iter += wrote; }
       return true;
+    }
+
+    template <typename T>
+    bool read(
+      FILE* file,
+      T& value )
+    {
+      assert(file != nullptr);
+      return File::read(file, (void*)&value, sizeof(T));
+    }
+
+    template bool read<bool>( FILE*, bool& );
+    template bool read<int8_t>( FILE*, int8_t& );
+    template bool read<uint8_t>( FILE*, uint8_t& );
+    template bool read<int16_t>( FILE*, int16_t& );
+    template bool read<uint16_t>( FILE*, uint16_t& );
+    template bool read<int32_t>( FILE*, int32_t& );
+    template bool read<uint32_t>( FILE*, uint32_t& );
+    template bool read<int64_t>( FILE*, int64_t& );
+    template bool read<uint64_t>( FILE*, uint64_t& );
+    template bool read<float>( FILE*, float& );
+    template bool read<double>( FILE*, double& );
+
+    template <>
+    bool read<String>(
+      FILE* file,
+      String& value )
+    {
+      assert(file != nullptr);
+      uint16_t len = 0;
+      if (!File::read(file, len))
+        return false;
+      if (len == 0) {
+        value = String(value.allocator(), "");
+        return true; }
+      value = String(value.allocator(), len);
+      return File::read(file, (void*)value.raw(), len);
+    }
+
+    template <typename T>
+    bool write(
+      FILE* file,
+      const T& value )
+    {
+      assert(file != nullptr);
+      return File::write(file, (const void*)&value, sizeof(T));
+    }
+
+    template bool write<bool>( FILE*, const bool& );
+    template bool write<int8_t>( FILE*, const int8_t& );
+    template bool write<uint8_t>( FILE*, const uint8_t& );
+    template bool write<int16_t>( FILE*, const int16_t& );
+    template bool write<uint16_t>( FILE*, const uint16_t& );
+    template bool write<int32_t>( FILE*, const int32_t& );
+    template bool write<uint32_t>( FILE*, const uint32_t& );
+    template bool write<int64_t>( FILE*, const int64_t& );
+    template bool write<uint64_t>( FILE*, const uint64_t& );
+    template bool write<float>( FILE*, const float& );
+    template bool write<double>( FILE*, const double& );
+
+    template <>
+    bool write<const char*>(
+      FILE* file,
+      const char* const& value )
+    {
+      assert(file != nullptr);
+      const uint16_t len = value ? (strlen(value) + 1) : 0;
+      if (!File::write(file, len))
+        return false;
+      return (value ? File::write(file, (const void*)value, len) : true);
     }
   } // File
 } // foundation

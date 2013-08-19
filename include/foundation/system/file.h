@@ -73,6 +73,18 @@ namespace foundation {
       FILE* file,
       const void* buffer,
       size_t num_bytes );
+
+    // Reads |value from |file|.
+    template <typename T>
+    extern FOUNDATION_EXPORT bool read(
+      FILE* file,
+      T& value );
+
+    // Writes |value| to |file|.
+    template <typename T>
+    extern FOUNDATION_EXPORT bool write(
+      FILE* file,
+      const T& value );
   } // File
 } // foundation
 
