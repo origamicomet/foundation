@@ -92,7 +92,7 @@
 
 /*! @def FND_DEBUG
   Enables debugging (and higher) checks and profiling. */
-#define FND_DEBUG 3
+#define FND_DEBUG 1
 
 /*! @def FND_DEVELOPMENT
   Enables development (and higher) checks and profiling. */
@@ -100,7 +100,7 @@
 
 /*! @def FND_RELEASE
   Enables release checks. */
-#define FND_RELEASE 1
+#define FND_RELEASE 3
 
 /*! @def FND_CONFIGURATION
   Specifies how "loose and fast" Foundation is. */
