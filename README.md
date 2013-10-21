@@ -1,5 +1,7 @@
 # Foundation
 
+A public domain foundation library.
+
 ## Supports
 
 | Platform  | Toolchain               | Supported             |
@@ -12,7 +14,7 @@
 | BSD       | GCC or Clang            |                       |
 | Android   | GCC or Clang            |                       |
 | iOS       | GCC or Clang            |                       |
-| Web       | Native Client (NaCl)    |                       |
+| Web       | Native Client (PNaCl)   |                       |
 | Web       | emscripten              |                       |
 
 ## Building
@@ -43,7 +45,7 @@ TODO
 
 ### Web
 
-#### via [Native Client (NaCl)](https://developers.google.com/native-client/)
+#### via [Native Client (PNaCl)](https://developers.google.com/native-client/)
 
 TODO
 
@@ -53,36 +55,20 @@ TODO
 
 ## Configuring
 
-Foundations's compile, link, and runtime behaviour is controlled by `./configure` switches and options, as well as various pre-processor defines (which are documented in `include/fnd/config.h`).
+Foundations's compile-, link-, and runtime behaviour is controlled by `./configure` switches and options, as well as various pre-processor defines (which are documented in `include/foundation/config.h`).
 
 ### via switches and options
 
-**--paranoid**: defines `FND_PARANOID`, which will enable paranoid checks.
-
-**--config=debug**: defines `FND_DEBUG` and `FND_DEVELOPMENT` and `FND_RELEASE`, which will enable debugging, development, and release checks; disables optimizations; and enables symbol generation.
-
-**--config=development**: defines `FND_DEVELOPMENT` and `FND_RELEASE`, which will enable development and release checks; enables optimizations; and enables symbol generation.
-
-**--config=release**: defines `FND_RELEASE`, which will enable **only** release checks; enables optimizations; and disables symbol generation.
-
-**--architecture=[x86,x86-64,arm]**: compiles for the specified architecture.
-
-**--toolchain=[gcc,clang,msvc]**: uses specifed toolchain.
-
-**--platform=[windows,macosx,linux]**: builds for the specified platform.
-
-**--windows-sdk=[path]**: specifies the Windows SDK to use when using Microsoft Visual Studio.
-
-**--msvc=[path]**: specifies which verison of Microsoft Visual Studio to use.
+TODO
 
 ## License
 
-Copyright (c) Michael Williams <devbug@bitbyte.ca>
+Author(s):
 
-All rights reserved.
+  * Michael Williams <devbug@bitbyte.ca>
 
-Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
+This is free and unencumbered software released into the public domain. Anyone is free to copy, modify, publish, use, compile, sell, or distribute this software, either in source code form or as a compiled binary, for any purpose, commercial or non-commercial, and by any means.
 
-Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer. Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution. Neither the name of the nor the names of its contributors may be used to endorse or promote products derived from this software without specific prior written permission.
+In jurisdictions that recognize copyright laws, the author or authors of this software dedicate any and all copyright interest in the software to the public domain. We make this dedication for the benefit of the public large and to the detriment of our heirs and successors. We intend this dedication to be an overt act of relinquishment in perpetuity of all present and future rights to this software under copyright law.
 
-THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
