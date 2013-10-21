@@ -1,4 +1,0 @@
-FOUNDATION_DEPENDENCIES =
-ifeq (@(TUP_PLATFORM),win32)
-  FOUNDATION_LIBS = DbgHelp.lib Ws2_32.lib
-endif

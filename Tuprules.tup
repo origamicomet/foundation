@@ -1,9 +1,0 @@
-CFLAGS =
-LDFLAGS =
-ASFLAGS =
-
-ifeq (@(TUP_PLATFORM),win32)
-include win32.tup
-else
-include posix.tup
-endif
