@@ -31,7 +31,7 @@
 ## For more information, please refer to <http://unlicense.org/>              ##
 ##                                                                            ##
 ################################################################################
-## build/msvc                                                                 ##
+## build/msvc++                                                               ##
 ##  Handles 'inconsistencies' when dealing with `cl.exe`.                     ##
 ################################################################################
 
@@ -49,7 +49,7 @@ _ = ARGV.map { |argument|
   else
     argument
   end
-}.unshift("-TC").unshift("cl.exe").join(' ')
+}.unshift("-TP").unshift("cl.exe").join(' ')
 
 begin
   COMMAND = { :output => `#{_}`, :successful => $?.success? }
