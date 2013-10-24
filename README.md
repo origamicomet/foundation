@@ -6,11 +6,11 @@ A public domain foundation library.
 
 | Platform  | Toolchain               | Supported             |
 |:--------- |:----------------------- |:---------------------:|
-| Windows   | Microsoft Visual Studio |                       |
-| Windows   | MinGW/MSYS              |                       |
+| Windows   | Microsoft Visual Studio | <span>&#10003;</span> |
+| Windows   | MinGW/MSYS              | <span>&#10003;</span> |
 | Windows   | Cygwin                  |         Never         |
 | Mac OSX   | GCC or Clang            |                       |
-| Linux     | GCC or Clang            |                       |
+| Linux     | GCC or Clang            | <span>&#10003;</span> |
 | BSD       | GCC or Clang            |                       |
 | Android   | GCC or Clang            |                       |
 | iOS       | GCC or Clang            |                       |
