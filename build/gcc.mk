@@ -30,97 +30,106 @@
 ## For more information, please refer to <http://unlicense.org/>              ##
 ##                                                                            ##
 ################################################################################
-## Makefile                                                                   ##
-##  Specifies all build rules for Foundation.                                 ##
+## build/msvc.mk                                                              ##
+##  Provides the standardized toolchain interface for Visual Studio.          ##
 ################################################################################
 
--include build/config
-ifndef _FOUNDATION_BUILD_CONFIG_
-  $(error Please ./configure first.)
-endif
+ifndef _FOUNDATION_BUILD_GCC_MK_
+_FOUNDATION_BUILD_GCC_MK_ := 1
 
-include build/toolchain.mk
-include build/platform.mk
-include build/architecture.mk
 include build/detect/platform.mk
 include build/detect/architecture.mk
 
 ################################################################################
-# Version:                                                                     #
+# Check for support:                                                           #
 ################################################################################
 
-COMMIT   := $(shell git log --pretty=oneline | wc -l)
-REVISION := $(shell git rev-parse HEAD)
+# Check that the host platform supports the toolchain.
 
-################################################################################
-# Binary, library, object, and source directories:                             #
-################################################################################
-
-BIN_DIR := bin
-LIB_DIR := lib
-OBJ_DIR := obj
-SRC_DIR := src
-
-################################################################################
-# Debugging and optimization:                                                  #
-################################################################################
-
-ifeq ($(PARANOID),yes)
-  CFLAGS += $(call cc-define,FND_PARANOID)
+ifeq ($(HOST_PLATFORM),windows-cygwin)
+  $(error Compilation on 'windows-cygwin' with 'gcc' is not supported.)
+endif
+ifeq ($(HOST_PLATFORM),windows-mingw)
+  # Supported.
+endif
+ifeq ($(HOST_PLATFORM),macosx)
+  $(error Compilation on 'macosx' with 'gcc' is not supported.)
+endif
+ifeq ($(HOST_PLATFORM),linux)
+  # Supported.
 endif
 
-ifeq ($(CONFIGURATION),debug)
-  CFLAGS  += $(call cc-define,FND_CONFIGURATION=1) $(call cc-debug)
-  LDFLAGS += $(call ld-debug)
-  ARFLAGS += $(call ar-debug)
+# And check that the toolchain can compile for the target platform.
+
+ifneq ($(TARGET_PLATFORM),$(HOST_PLATFORM))
+  $(error Cross-compilation support on '$(HOST_PLATFORM)' with 'gcc' to '$(TARGET_PLATFORM)' is not supported.)
 endif
-ifeq ($(CONFIGURATION),development)
-  CFLAGS  += $(call cc-define,FND_CONFIGURATION=2) $(call cc-development)
-  LDFLAGS += $(call ld-development)
-  ARFLAGS += $(call ar-development)
+
+# And check that we can target the specified architecture.
+
+ifeq ($(TARGET_ARCHITECTURE),x86)
+  # Supported.
 endif
-ifeq ($(CONFIGURATION),release)
-  CFLAGS  += $(call cc-define,FND_CONFIGURATION=3) $(call cc-release)
-  LDFLAGS += $(call ld-release)
-  ARFLAGS += $(call ar-release)
+ifeq ($(TARGET_ARCHITECTURE),x86-64)
+  # Supported.
+endif
+ifeq ($(TARGET_ARCHITECTURE),arm)
+  $(error Compilation on '$(HOST_PLATFORM)' with 'gcc' targeting 'arm' is not supported.)
 endif
 
 ################################################################################
-# Rules:                                                                       #
+# Define CFLAGS, LDFLAGS and ARFLAGS:                                          #
 ################################################################################
 
-FOUNDATION := $(LIB_DIR)/$(STATIC_LIB_PREFIX)foundation$(STATIC_LIB_SUFFIX)$(STATIC_LIB_EXTENSION)
+CFLAGS  := -Wall -Wextra -Wfloat-equal -Wshadow -Wunsafe-loop-optimizations \
+           -Wpointer-arith -Wcast-qual -Wcast-align \
+           -Wmissing-field-initializers -Wpacked -Wpadded -Wredundant-decls \
+           -Wunreachable-code -Winline
 
-.PHONY: all docs clean
+LDFLAGS :=
 
-all: $(FOUNDATION)
+ARFLAGS :=
 
-docs:
-	@echo "[DOXYGEN] docs/doxygen.conf"
-	@doxygen docs/doxygen.conf
+ifeq ($(TARGET_ARCHITECTURE),x86)
+  CFLAGS += -m32
+endif
+ifeq ($(TARGET_ARCHITECTURE),x86-64)
+  CFLAGS += -m64
+endif
 
-clean:
-	@echo "Cleaning..."
-	@rm -R -f $(BIN_DIR)
-	@rm -R -f $(LIB_DIR)
-	@rm -R -f $(OBJ_DIR)
-	@rm -R -f docs/html
+################################################################################
+# Implement the standardized interface:                                        #
+################################################################################
 
-SOURCES      := $(shell find $(SRC_DIR) -name '*.c')
-OBJECTS      := $(addprefix $(OBJ_DIR)/, $(subst $(SRC_DIR)/,,$(SOURCES:%.c=%.o)))
-INCLUDES     := $(call cc-includes,include)
-DEFINES      := $(call cc-define,FND_COMPILING)
-DEFINES      += $(call cc-define,FND_LINK=1)
-DEPENDENCIES :=
+cc                           = gcc -std=c99 -pedantic $(CFLAGS)
+c++                          = g++ -std=c++98 -pedantic $(CFLAGS)
+cc-input                     = -c "$(1)"
+cc-output                    = -o "$(1)"
+cc-includes                  = -I"$(1)"
+cc-define                    = -D$(1)
+cc-position-independent-code = -fPIC
+cc-generate-dependencies     = -MM -MT"$(1)"
+cc-debug                     = -g
+cc-development               = -g
+cc-release                   = -O3
 
-#	@$(call c++) $(INCLUDES) $(DEFINES) $(call cc-input,$<) -MM -MT $@ >$(patsubst %.o,%.d,$@)
--include $(OBJECTS:%.o=%.d)
-$(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
-	@echo "[CXX] $<"
-	@mkdir -p ${@D}
-	@$(call c++) $(INCLUDES) $(DEFINES) $(call cc-input,$<) $(call cc-output,$@)
+ar                           = ar -rcs $(ARFLAGS)
+ar++                         = ar -rcs $(ARFLAGS)
+ar-input                     = "$(1)"
+ar-output                    = -o "$(1)"
+ar-debug                     =
+ar-development               =
+ar-release                   =
 
-$(FOUNDATION): $(OBJECTS)
-	@echo "[LD] $@"
-	@mkdir -p ${@D}
-	@$(call ar++) $(call ar-output,$@) $(foreach input,$^,$(call ar-input,$(input))) $(DEPENDENCIES)
+ld                           = gcc $(LDFLAGS)
+ld++                         = g++ $(LDFLAGS)
+ld-input                     = "$(1)"
+ld-output                    = -o "$(1)"
+ld-libraries                 = -L"$(1)"
+ld-link                      = -l$(1)
+ld-shared                    = -shared
+ld-debug                     =
+ld-development               =
+ld-release                   =
+
+endif # _FOUNDATION_BUILD_GCC_MK_

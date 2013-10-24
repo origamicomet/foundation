@@ -30,97 +30,32 @@
 ## For more information, please refer to <http://unlicense.org/>              ##
 ##                                                                            ##
 ################################################################################
-## Makefile                                                                   ##
-##  Specifies all build rules for Foundation.                                 ##
+## build/linux.mk                                                             ##
+##  Opaquely handles platform specific prefixes, suffixes, and extensions as  ##
+##  well as system libraries for Linux.                                       ##
 ################################################################################
 
--include build/config
-ifndef _FOUNDATION_BUILD_CONFIG_
-  $(error Please ./configure first.)
-endif
-
-include build/toolchain.mk
-include build/platform.mk
-include build/architecture.mk
-include build/detect/platform.mk
-include build/detect/architecture.mk
+ifndef _FOUNDATION_BUILD_LINUX_MK_
+_FOUNDATION_BUILD_LINUX_MK_ := 1
 
 ################################################################################
-# Version:                                                                     #
+# Prefixes, suffixes, and extensions:                                          #
 ################################################################################
 
-COMMIT   := $(shell git log --pretty=oneline | wc -l)
-REVISION := $(shell git rev-parse HEAD)
+EXECUTABLE_PREFIX    :=
+EXECUTABLE_SUFFIX    :=
+EXECUTABLE_EXTENSION :=
+STATIC_LIB_PREFIX    := lib
+STATIC_LIB_SUFFIX    :=
+STATIC_LIB_EXTENSION := .a
+SHARED_LIB_PREFIX    := lib
+SHARED_LIB_SUFFIX    :=
+SHARED_LIB_EXTENSION := .so
 
 ################################################################################
-# Binary, library, object, and source directories:                             #
+# System libraries:                                                            #
 ################################################################################
 
-BIN_DIR := bin
-LIB_DIR := lib
-OBJ_DIR := obj
-SRC_DIR := src
+LDFLAGS += $(call ld-link,rt)
 
-################################################################################
-# Debugging and optimization:                                                  #
-################################################################################
-
-ifeq ($(PARANOID),yes)
-  CFLAGS += $(call cc-define,FND_PARANOID)
-endif
-
-ifeq ($(CONFIGURATION),debug)
-  CFLAGS  += $(call cc-define,FND_CONFIGURATION=1) $(call cc-debug)
-  LDFLAGS += $(call ld-debug)
-  ARFLAGS += $(call ar-debug)
-endif
-ifeq ($(CONFIGURATION),development)
-  CFLAGS  += $(call cc-define,FND_CONFIGURATION=2) $(call cc-development)
-  LDFLAGS += $(call ld-development)
-  ARFLAGS += $(call ar-development)
-endif
-ifeq ($(CONFIGURATION),release)
-  CFLAGS  += $(call cc-define,FND_CONFIGURATION=3) $(call cc-release)
-  LDFLAGS += $(call ld-release)
-  ARFLAGS += $(call ar-release)
-endif
-
-################################################################################
-# Rules:                                                                       #
-################################################################################
-
-FOUNDATION := $(LIB_DIR)/$(STATIC_LIB_PREFIX)foundation$(STATIC_LIB_SUFFIX)$(STATIC_LIB_EXTENSION)
-
-.PHONY: all docs clean
-
-all: $(FOUNDATION)
-
-docs:
-	@echo "[DOXYGEN] docs/doxygen.conf"
-	@doxygen docs/doxygen.conf
-
-clean:
-	@echo "Cleaning..."
-	@rm -R -f $(BIN_DIR)
-	@rm -R -f $(LIB_DIR)
-	@rm -R -f $(OBJ_DIR)
-	@rm -R -f docs/html
-
-SOURCES      := $(shell find $(SRC_DIR) -name '*.c')
-OBJECTS      := $(addprefix $(OBJ_DIR)/, $(subst $(SRC_DIR)/,,$(SOURCES:%.c=%.o)))
-INCLUDES     := $(call cc-includes,include)
-DEFINES      := $(call cc-define,FND_COMPILING)
-DEFINES      += $(call cc-define,FND_LINK=1)
-DEPENDENCIES :=
-
-#	@$(call c++) $(INCLUDES) $(DEFINES) $(call cc-input,$<) -MM -MT $@ >$(patsubst %.o,%.d,$@)
--include $(OBJECTS:%.o=%.d)
-$(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
-	@echo "[CXX] $<"
-	@mkdir -p ${@D}
-	@$(call c++) $(INCLUDES) $(DEFINES) $(call cc-input,$<) $(call cc-output,$@)
-
-$(FOUNDATION): $(OBJECTS)
-	@echo "[LD] $@"
-	@mkdir -p ${@D}
-	@$(call ar++) $(call ar-output,$@) $(foreach input,$^,$(call ar-input,$(input))) $(DEPENDENCIES)
+endif # _FOUNDATION_BUILD_LINUX_MK_
