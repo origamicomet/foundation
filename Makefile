@@ -113,12 +113,12 @@ DEFINES      := $(call cc-define,FND_COMPILING)
 DEFINES      += $(call cc-define,FND_LINK=1)
 DEPENDENCIES :=
 
-#	@$(call c++) $(INCLUDES) $(DEFINES) $(call cc-input,$<) -MM -MT $@ >$(patsubst %.o,%.d,$@)
 -include $(OBJECTS:%.o=%.d)
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
 	@echo "[CXX] $<"
 	@mkdir -p ${@D}
 	@$(call c++) $(INCLUDES) $(DEFINES) $(call cc-input,$<) $(call cc-output,$@)
+	$(call c++) $(INCLUDES) $(DEFINES) $(call cc-input,$<) -MM -MT $@ >$(patsubst %.o,%.d,$@)
 
 $(FOUNDATION): $(OBJECTS)
 	@echo "[LD] $@"
