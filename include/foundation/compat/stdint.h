@@ -297,8 +297,11 @@
 
   #endif // __STDC_CONSTANT_MACROS ]
 
+  #include <stddef.h>
+
   #endif // _MSC_STDINT_H_ ]
 #else
+  #include <stddef.h>
   #include <stdint.h>
 #endif
 
