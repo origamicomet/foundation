@@ -118,7 +118,7 @@ $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
 	@echo "[CXX] $<"
 	@mkdir -p ${@D}
 	@$(call c++) $(INCLUDES) $(DEFINES) $(call cc-input,$<) $(call cc-output,$@)
-	$(call c++) $(INCLUDES) $(DEFINES) $(call cc-input,$<) -MM -MT $@ >$(patsubst %.o,%.d,$@)
+	@$(call c++) $(INCLUDES) $(DEFINES) $(call cc-input,$<) -MM -MT $@ >$(patsubst %.o,%.d,$@)
 
 $(FOUNDATION): $(OBJECTS)
 	@echo "[LD] $@"
