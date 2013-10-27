@@ -38,6 +38,7 @@
 #define _FOUNDATION_ASSERT_H_
 
 #include <foundation/config.h>
+#include <foundation/preprocessor.h>
 
 #include <stdio.h>
 #include <signal.h>
@@ -58,7 +59,7 @@
   do { \
     if (!(_Condition)) { \
       fprintf(stderr, _Format, ## __VA_ARGS__); \
-      signal(SIGABRT); \
+      raise(SIGABRT); \
     } \
   } while (0)
 
@@ -82,7 +83,15 @@
 /*! @def fnd_assertf
   @copydoc fnd_assert_f If, and only if, `_Level` is <= FND_CONFIGURATION. */
 #define fnd_assertf(_Level, _Condition, _Format, ...) \
-  fnd_assertf_#_Level(_Condition, _Format, ## __VA_ARGS__)
+  fnd_assertf_##_Level(_Condition, _Format, ## __VA_ARGS__)
+
+#ifdef FND_PARANOID
+  #define fnd_assertf_paranoid(_Condition, _Format, ...) \
+    fnd_assertf_(_Condition, _Format, ## __VA_ARGS__)
+#else
+  #define fnd_assertf_paranoid(_Condition, _Format) \
+    do { (void)sizeof((_Condition)); } while (0)
+#endif
 
 #if (FND_CONFIGURATION <= FND_DEBUG)
   #define fnd_assertf_debug(_Condition, _Format, ...) \
