@@ -41,6 +41,8 @@
 #include <foundation/compat/stdbool.h>
 #include <foundation/allocator.h>
 
+#include <string.h>
+
 /* ========================================================================== */
 /*  Allocator:                                                                */
 /*   * "C" (fnd_array_t);                                                     */
