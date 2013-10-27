@@ -44,7 +44,7 @@
 /* ========================================================================== */
 /*  Allocator:                                                                */
 /*   * C (fnd_allocator_t);                                                   */
-/*   * C++ (foundation::Allocator).                                           */
+/*   * C++ (foundation::allocator).                                           */
 /* ========================================================================== */
 
 /* ========================================================================== */
@@ -76,19 +76,19 @@ typedef struct fnd_allocator {
 #endif
 
 /* ========================================================================== */
-/*  C++ (foundation::Allocator):                                              */
+/*  C++ (foundation::allocator):                                              */
 /* ========================================================================== */
 
 #ifdef __cplusplus
 namespace foundation {
   /*! @copydoc fnd_allocator_t */
-  class Allocator {
+  class allocator {
     private:
-      Allocator(const Allocator &);
-      Allocator &operator= (const Allocator &);
+      allocator(const allocator &);
+      allocator &operator= (const allocator &);
     protected:
-      Allocator();
-      virtual ~Allocator();
+      allocator();
+      virtual ~allocator();
     public:
       virtual void *alloc(const size_t sz, const size_t alignment) = 0;
       virtual void *realloc(void *ptr, const size_t sz, const size_t alignment) = 0;
@@ -99,7 +99,7 @@ namespace foundation {
       static void free_(fnd_allocator_t *_, void *ptr);
     private:
       fnd_allocator_t _;
-      Allocator *this_;
+      allocator *this_;
   };
 } /* foundation */
 #endif
