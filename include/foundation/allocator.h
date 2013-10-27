@@ -57,7 +57,7 @@
 extern "C" {
 #endif
 
-/*! A genertic stateful allocator interface. */
+/*! A generic stateful allocator interface. */
 typedef struct fnd_allocator {
   void *(*alloc)(
     struct fnd_allocator *allocator,
