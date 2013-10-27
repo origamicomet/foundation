@@ -40,6 +40,8 @@
 #include <foundation/config.h>
 #include <foundation/compat/stdint.h>
 #include <foundation/compat/inttypes.h>
+#include <foundation/compat/stdalign.h>
+#include <foundation/assert.h>
 
 /* ========================================================================== */
 /*  Allocator:                                                                */
@@ -70,6 +72,26 @@ typedef struct fnd_allocator {
     struct fnd_allocator *allocator,
     void *ptr);
 } fnd_allocator_t;
+
+/* ========================================================================== */
+
+/*! */
+extern void *fnd_allocator_alloc(
+  fnd_allocator_t *allocator,
+  const size_t sz,
+  const size_t alignment);
+
+/*! */
+extern void *fnd_allocator_realloc(
+  fnd_allocator_t *allocator,
+  void *ptr,
+  const size_t sz,
+  const size_t alignment);
+
+/*! */
+extern void fnd_allocator_free(
+  fnd_allocator_t *allocator,
+  void *ptr);
 
 #ifdef __cplusplus
 }

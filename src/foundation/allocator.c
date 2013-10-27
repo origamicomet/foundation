@@ -41,7 +41,32 @@
 extern "C" {
 #endif
 
-/* ... */
+void *fnd_allocator_alloc(
+  fnd_allocator_t *allocator,
+  const size_t sz,
+  const size_t alignment)
+{
+  fnd_assert(debug, allocator != NULL);
+  return allocator->alloc(allocator, sz, alignment);
+}
+
+void *fnd_allocator_realloc(
+  fnd_allocator_t *allocator,
+  void *ptr,
+  const size_t sz,
+  const size_t alignment)
+{
+  fnd_assert(debug, allocator != NULL);
+  return allocator->realloc(allocator, ptr, sz, alignment);
+}
+
+void fnd_allocator_free(
+  fnd_allocator_t *allocator,
+  void *ptr)
+{
+  fnd_assert(debug, allocator != NULL);
+  allocator->free(allocator, ptr);
+}
 
 #ifdef __cplusplus
 }
