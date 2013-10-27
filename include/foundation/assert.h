@@ -89,7 +89,7 @@
   #define fnd_assertf_paranoid(_Condition, _Format, ...) \
     fnd_assertf_(_Condition, _Format, ## __VA_ARGS__)
 #else
-  #define fnd_assertf_paranoid(_Condition, _Format) \
+  #define fnd_assertf_paranoid(_Condition, _Format, ...) \
     do { (void)sizeof((_Condition)); } while (0)
 #endif
 
@@ -97,7 +97,7 @@
   #define fnd_assertf_debug(_Condition, _Format, ...) \
     fnd_assertf_(_Condition, _Format, ## __VA_ARGS__)
 #else
-  #define fnd_assertf_debug(_Condition, _Format) \
+  #define fnd_assertf_debug(_Condition, _Format, ...) \
     do { (void)sizeof((_Condition)); } while (0)
 #endif
 
@@ -105,7 +105,7 @@
   #define fnd_assertf_development(_Condition, _Format, ...) \
     fnd_assertf_(_Condition, _Format, ## __VA_ARGS__)
 #else
-  #define fnd_assertf_development(_Condition, _Format) \
+  #define fnd_assertf_development(_Condition, _Format, ...) \
     do { (void)sizeof((_Condition)); } while (0)
 #endif
 
@@ -113,7 +113,7 @@
   #define fnd_assertf_release(_Condition, _Format, ...) \
     fnd_assertf_(_Condition, _Format, ## __VA_ARGS__)
 #else
-  #define fnd_assertf_release(_Condition, _Format) \
+  #define fnd_assertf_release(_Condition, _Format, ...) \
     do { (void)sizeof((_Condition)); } while (0)
 #endif
 
