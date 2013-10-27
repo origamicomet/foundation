@@ -78,26 +78,26 @@ void fnd_allocator_free(
 
 #ifdef __cplusplus
 namespace foundation {
-  allocator::allocator() {
-    _.alloc = &allocator::alloc_;
-    _.realloc = &allocator::realloc_;
-    _.free = &allocator::free_;
+  Allocator::Allocator() {
+    _.alloc = &Allocator::alloc_;
+    _.realloc = &Allocator::realloc_;
+    _.free = &Allocator::free_;
     this_ = this;
   }
 
-  allocator::~allocator() {
+  Allocator::~Allocator() {
   }
 
-  void *allocator::alloc_(fnd_allocator_t *_, const size_t sz, const size_t alignment) {
-    return (*((allocator **)(((uintptr_t)_) + sizeof(fnd_allocator_t))))->alloc(sz, alignment);
+  void *Allocator::alloc_(fnd_allocator_t *_, const size_t sz, const size_t alignment) {
+    return (*((Allocator **)(((uintptr_t)_) + sizeof(fnd_allocator_t))))->alloc(sz, alignment);
   }
 
-  void *allocator::realloc_(fnd_allocator_t *_, void *ptr, const size_t sz, const size_t alignment) {
-    return (*((allocator **)(((uintptr_t)_) + sizeof(fnd_allocator_t))))->realloc(ptr, sz, alignment);
+  void *Allocator::realloc_(fnd_allocator_t *_, void *ptr, const size_t sz, const size_t alignment) {
+    return (*((Allocator **)(((uintptr_t)_) + sizeof(fnd_allocator_t))))->realloc(ptr, sz, alignment);
   }
 
-  void allocator::free_(fnd_allocator_t *_, void *ptr) {
-    (*((allocator **)(((uintptr_t)_) + sizeof(fnd_allocator_t))))->free(ptr);
+  void Allocator::free_(fnd_allocator_t *_, void *ptr) {
+    (*((Allocator **)(((uintptr_t)_) + sizeof(fnd_allocator_t))))->free(ptr);
   }
 } /* foundation */
 #endif

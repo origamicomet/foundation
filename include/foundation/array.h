@@ -86,11 +86,11 @@ template <typename _Elem>
 void fnd_array_create(fnd_array_t<_Elem> *array, fnd_allocator_t *allocator) {
   fnd_assert(debug, array != NULL);
   fnd_assert(debug, allocator != NULL);
-  array->copy_ = (fnd_array_t<_Elem>::copy *)
+  array->copy_ = (typename fnd_array_t<_Elem>::copy *)
     fnd_allocator_alloc(
       allocator,
-      sizeof(fnd_array_t<_Elem>::copy),
-      fnd_alignof(fnd_array_t<_Elem>::copy));
+      sizeof(typename fnd_array_t<_Elem>::copy),
+      fnd_alignof(typename fnd_array_t<_Elem>::copy));
   array->copy_->refs = 1;
   array->copy_->allocator = allocator;
   array->copy_->size = array->copy_->reserved = 0;
@@ -103,11 +103,11 @@ template <typename _Elem>
 void fnd_array_create(fnd_array_t<_Elem> *array, fnd_allocator_t *allocator, const size_t reserve) {
   fnd_assert(debug, array != NULL);
   fnd_assert(debug, allocator != NULL);
-  array->copy_ = (fnd_array_t<_Elem>::copy *)
+  array->copy_ = (typename fnd_array_t<_Elem>::copy *)
     fnd_allocator_alloc(
       allocator,
-      sizeof(fnd_array_t<_Elem>::copy),
-      fnd_alignof(fnd_array_t<_Elem>::copy));
+      sizeof(typename fnd_array_t<_Elem>::copy),
+      fnd_alignof(typename fnd_array_t<_Elem>::copy));
   array->copy_->refs = 1;
   array->copy_->allocator = allocator;
   array->copy_->size = 0;
@@ -193,11 +193,11 @@ void fnd_array_deepen(fnd_array_t<_Elem> *array) {
     array->copy_on_write_ = false;
     return;
   }
-  fnd_array_t<_Elem>::copy *copy = (fnd_array_t<_Elem>::copy *)
+  typename fnd_array_t<_Elem>::copy *copy = (typename fnd_array_t<_Elem>::copy *)
     fnd_allocator_alloc(
       array->copy_->allocator,
-      sizeof(fnd_array_t<_Elem>::copy),
-      fnd_alignof(fnd_array_t<_Elem>::copy));
+      sizeof(typename fnd_array_t<_Elem>::copy),
+      fnd_alignof(typename fnd_array_t<_Elem>::copy));
   copy->refs = 1;
   copy->allocator = array->copy_->allocator;
   copy->size = copy->reserved = array->copy_->size;
@@ -237,11 +237,11 @@ void fnd_array_clear(fnd_array_t<_Elem> *array) {
       array->copy_on_write_ = false;
     } else {
       array->copy_->refs--;
-      fnd_array_t<_Elem>::copy *copy = (fnd_array_t<_Elem>::copy *)
+      typename fnd_array_t<_Elem>::copy *copy = (typename fnd_array_t<_Elem>::copy *)
         fnd_allocator_alloc(
           array->copy_->allocator,
-          sizeof(fnd_array_t<_Elem>::copy),
-          fnd_alignof(fnd_array_t<_Elem>::copy));
+          sizeof(typename fnd_array_t<_Elem>::copy),
+          fnd_alignof(typename fnd_array_t<_Elem>::copy));
       copy->allocator = array->copy_->allocator;
       copy->size = copy->reserved = 0;
       copy->elements = (_Elem *)NULL;
@@ -267,11 +267,11 @@ void fnd_array_coup_(fnd_array_t<_Elem> *array) {
       array->copy_on_write_ = false;
     } else {
       array->copy_->refs--;
-      fnd_array_t<_Elem>::copy *copy = (fnd_array_t<_Elem>::copy *)
+      typename fnd_array_t<_Elem>::copy *copy = (typename fnd_array_t<_Elem>::copy *)
         fnd_allocator_alloc(
           array->copy_->allocator,
-          sizeof(fnd_array_t<_Elem>::copy),
-          fnd_alignof(fnd_array_t<_Elem>::copy));
+          sizeof(typename fnd_array_t<_Elem>::copy),
+          fnd_alignof(typename fnd_array_t<_Elem>::copy));
       copy->refs = 1;
       copy->allocator = array->copy_->allocator;
       copy->size = array->copy_->size;
@@ -459,30 +459,30 @@ void fnd_array_reserve(fnd_array_t<_Elem> *array, const size_t additional) {
 namespace foundation {
   /*! @copydoc fnd_array_t */
   template <typename _Elem>
-  class array : private fnd_array_t<_Elem> {
+  class Array : private fnd_array_t<_Elem> {
     private:
-      array(const array &);
-      array &operator= (const array &);
+      Array(const Array &);
+      Array &operator= (const Array &);
     public:
-      array();
-      array(allocator *allocator);
-      array(allocator *allocator, const size_t reserve);
-      ~array();
+      Array();
+      Array(Allocator *allocator);
+      Array(Allocator *allocator, const size_t reserve);
+      ~Array();
     public:
       _Elem &at(const size_t index);
       _Elem &operator [](const size_t index);
       const _Elem &at(const size_t index) const;
       const _Elem &operator [](const size_t index) const;
     public:
-      void copy(array<_Elem> &copy) const;
+      void copy(Array<_Elem> &copy) const;
       void deepen();
       bool copy_on_write() const;
     public:
       void clear();
       void prepend(const _Elem &prefix);
-      void prepend(const array<_Elem> &prefix);
+      void prepend(const Array<_Elem> &prefix);
       void append(const _Elem &suffix);
-      void append(const array<_Elem> &suffix);
+      void append(const Array<_Elem> &suffix);
     public:
       size_t size() const;
       void resize(const size_t size);

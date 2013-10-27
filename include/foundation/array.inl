@@ -39,121 +39,121 @@
 
 /*! @copydoc fnd_array_create */
 template <typename _Elem>
-array<_Elem>::array() {
+Array<_Elem>::Array() {
   fnd_array_create((fnd_array_t<_Elem> *)this);
 }
 
 /*! @copydoc fnd_array_create */
 template <typename _Elem>
-array<_Elem>::array(allocator *allocator) {
+Array<_Elem>::Array(Allocator *allocator) {
   fnd_array_create((fnd_array_t<_Elem> *)this, (fnd_allocator_t *)allocator);
 }
 
 /*! @copydoc fnd_array_create */
 template <typename _Elem>
-array<_Elem>::array(allocator *allocator, const size_t reserve) {
-  fnd_array_create((fnd_array_t<_Elem> *)this, (fnd_allocator_t *)allocator, reserve);
+Array<_Elem>::Array(Allocator *allocator, const size_t reserve_) {
+  fnd_array_create((fnd_array_t<_Elem> *)this, (fnd_allocator_t *)allocator, reserve_);
 }
 
 /*! @copydoc fnd_array_destroy */
 template <typename _Elem>
-array<_Elem>::~array() {
+Array<_Elem>::~Array() {
   fnd_array_destroy((fnd_array_t<_Elem> *)this);
 }
 
 /*! @copydoc fnd_array_at */
 template <typename _Elem>
-_Elem &array<_Elem>::at(const size_t index) {
+_Elem &Array<_Elem>::at(const size_t index) {
   return *fnd_array_at((fnd_array_t<_Elem> *)this, index);
 }
 
 /*! @copydoc fnd_array_at */
 template <typename _Elem>
-_Elem &array<_Elem>::operator [](const size_t index) {
+_Elem &Array<_Elem>::operator [](const size_t index) {
   return at(index);
 }
 
 /*! @copydoc fnd_array_at */
 template <typename _Elem>
-const _Elem &array<_Elem>::at(const size_t index) const {
+const _Elem &Array<_Elem>::at(const size_t index) const {
   return *fnd_array_at((const fnd_array_t<_Elem> *)this, index);
 }
 
 /*! @copydoc fnd_array_at */
 template <typename _Elem>
-const _Elem &array<_Elem>::operator [](const size_t index) const {
+const _Elem &Array<_Elem>::operator [](const size_t index) const {
   return at(index);
 }
 
 /*! @copydoc fnd_array_copy */
 template <typename _Elem>
-void array<_Elem>::copy(array<_Elem> &copy) const {
-  fnd_array_copy((const fnd_array_t<_Elem> *)this, (fnd_array_t<_Elem> *)&copy);
+void Array<_Elem>::copy(Array<_Elem> &copy_) const {
+  fnd_array_copy((const fnd_array_t<_Elem> *)this, (fnd_array_t<_Elem> *)&copy_);
 }
 
 /*! @copydoc fnd_array_deepen */
 template <typename _Elem>
-void array<_Elem>::deepen() {
+void Array<_Elem>::deepen() {
   fnd_array_deepen((fnd_array_t<_Elem> *)this);
 }
 
 /*! @copydoc fnd_array_copy_on_write */
 template <typename _Elem>
-bool array<_Elem>::copy_on_write() const {
+bool Array<_Elem>::copy_on_write() const {
   return fnd_array_copy_on_write((const fnd_array_t<_Elem> *)this);
 }
 
 /*! @copydoc fnd_array_clear */
 template <typename _Elem>
-void array<_Elem>::clear() {
+void Array<_Elem>::clear() {
   return fnd_array_clear((fnd_array_t<_Elem> *)this);
 }
 
 /*! @copydoc fnd_array_prepend */
 template <typename _Elem>
-void array<_Elem>::prepend(const _Elem &prefix) {
+void Array<_Elem>::prepend(const _Elem &prefix) {
   return fnd_array_prepend((fnd_array_t<_Elem> *)this, &prefix);
 }
 
 /*! @copydoc fnd_array_prepend */
 template <typename _Elem>
-void array<_Elem>::prepend(const array<_Elem> &prefix) {
+void Array<_Elem>::prepend(const Array<_Elem> &prefix) {
   return fnd_array_prepend((fnd_array_t<_Elem> *)this, (const fnd_array_t<_Elem> *)&prefix);
 }
 
 /*! @copydoc fnd_array_append */
 template <typename _Elem>
-void array<_Elem>::append(const _Elem &suffix) {
+void Array<_Elem>::append(const _Elem &suffix) {
   return fnd_array_append((fnd_array_t<_Elem> *)this, &suffix);
 }
 
 /*! @copydoc fnd_array_append */
 template <typename _Elem>
-void array<_Elem>::append(const array<_Elem> &suffix) {
+void Array<_Elem>::append(const Array<_Elem> &suffix) {
   return fnd_array_append((fnd_array_t<_Elem> *)this, (const fnd_array_t<_Elem> *)&suffix);
 }
 
 /*! @copydoc fnd_array_size */
 template <typename _Elem>
-size_t array<_Elem>::size() const {
+size_t Array<_Elem>::size() const {
   return fnd_array_size((const fnd_array_t<_Elem> *)this);
 }
 
 /*! @copydoc fnd_array_resize */
 template <typename _Elem>
-void array<_Elem>::resize(const size_t size) {
-  fnd_array_resize((fnd_array_t<_Elem> *)this, size);
+void Array<_Elem>::resize(const size_t size_) {
+  fnd_array_resize((fnd_array_t<_Elem> *)this, size_);
 }
 
 /*! @copydoc fnd_array_reserved */
 template <typename _Elem>
-size_t array<_Elem>::reserved() const {
+size_t Array<_Elem>::reserved() const {
   return fnd_array_reserved((const fnd_array_t<_Elem> *)this);
 }
 
 /*! @copydoc fnd_array_reserve */
 template <typename _Elem>
-void array<_Elem>::reserve(const size_t additional) {
+void Array<_Elem>::reserve(const size_t additional) {
   fnd_array_reserve((fnd_array_t<_Elem> *)this, additional);
 }
 

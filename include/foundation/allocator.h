@@ -104,13 +104,13 @@ extern void fnd_allocator_free(
 #ifdef __cplusplus
 namespace foundation {
   /*! @copydoc fnd_allocator_t */
-  class allocator {
+  class Allocator {
     private:
-      allocator(const allocator &);
-      allocator &operator= (const allocator &);
+      Allocator(const Allocator &);
+      Allocator &operator= (const Allocator &);
     protected:
-      allocator();
-      virtual ~allocator();
+      Allocator();
+      virtual ~Allocator();
     public:
       virtual void *alloc(const size_t sz, const size_t alignment) = 0;
       virtual void *realloc(void *ptr, const size_t sz, const size_t alignment) = 0;
@@ -121,7 +121,7 @@ namespace foundation {
       static void free_(fnd_allocator_t *_, void *ptr);
     private:
       fnd_allocator_t _;
-      allocator *this_;
+      Allocator *this_;
   };
 } /* foundation */
 #endif
