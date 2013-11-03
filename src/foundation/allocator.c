@@ -101,3 +101,88 @@ namespace foundation {
   }
 } /* foundation */
 #endif
+
+/* ========================================================================== */
+/*  C (fnd_heap):                                                             */
+/* ========================================================================== */
+
+#include <malloc.h>
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+typedef struct fnd_aligned_alloc_header {
+  void *unaligned;
+  size_t size;
+} fnd_aligned_alloc_header_t;
+
+static fnd_aligned_alloc_header_t *fnd_aligned_alloc_header_from_ptr(void *ptr) {
+  return (((fnd_aligned_alloc_header_t **)ptr)[-1]);
+}
+
+static void *fnd_heap_alloc(fnd_allocator_t *, const size_t sz, const size_t alignment) {
+  uintptr_t ptr = (uintptr_t)
+    malloc(sz + sizeof(fnd_aligned_alloc_header_t) + alignment - 1);
+  uintptr_t aligned = ((ptr + sizeof(fnd_aligned_alloc_header_t)) & ~(alignment - 1));
+  fnd_aligned_alloc_header *header = fnd_aligned_alloc_header_from_ptr((void *)aligned);
+  header->unaligned = (void *)ptr;
+  header->size = sz;
+  return ((void *)aligned);
+}
+
+static void *fnd_heap_realloc(fnd_allocator_t *, void *ptr, const size_t sz, const size_t alignment) {
+  void *ptr_ = fnd_heap_alloc(NULL, sz, alignment);
+  if (ptr) {
+    fnd_aligned_alloc_header *header = fnd_aligned_alloc_header_from_ptr(ptr);
+    memcpy((void *)ptr_, (const void *)ptr, header->size);
+    free(fnd_aligned_alloc_header_from_ptr(ptr)->unaligned); }
+  return ptr_;
+}
+
+static void fnd_heap_free(fnd_allocator_t *, void *ptr) {
+  if (ptr)
+    free(fnd_aligned_alloc_header_from_ptr(ptr)->unaligned);
+}
+
+static fnd_allocator_t heap_ = {
+  /* .alloc = */   &fnd_heap_alloc,
+  /* .realloc = */ &fnd_heap_realloc,
+  /* .free = */    &fnd_heap_free,
+};
+
+fnd_allocator_t *fnd_heap(void) {
+  return &heap_;
+}
+
+#ifdef __cplusplus
+}
+#endif
+
+/* ========================================================================== */
+/*  C++ (foundation::heap):                                                   */
+/* ========================================================================== */
+
+#ifdef __cplusplus
+namespace foundation {
+  class Heap : public Allocator {
+    private:
+      Heap(const Heap &);
+      Heap &operator= (const Heap &);
+    public:
+      Heap() {}
+      ~Heap() {}
+    public:
+      void *alloc(const size_t sz, const size_t alignment)
+      { return fnd_heap_alloc(NULL, sz, alignment); }
+      void *realloc(void *ptr, const size_t sz, const size_t alignment)
+      { return fnd_heap_realloc(NULL, ptr, sz, alignment); }
+      void free(void *ptr)
+      { fnd_heap_free(NULL, ptr); }
+  }; static Heap heap_;
+
+  Allocator &heap() {
+    return heap_;
+  }
+} /* foundation */
+#endif
