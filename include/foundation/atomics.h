@@ -293,6 +293,9 @@ static fnd_atomic_ptr_t fnd_atomic_ptr_compare_swap_relaxed(
 #ifdef __cplusplus
 namespace foundation {
   namespace atomic {
+    /* ====================================================================== */
+    /*  Types:                                                                */
+    /* ====================================================================== */
     /*! @copydoc fnd_atomic_int32_t */
     typedef fnd_atomic_int32_t int32;
     /*! @copydoc fnd_atomic_uint32_t */
@@ -300,6 +303,9 @@ namespace foundation {
     /*! @copydoc fnd_atomic_ptr_t */
     typedef fnd_atomic_ptr_t ptr;
 
+    /* ====================================================================== */
+    /*  Add & Increment:                                                      */
+    /* ====================================================================== */
     /*! @copydoc fnd_atomic_int32_fetch_add_relaxed */
     static int32 fetch_add_relaxed(int32 *lhs, int32 rhs) {
       return fnd_atomic_int32_fetch_add_relaxed(lhs, rhs); }
@@ -319,6 +325,9 @@ namespace foundation {
     static ptr fetch_increment_relaxed(ptr *v) {
       return fnd_atomic_ptr_fetch_increment_relaxed(v); }
 
+    /* ====================================================================== */
+    /*  Sub & Decrement:                                                      */
+    /* ====================================================================== */
     /*! @copydoc fnd_atomic_int32_fetch_sub_relaxed */
     static int32 fetch_sub_relaxed(int32 *lhs, int32 rhs) {
       return fnd_atomic_int32_fetch_sub_relaxed(lhs, rhs); }
@@ -338,6 +347,9 @@ namespace foundation {
     static ptr fetch_decrement_relaxed(ptr *v) {
       return fnd_atomic_ptr_fetch_decrement_relaxed(v); }
 
+    /* ====================================================================== */
+    /*  Compare and Swap:                                                     */
+    /* ====================================================================== */
     /*! @copydoc fnd_atomic_int32_compare_swap_relaxed */
     static int32 compare_swap_relaxed(int32 *v, int32 expected, int32 desired) {
       return fnd_atomic_int32_compare_swap_relaxed(v, expected, desired); }
