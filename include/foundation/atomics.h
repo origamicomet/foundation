@@ -48,6 +48,7 @@
 /* ========================================================================== */
 /*  Atomics:                                                                  */
 /*   * Types;                                                                 */
+/*   * Load & Store;                                                          */
 /*   * Increment & Add;                                                       */
 /*   * Decrement & Sub;                                                       */
 /*   * Compare and Swap;                                                      */
@@ -87,6 +88,85 @@ extern "C" {
 typedef int32_t fnd_atomic_int32_t;
 typedef uint32_t fnd_atomic_uint32_t;
 typedef uintptr_t fnd_atomic_ptr_t;
+
+/* ========================================================================== */
+/*  Load & Store:                                                             */
+/* ========================================================================== */
+
+/*! */
+static fnd_atomic_int32_t fnd_atomic_int32_load_relaxed(
+  fnd_atomic_int32_t *v)
+{
+#if (FND_COMPILER == FND_COMPILER_MSVC)
+  #if (FND_ARCHITECTURE == FND_ARCHITECTURE_X86)    || \
+      (FND_ARCHITECTURE == FND_ARCHITECTURE_X86_64)
+    return *v;
+  #endif
+#endif
+}
+
+/*! */
+static void fnd_atomic_int32_store_relaxed(
+  fnd_atomic_int32_t *v,
+  fnd_atomic_int32_t desired)
+{
+#if (FND_COMPILER == FND_COMPILER_MSVC)
+  #if (FND_ARCHITECTURE == FND_ARCHITECTURE_X86)    || \
+      (FND_ARCHITECTURE == FND_ARCHITECTURE_X86_64)
+    *v = desired;
+  #endif
+#endif
+}
+
+/*! */
+static fnd_atomic_uint32_t fnd_atomic_uint32_load_relaxed(
+  fnd_atomic_uint32_t *v)
+{
+#if (FND_COMPILER == FND_COMPILER_MSVC)
+  #if (FND_ARCHITECTURE == FND_ARCHITECTURE_X86)    || \
+      (FND_ARCHITECTURE == FND_ARCHITECTURE_X86_64)
+    return *v;
+  #endif
+#endif
+}
+
+/*! */
+static void fnd_atomic_uint32_store_relaxed(
+  fnd_atomic_uint32_t *v,
+  fnd_atomic_uint32_t desired)
+{
+#if (FND_COMPILER == FND_COMPILER_MSVC)
+  #if (FND_ARCHITECTURE == FND_ARCHITECTURE_X86)    || \
+      (FND_ARCHITECTURE == FND_ARCHITECTURE_X86_64)
+    *v = desired;
+  #endif
+#endif
+}
+
+/*! */
+static fnd_atomic_ptr_t fnd_atomic_ptr_load_relaxed(
+  fnd_atomic_ptr_t *v)
+{
+#if (FND_COMPILER == FND_COMPILER_MSVC)
+  #if (FND_ARCHITECTURE == FND_ARCHITECTURE_X86)    || \
+      (FND_ARCHITECTURE == FND_ARCHITECTURE_X86_64)
+    return *v;
+  #endif
+#endif
+}
+
+/*! */
+static void fnd_atomic_ptr_store_relaxed(
+  fnd_atomic_ptr_t *v,
+  fnd_atomic_ptr_t desired)
+{
+#if (FND_COMPILER == FND_COMPILER_MSVC)
+  #if (FND_ARCHITECTURE == FND_ARCHITECTURE_X86)    || \
+      (FND_ARCHITECTURE == FND_ARCHITECTURE_X86_64)
+    *v = desired;
+  #endif
+#endif
+}
 
 /* ========================================================================== */
 /*  Increment & Add:                                                          */
@@ -302,6 +382,28 @@ namespace foundation {
     typedef fnd_atomic_uint32_t uint32;
     /*! @copydoc fnd_atomic_ptr_t */
     typedef fnd_atomic_ptr_t ptr;
+
+    /* ====================================================================== */
+    /*  Load & Store:                                                         */
+    /* ====================================================================== */
+    /*! @copydoc fnd_atomic_int32_load_relaxed */
+    static int32 load_relaxed(int32 *v) {
+      return fnd_atomic_int32_load_relaxed(v); }
+    /*! @copydoc fnd_atomic_int32_store_relaxed */
+    static void store_relaxed(int32 *v, int32 desired) {
+      return fnd_atomic_int32_store_relaxed(v, desired); }
+    /*! @copydoc fnd_atomic_uint32_load_relaxed */
+    static uint32 load_relaxed(uint32 *v) {
+      return fnd_atomic_uint32_load_relaxed(v); }
+    /*! @copydoc fnd_atomic_uint32_store_relaxed */
+    static void store_relaxed(uint32 *v, uint32 desired) {
+      return fnd_atomic_uint32_store_relaxed(v, desired); }
+    /*! @copydoc fnd_atomic_ptr_load_relaxed */
+    static ptr load_relaxed(ptr *v) {
+      return fnd_atomic_ptr_load_relaxed(v); }
+    /*! @copydoc fnd_atomic_ptr_store_relaxed */
+    static void store_relaxed(ptr *v, ptr desired) {
+      return fnd_atomic_ptr_store_relaxed(v, desired); }
 
     /* ====================================================================== */
     /*  Add & Increment:                                                      */
