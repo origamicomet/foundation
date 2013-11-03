@@ -109,7 +109,7 @@ extern void fnd_thread_detach(fnd_thread_t *thread);
 #endif
 
 /* ========================================================================== */
-/*  C++ (foundation::atomic::*).                                              */
+/*  C++ (foundation::atomic::*):                                              */
 /* ========================================================================== */
 
 #ifdef __cplusplus
