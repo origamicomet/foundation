@@ -118,7 +118,7 @@ typedef struct fnd_aligned_alloc_header {
 } fnd_aligned_alloc_header_t;
 
 static fnd_aligned_alloc_header_t *fnd_aligned_alloc_header_from_ptr(void *ptr) {
-  return (((fnd_aligned_alloc_header_t **)ptr)[-1]);
+  return &(((fnd_aligned_alloc_header_t *)ptr)[-1]);
 }
 
 static void *fnd_heap_alloc(fnd_allocator_t *, const size_t sz, const size_t alignment) {
