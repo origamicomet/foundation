@@ -108,10 +108,12 @@ clean:
 
 SOURCES      := $(shell find $(SRC_DIR) -name '*.c')
 OBJECTS      := $(addprefix $(OBJ_DIR)/, $(subst $(SRC_DIR)/,,$(SOURCES:%.c=%.o)))
+
 INCLUDES     := $(call cc-includes,include)
-DEFINES      := $(call cc-define,FND_COMPILING)
-DEFINES      += $(call cc-define,FND_LINK=1)
 DEPENDENCIES :=
+
+DEFINES      := $(call cc-define,FND_COMPILING)
+DEFINES      += $(call cc-define,FND_LINKAGE=1)
 
 -include $(OBJECTS:%.o=%.d)
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
