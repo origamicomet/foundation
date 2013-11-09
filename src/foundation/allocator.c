@@ -106,6 +106,7 @@ namespace foundation {
 /*  C (fnd_heap):                                                             */
 /* ========================================================================== */
 
+#include <string.h>
 #include <malloc.h>
 
 #ifdef __cplusplus

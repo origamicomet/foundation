@@ -53,7 +53,7 @@
   #include <windows.h>
 #elif (FND_PLATFORM == FND_PLATFORM_MACOSX)  || \
       (FND_PLATFORM == FND_PLATFORM_LINUX)   || \
-      (FND_PLATFORM == FND_PLATFORM_ANDROID) ||
+      (FND_PLATFORM == FND_PLATFORM_ANDROID) || \
       (FND_PLATFORM == FND_PLATFORM_IOS)
   #error ("Not implemented, yet.")
 #else

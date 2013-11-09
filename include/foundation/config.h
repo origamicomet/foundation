@@ -40,28 +40,10 @@
 
 /* ========================================================================== */
 /*  Configuration:                                                            */
-/*   * Linking;                                                               */
 /*   * Compiler, architecture, and platform autodetection;                    */
-/*   * Paranoid and/or debug, development, and release selection.             */
+/*   * Paranoid and/or debug, development, and release selection;             */
+/*   * Linkage.                                                               */
 /* ========================================================================== */
-
-/* ========================================================================== */
-/*  Linking:                                                                  */
-/* ========================================================================== */
-
-/*! @def FND_LINK_STATICALLY
-  Linking to Foundation statically, e.g., using libfoundation.a. */
-#define FND_LINK_STATICALLY 1
-
-/*! @def FND_LINK_DYNAMICALLY
-  Linking to Foundation dynamically, e.g., using libfoundation.so. */
-#define FND_LINK_DYNAMICALLY 2
-
-/*! @def FND_LINK
-  Specifies if Foundation is being linked to statically, or dynamically. */
-#ifndef FND_LINK
-  #error ("Please specify how you are linking to Foundation by defining `FND_LINK`.")
-#endif
 
 /* ========================================================================== */
 /*  Compiler, architecture, and platform autodetection:                       */
@@ -106,6 +88,24 @@
   Specifies how "loose and fast" Foundation is. */
 #ifndef FND_CONFIGURATION
   #error ("Please specify a configuration by defining `FND_CONFIGURATION`.")
+#endif
+
+/* ========================================================================== */
+/*  Linkage:                                                                  */
+/* ========================================================================== */
+
+/*! @def FND_LINK_STATICALLY
+  Linking to Foundation statically, e.g., using libfoundation.a. */
+#define FND_LINK_STATICALLY 1
+
+/*! @def FND_LINK_DYNAMICALLY
+  Linking to Foundation dynamically, e.g., using libfoundation.so. */
+#define FND_LINK_DYNAMICALLY 2
+
+/*! @def FND_LINKAGE
+  Specifies if Foundation is being linked to statically, or dynamically. */
+#ifndef FND_LINKAGE
+  #error ("Please specify how you are linking to Foundation by defining `FND_LINKAGE`.")
 #endif
 
 #endif /* _FOUNDATION_CONFIG_H_ */

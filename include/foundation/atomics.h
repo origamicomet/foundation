@@ -68,11 +68,17 @@
   #elif (FND_ARCHITECTURE == FND_ARCHITECTURE_ARM)
     #error ("Not implemented, yet.")
   #else
-    #error ("Unknown or unsupported platform.")
+    #error ("Unknown or unsupported architecture.")
   #endif
 #elif (FND_COMPILER == FND_COMPILER_GCC)   || \
       (FND_COMPILER == FND_COMPILER_CLANG)
-  #error ("Not implemented, yet.")
+  #if (FND_ARCHITECTURE == FND_ARCHITECTURE_X86)    || \
+      (FND_ARCHITECTURE == FND_ARCHITECTURE_X86_64)
+  #elif (FND_ARCHITECTURE == FND_ARCHITECTURE_ARM)
+    #error ("Not implemented, yet.")
+  #else
+    #error ("Unknown or unsupported architecture.")
+  #endif
 #else
   #error ("Unknown or unsupported compiler.")
 #endif
@@ -102,6 +108,12 @@ static fnd_atomic_int32_t fnd_atomic_int32_load_relaxed(
       (FND_ARCHITECTURE == FND_ARCHITECTURE_X86_64)
     return *v;
   #endif
+#elif (FND_COMPILER == FND_COMPILER_GCC)   || \
+      (FND_COMPILER == FND_COMPILER_CLANG)
+  #if (FND_ARCHITECTURE == FND_ARCHITECTURE_X86)    || \
+      (FND_ARCHITECTURE == FND_ARCHITECTURE_X86_64)
+    return *v;
+  #endif
 #endif
 }
 
@@ -115,6 +127,12 @@ static void fnd_atomic_int32_store_relaxed(
       (FND_ARCHITECTURE == FND_ARCHITECTURE_X86_64)
     *v = desired;
   #endif
+#elif (FND_COMPILER == FND_COMPILER_GCC)   || \
+      (FND_COMPILER == FND_COMPILER_CLANG)
+  #if (FND_ARCHITECTURE == FND_ARCHITECTURE_X86)    || \
+      (FND_ARCHITECTURE == FND_ARCHITECTURE_X86_64)
+    *v = desired;
+  #endif
 #endif
 }
 
@@ -123,6 +141,12 @@ static fnd_atomic_uint32_t fnd_atomic_uint32_load_relaxed(
   fnd_atomic_uint32_t *v)
 {
 #if (FND_COMPILER == FND_COMPILER_MSVC)
+  #if (FND_ARCHITECTURE == FND_ARCHITECTURE_X86)    || \
+      (FND_ARCHITECTURE == FND_ARCHITECTURE_X86_64)
+    return *v;
+  #endif
+#elif (FND_COMPILER == FND_COMPILER_GCC)   || \
+      (FND_COMPILER == FND_COMPILER_CLANG)
   #if (FND_ARCHITECTURE == FND_ARCHITECTURE_X86)    || \
       (FND_ARCHITECTURE == FND_ARCHITECTURE_X86_64)
     return *v;
@@ -140,6 +164,12 @@ static void fnd_atomic_uint32_store_relaxed(
       (FND_ARCHITECTURE == FND_ARCHITECTURE_X86_64)
     *v = desired;
   #endif
+#elif (FND_COMPILER == FND_COMPILER_GCC)   || \
+      (FND_COMPILER == FND_COMPILER_CLANG)
+  #if (FND_ARCHITECTURE == FND_ARCHITECTURE_X86)    || \
+      (FND_ARCHITECTURE == FND_ARCHITECTURE_X86_64)
+    *v = desired;
+  #endif
 #endif
 }
 
@@ -148,6 +178,12 @@ static fnd_atomic_ptr_t fnd_atomic_ptr_load_relaxed(
   fnd_atomic_ptr_t *v)
 {
 #if (FND_COMPILER == FND_COMPILER_MSVC)
+  #if (FND_ARCHITECTURE == FND_ARCHITECTURE_X86)    || \
+      (FND_ARCHITECTURE == FND_ARCHITECTURE_X86_64)
+    return *v;
+  #endif
+#elif (FND_COMPILER == FND_COMPILER_GCC)   || \
+      (FND_COMPILER == FND_COMPILER_CLANG)
   #if (FND_ARCHITECTURE == FND_ARCHITECTURE_X86)    || \
       (FND_ARCHITECTURE == FND_ARCHITECTURE_X86_64)
     return *v;
@@ -161,6 +197,12 @@ static void fnd_atomic_ptr_store_relaxed(
   fnd_atomic_ptr_t desired)
 {
 #if (FND_COMPILER == FND_COMPILER_MSVC)
+  #if (FND_ARCHITECTURE == FND_ARCHITECTURE_X86)    || \
+      (FND_ARCHITECTURE == FND_ARCHITECTURE_X86_64)
+    *v = desired;
+  #endif
+#elif (FND_COMPILER == FND_COMPILER_GCC)   || \
+      (FND_COMPILER == FND_COMPILER_CLANG)
   #if (FND_ARCHITECTURE == FND_ARCHITECTURE_X86)    || \
       (FND_ARCHITECTURE == FND_ARCHITECTURE_X86_64)
     *v = desired;
@@ -182,6 +224,12 @@ static fnd_atomic_int32_t fnd_atomic_int32_fetch_add_relaxed(
       (FND_ARCHITECTURE == FND_ARCHITECTURE_X86_64)
     return (fnd_atomic_int32_t)_InterlockedExchangeAdd((long volatile *)lhs, (long)rhs);
   #endif
+#elif (FND_COMPILER == FND_COMPILER_GCC)   || \
+      (FND_COMPILER == FND_COMPILER_CLANG)
+  #if (FND_ARCHITECTURE == FND_ARCHITECTURE_X86)    || \
+      (FND_ARCHITECTURE == FND_ARCHITECTURE_X86_64)
+    return __sync_fetch_and_add(lhs, rhs);
+  #endif
 #endif
 }
 
@@ -201,6 +249,12 @@ static fnd_atomic_uint32_t fnd_atomic_uint32_fetch_add_relaxed(
   #if (FND_ARCHITECTURE == FND_ARCHITECTURE_X86)    || \
       (FND_ARCHITECTURE == FND_ARCHITECTURE_X86_64)
     return (fnd_atomic_uint32_t)_InterlockedExchangeAdd((long volatile *)lhs, (long)rhs);
+  #endif
+#elif (FND_COMPILER == FND_COMPILER_GCC)   || \
+      (FND_COMPILER == FND_COMPILER_CLANG)
+  #if (FND_ARCHITECTURE == FND_ARCHITECTURE_X86)    || \
+      (FND_ARCHITECTURE == FND_ARCHITECTURE_X86_64)
+    return __sync_fetch_and_add(lhs, rhs);
   #endif
 #endif
 }
@@ -222,6 +276,12 @@ static fnd_atomic_ptr_t fnd_atomic_ptr_fetch_add_relaxed(
     return (fnd_atomic_ptr_t)_InterlockedExchangeAdd((long volatile *)lhs, (long)rhs);
   #elif (FND_ARCHITECTURE == FND_ARCHITECTURE_X86_64)
     return (fnd_atomic_ptr_t)_InterlockedExchangeAdd64((__int64 volatile *)lhs, (__int64)rhs);
+  #endif
+#elif (FND_COMPILER == FND_COMPILER_GCC)   || \
+      (FND_COMPILER == FND_COMPILER_CLANG)
+  #if (FND_ARCHITECTURE == FND_ARCHITECTURE_X86)    || \
+      (FND_ARCHITECTURE == FND_ARCHITECTURE_X86_64)
+    return __sync_fetch_and_add(lhs, rhs);
   #endif
 #endif
 }
@@ -251,6 +311,12 @@ static fnd_atomic_int32_t fnd_atomic_int32_fetch_sub_relaxed(
     } while(_InterlockedCompareExchange((long volatile *)lhs, (long)v_, (long)v) != (long)v);
     return v;
   #endif
+#elif (FND_COMPILER == FND_COMPILER_GCC)   || \
+      (FND_COMPILER == FND_COMPILER_CLANG)
+  #if (FND_ARCHITECTURE == FND_ARCHITECTURE_X86)    || \
+      (FND_ARCHITECTURE == FND_ARCHITECTURE_X86_64)
+    return __sync_fetch_and_sub(lhs, rhs);
+  #endif
 #endif
 }
 
@@ -274,6 +340,12 @@ static fnd_atomic_uint32_t fnd_atomic_uint32_fetch_sub_relaxed(
       v = *lhs; v_ = v - rhs;
     } while(_InterlockedCompareExchange((long volatile *)lhs, (long)v_, (long)v) != (long)v);
     return v;
+  #endif
+#elif (FND_COMPILER == FND_COMPILER_GCC)   || \
+      (FND_COMPILER == FND_COMPILER_CLANG)
+  #if (FND_ARCHITECTURE == FND_ARCHITECTURE_X86)    || \
+      (FND_ARCHITECTURE == FND_ARCHITECTURE_X86_64)
+    return __sync_fetch_and_sub(lhs, rhs);
   #endif
 #endif
 }
@@ -304,6 +376,12 @@ static fnd_atomic_ptr_t fnd_atomic_ptr_fetch_sub_relaxed(
     } while(_InterlockedCompareExchange64((__int64 volatile *)lhs, (__int64)v_, (__int64)v) != (__int64)v);
     return v;
   #endif
+#elif (FND_COMPILER == FND_COMPILER_GCC)   || \
+      (FND_COMPILER == FND_COMPILER_CLANG)
+  #if (FND_ARCHITECTURE == FND_ARCHITECTURE_X86)    || \
+      (FND_ARCHITECTURE == FND_ARCHITECTURE_X86_64)
+    return __sync_fetch_and_sub(lhs, rhs);
+  #endif
 #endif
 }
 
@@ -330,6 +408,12 @@ static fnd_atomic_int32_t fnd_atomic_int32_compare_swap_relaxed(
 
     return (fnd_atomic_int32_t)_InterlockedCompareExchange((long volatile *)v, (long)desired, (long)expected);
   #endif
+#elif (FND_COMPILER == FND_COMPILER_GCC)   || \
+      (FND_COMPILER == FND_COMPILER_CLANG)
+  #if (FND_ARCHITECTURE == FND_ARCHITECTURE_X86)    || \
+      (FND_ARCHITECTURE == FND_ARCHITECTURE_X86_64)
+    return __sync_val_compare_and_swap(v, expected, desired);
+  #endif
 #endif
 }
 
@@ -343,6 +427,12 @@ static fnd_atomic_uint32_t fnd_atomic_uint32_compare_swap_relaxed(
   #if (FND_ARCHITECTURE == FND_ARCHITECTURE_X86)    || \
       (FND_ARCHITECTURE == FND_ARCHITECTURE_X86_64)
     return (fnd_atomic_uint32_t)_InterlockedCompareExchange((long volatile *)v, (long)desired, (long)expected);
+  #endif
+#elif (FND_COMPILER == FND_COMPILER_GCC)   || \
+      (FND_COMPILER == FND_COMPILER_CLANG)
+  #if (FND_ARCHITECTURE == FND_ARCHITECTURE_X86)    || \
+      (FND_ARCHITECTURE == FND_ARCHITECTURE_X86_64)
+    return __sync_val_compare_and_swap(v, expected, desired);
   #endif
 #endif
 }
@@ -358,6 +448,12 @@ static fnd_atomic_ptr_t fnd_atomic_ptr_compare_swap_relaxed(
     return (fnd_atomic_ptr_t)_InterlockedCompareExchange((long volatile *)v, (long)desired, (long)expected);
   #elif (FND_ARCHITECTURE == FND_ARCHITECTURE_X86_64)
     return (fnd_atomic_ptr_t)_InterlockedCompareExchange64((__int64 volatile *)v, (__int64)desired, (__int64)expected);
+  #endif
+#elif (FND_COMPILER == FND_COMPILER_GCC)   || \
+      (FND_COMPILER == FND_COMPILER_CLANG)
+  #if (FND_ARCHITECTURE == FND_ARCHITECTURE_X86)    || \
+      (FND_ARCHITECTURE == FND_ARCHITECTURE_X86_64)
+    return __sync_val_compare_and_swap(v, expected, desired);
   #endif
 #endif
 }
@@ -398,12 +494,6 @@ namespace foundation {
     /*! @copydoc fnd_atomic_uint32_store_relaxed */
     static void store_relaxed(uint32 *v, uint32 desired) {
       return fnd_atomic_uint32_store_relaxed(v, desired); }
-    /*! @copydoc fnd_atomic_ptr_load_relaxed */
-    static ptr load_relaxed(ptr *v) {
-      return fnd_atomic_ptr_load_relaxed(v); }
-    /*! @copydoc fnd_atomic_ptr_store_relaxed */
-    static void store_relaxed(ptr *v, ptr desired) {
-      return fnd_atomic_ptr_store_relaxed(v, desired); }
 
     /* ====================================================================== */
     /*  Add & Increment:                                                      */
@@ -420,12 +510,6 @@ namespace foundation {
     /*! @copydoc fnd_atomic_uint32_fetch_increment_relaxed */
     static uint32 fetch_increment_relaxed(uint32 *v) {
       return fnd_atomic_uint32_fetch_increment_relaxed(v); }
-    /*! @copydoc fnd_atomic_ptr_fetch_add_relaxed */
-    static ptr fetch_add_relaxed(ptr *lhs, ptr rhs) {
-      return fnd_atomic_ptr_fetch_add_relaxed(lhs, rhs); }
-    /*! @copydoc fnd_atomic_ptr_fetch_increment_relaxed */
-    static ptr fetch_increment_relaxed(ptr *v) {
-      return fnd_atomic_ptr_fetch_increment_relaxed(v); }
 
     /* ====================================================================== */
     /*  Sub & Decrement:                                                      */
@@ -442,12 +526,6 @@ namespace foundation {
     /*! @copydoc fnd_atomic_uint32_fetch_decrement_relaxed */
     static uint32 fetch_decrement_relaxed(uint32 *v) {
       return fnd_atomic_uint32_fetch_decrement_relaxed(v); }
-    /*! @copydoc fnd_atomic_ptr_fetch_sub_relaxed */
-    static ptr fetch_sub_relaxed(ptr *lhs, ptr rhs) {
-      return fnd_atomic_ptr_fetch_sub_relaxed(lhs, rhs); }
-    /*! @copydoc fnd_atomic_ptr_fetch_decrement_relaxed */
-    static ptr fetch_decrement_relaxed(ptr *v) {
-      return fnd_atomic_ptr_fetch_decrement_relaxed(v); }
 
     /* ====================================================================== */
     /*  Compare and Swap:                                                     */
@@ -458,9 +536,6 @@ namespace foundation {
     /*! @copydoc fnd_atomic_uint32_compare_swap_relaxed */
     static uint32 compare_swap_relaxed(uint32 *v, uint32 expected, uint32 desired) {
       return fnd_atomic_uint32_compare_swap_relaxed(v, expected, desired); }
-    /*! @copydoc fnd_atomic_ptr_compare_swap_relaxed */
-    static ptr compare_swap_relaxed(ptr *v, ptr expected, ptr desired) {
-      return fnd_atomic_ptr_compare_swap_relaxed(v, expected, desired); }
   } /* atomic */
 } /* foundation */
 #endif
