@@ -58,7 +58,7 @@
 #define fnd_assertf_(_Condition, _Format, ...) \
   do { \
     if (!(_Condition)) { \
-      fprintf(stderr, _Format, ## __VA_ARGS__); \
+      fprintf(stderr, _Format "\n", ## __VA_ARGS__); \
       raise(SIGABRT); \
     } \
   } while (0)
