@@ -403,6 +403,16 @@ class SwitchesAndOptions
   end
 end
 
+puts "#============================================================================#"
+puts "# Foundation                                                                 #"
+puts "#============================================================================#"
+puts ""
+
+at_exit {
+  puts ""
+  puts "#============================================================================#"
+}
+
 switches_and_options = SwitchesAndOptions.parse(ARGV)
 
 if not (SwitchesAndOptions.sane? switches_and_options)
