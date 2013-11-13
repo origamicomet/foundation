@@ -30,7 +30,7 @@
 /* For more information, please refer to <http://unlicense.org/>              */
 /*                                                                            */
 /* ========================================================================== */
-/*! @file include/polyswf.h
+/*! @file include/foundation.h
      Includes all public headers necessary to use Foundation.                 */
 /* ========================================================================== */
 
