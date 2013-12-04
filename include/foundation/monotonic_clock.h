@@ -30,83 +30,107 @@
 /* For more information, please refer to <http://unlicense.org/>              */
 /*                                                                            */
 /* ========================================================================== */
-/*! @file include/foundation.h
-     Includes all public headers necessary to use Foundation.                 */
+/*! @file include/foundation/monotonic_clock.h
+     Provides a high-precision monotonic (steadily increasing) clock.         */
 /* ========================================================================== */
 
-#ifndef _FOUNDATION_H_
-#define _FOUNDATION_H_
-
-/* ========================================================================== */
-/*  Foundation:                                                               */
-/*   * Configuration;                                                         */
-/*   * Compiler, architecture, and platform;                                  */
-/*   * Compatability;                                                         */
-/*   * Pre-processor and intrinsics;                                          */
-/*   * Containers and data structures;                                        */
-/*   * Concurrency;                                                           */
-/*   * System.                                                                */
-/* ========================================================================== */
-
-/* ========================================================================== */
-/*  Configuration:                                                            */
-/* ========================================================================== */
+#ifndef _FOUNDATION_MONOTONIC_CLOCK_H_
+#define _FOUNDATION_MONOTONIC_CLOCK_H_
 
 #include <foundation/config.h>
-
-/* ========================================================================== */
-/*  Compiler, architecture, and platform:                                     */
-/* ========================================================================== */
-
-#include <foundation/compiler.h>
-#include <foundation/detect/compiler.h>
-
-#include <foundation/architecture.h>
-#include <foundation/detect/architecture.h>
-
-#include <foundation/platform.h>
-#include <foundation/detect/platform.h>
-
-/* ========================================================================== */
-/*  Compatability:                                                            */
-/* ========================================================================== */
-
 #include <foundation/compat/stdint.h>
 #include <foundation/compat/inttypes.h>
-#include <foundation/compat/stdbool.h>
-#include <foundation/compat/stdalign.h>
-#include <foundation/compat/malloc.h>
 
 /* ========================================================================== */
-/*  Pre-processor and intrinsics:                                             */
+/*  Monotonic Clock:                                                          */
+/*   * C (fnd_monotonic_clock_t);                                             */
+/*   * C++ (foundation::clock::Monotonic).                                    */
 /* ========================================================================== */
 
-#include <foundation/preprocessor.h>
-#include <foundation/assert.h>
-
-#include <foundation/atomics.h>
-
 /* ========================================================================== */
-/*  Containers and data structures:                                           */
+/*  C (fnd_monotonic_clock_t):                                                */
 /* ========================================================================== */
 
-#include <foundation/array.h>
-
-/* ========================================================================== */
-/*  Concurrency:                                                              */
-/* ========================================================================== */
-
-#include <foundation/thread.h>
-#include <foundation/mutex.h>
-
-/* ========================================================================== */
-/*  System:                                                                   */
-/* ========================================================================== */
-
-#include <foundation/system.h>
-
-#include <foundation/monotonic_clock.h>
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 /* ========================================================================== */
 
-#endif /* _FOUNDATION_H_ */
+/*! A high-precision monotonic (steadily increasing) clock. */
+typedef struct fnd_monotonic_clock fnd_monotonic_clock_t;
+
+/* ========================================================================== */
+
+/*! Gets the number of seconds elapsed since reset. */
+extern uint64_t fnd_monotonic_clock_secs(const fnd_monotonic_clock_t *mc);
+
+/*! Gets the number of miliseconds elapsed since reset. */
+extern uint64_t fnd_monotonic_clock_msecs(const fnd_monotonic_clock_t *mc);
+
+/*! Gets the number of microseconds elapsed since reset. */
+extern uint64_t fnd_monotonic_clock_usecs(const fnd_monotonic_clock_t *mc);
+
+/*! Gets the number of nanoseconds elapsed since reset. */
+extern uint64_t fnd_monotonic_clock_nsecs(const fnd_monotonic_clock_t *mc);
+
+/* ========================================================================== */
+
+/*! Creates and resets a monotonic clock. */
+extern fnd_monotonic_clock_t *fnd_monotonic_clock_create(void);
+
+/*! Resets `mc`. */
+extern void fnd_monotonic_clock_reset(fnd_monotonic_clock_t *mc);
+
+/*! Destroys `mc`. */
+extern void fnd_monotonic_clock_destroy(fnd_monotonic_clock_t *mc);
+
+/* ========================================================================== */
+
+#ifdef __cplusplus
+}
+#endif
+
+/* ========================================================================== */
+/*  C++ (foundation::clock::Monotonic):                                       */
+/* ========================================================================== */
+
+#ifdef __cplusplus
+namespace foundation {
+namespace clock {
+  /*! @copydoc fnd_monotonic_clock_t */
+  class Monotonic {
+    private:
+      Monotonic();
+      Monotonic(const Monotonic &);
+      Monotonic &operator= (const Monotonic &);
+      ~Monotonic();
+    public: /* private: */
+      static Monotonic *recover_(::fnd_monotonic_clock_t *mc);
+      ::fnd_monotonic_clock_t *lose_();
+      static const Monotonic *recover_(const ::fnd_monotonic_clock_t *mc);
+      const ::fnd_monotonic_clock_t *lose_() const;
+    public:
+      /*! @copydoc fnd_monotonic_clock_secs */
+      uint64_t secs() const;
+      /*! @copydoc fnd_monotonic_clock_msecs */
+      uint64_t msecs() const;
+      /*! @copydoc fnd_monotonic_clock_usecs */
+      uint64_t usecs() const;
+      /*! @copydoc fnd_monotonic_clock_nsecs */
+      uint64_t nsecs() const;
+    public:
+      /*! @copydoc fnd_monotonic_clock_create */
+      static Monotonic *create();
+      /*! @copydoc fnd_monotonic_clock_reset */
+      void reset();
+      /*! @copydoc fnd_monotonic_clock_destroy */
+      void destroy();
+  };
+} /* clock */
+} /* foundation */
+#endif
+
+/* ========================================================================== */
+
+#endif /* _FOUNDATION_MONOTONIC_CLOCK_H_ */
