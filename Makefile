@@ -46,13 +46,6 @@ include build/detect/platform.mk
 include build/detect/architecture.mk
 
 ################################################################################
-# Version:                                                                     #
-################################################################################
-
-COMMIT   := $(shell git log --pretty=oneline | wc -l)
-REVISION := $(shell git rev-parse HEAD)
-
-################################################################################
 # Binary, library, object, and source directories:                             #
 ################################################################################
 
