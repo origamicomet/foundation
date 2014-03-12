@@ -33,13 +33,13 @@ SRC_DIR := src
 # Rules
 #
 
-.PHONY: all docs clean
+.PHONY: all docs clean foundation
 
-_: all
+all: foundation
 
 include src/Makefile
 
-all: $(TIER0)
+foundation: $(TIER0)
 
 docs:
 	@echo "[DOXYGEN] Doxyfile"

@@ -9,8 +9,8 @@
 //                                                                            //
 //===----------------------------------------------------------------------===//
 
-/// @file bitbyte/foundation/tier0/tier0.h
-/// @brief Includes bitbyte/foundation/tier0/tier0.h and imports tier0.
+/// @file bitbyte/foundation/tier0.h
+/// @brief Includes bitbyte/foundation/tier0.h and imports tier0.
 ///
 
 #ifndef _BITBYTE_FOUNDATION_TIER0_H_
@@ -22,8 +22,10 @@
 ///
 namespace bitbyte {
 namespace foundation {
-  namespace tier0 {}
-  using namespace ::bitbyte::foundation::tier0;
+
+namespace tier0 {}
+using namespace ::bitbyte::foundation::tier0;
+
 } // foundation
 } // bitbyte
 
