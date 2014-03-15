@@ -13,8 +13,8 @@
 /// @brief Includes bitbyte/foundation/tier1.h and imports tier1.
 ///
 
-#ifndef _BITBYTE_FOUNDATION_TIER0_H_
-#define _BITBYTE_FOUNDATION_TIER0_H_
+#ifndef _BITBYTE_FOUNDATION_TIER1_H_
+#define _BITBYTE_FOUNDATION_TIER1_H_
 
 /// @namespace ::bitbyte::foundation::tier1
 /// @brief Provides powerful assertion and logging utilities.
@@ -31,4 +31,4 @@ using namespace ::bitbyte::foundation::tier1;
 
 #include <bitbyte/foundation/tier1/tier1.h>
 
-#endif // _BITBYTE_FOUNDATION_TIER0_H_
+#endif // _BITBYTE_FOUNDATION_TIER1_H_
