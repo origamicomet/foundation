@@ -25,5 +25,5 @@
 
 #include <bitbyte/foundation/tier0.h>
 #include <bitbyte/foundation/tier1.h>
-// #include <bitbyte/foundation/tier2.h>
+#include <bitbyte/foundation/tier2.h>
 // #include <bitbyte/foundation/tier3.h>
