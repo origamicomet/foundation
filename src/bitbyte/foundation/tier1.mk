@@ -30,28 +30,41 @@ ifeq ($(BITBYTE_FOUNDATION_TIER1_LINKAGE),dynamically)
   TIER1 := $(BIN_DIR)/$(SHARED_LIB_PREFIX)tier1$(SHARED_LIB_SUFFIX)$(SHARED_LIB_EXTENSION)
 endif
 
-INCLUDES := $(call cc-includes,include)
-DEPENDENCIES :=
+ifeq ($(TOOLCHAIN),msvc)
+  TIER1_IMPORT_LIB := $(STATIC_LIB_PREFIX)tier1$(STATIC_LIB_SUFFIX)$(STATIC_LIB_EXTENSION)
+else
+  TIER1_IMPORT_LIB := $(SHARED_LIB_PREFIX)tier1$(SHARED_LIB_SUFFIX)
+endif
 
-SOURCES := $(shell find $(SRC_DIR)/bitbyte/foundation/tier1 -name '*.cc')
-OBJECTS := $(addprefix $(OBJ_DIR)/, $(subst $(SRC_DIR)/,,$(SOURCES:%.cc=%.o)))
-OBJECTS += $(OBJ_DIR)/bitbyte/foundation/tier1.o
+BITBYTE_FOUNDATION_TIER1_INCLUDES := $(call cc-includes,include)
+BITBYTE_FOUNDATION_TIER1_DEPENDENCIES := $(call ld-link,$(TIER0_IMPORT_LIB))
 
-DEFINES := $(call cc-define,BITBYTE_FOUNDATION_TIER1_COMPILING)
+BITBYTE_FOUNDATION_TIER1_SOURCES := $(shell find $(SRC_DIR)/bitbyte/foundation/tier1 -name '*.cc')
+BITBYTE_FOUNDATION_TIER1_OBJECTS := $(addprefix $(OBJ_DIR)/, $(subst $(SRC_DIR)/,,$(BITBYTE_FOUNDATION_TIER1_SOURCES:%.cc=%.o)))
+BITBYTE_FOUNDATION_TIER1_OBJECTS += $(OBJ_DIR)/bitbyte/foundation/tier1.o
 
--include $(OBJECTS:%.o=%.d)
-$(OBJ_DIR)/%.o: $(SRC_DIR)/%.cc
+BITBYTE_FOUNDATION_TIER1_DEFINES := $(call cc-define,BITBYTE_FOUNDATION_TIER1_COMPILING)
+
+-include $(BITBYTE_FOUNDATION_TIER1_OBJECTS:%.o=%.d)
+
+$(OBJ_DIR)/bitbyte/foundation/tier1/%.o: $(SRC_DIR)/bitbyte/foundation/tier1/%.cc
 	@echo "[CC] $<"
 	@mkdir -p ${@D}
-	$(call c++) $(INCLUDES) $(DEFINES) $(BITBYTE_FOUNDATION_TIER1_CFLAGS) $(call cc-input,$<) $(call cc-output,$@)
-	$(call c++) $(INCLUDES) $(DEFINES) $(BITBYTE_FOUNDATION_TIER1_CFLAGS) $(call cc-input,$<) -MM -MT $@ >$(patsubst %.o,%.d,$@)
+	$(call c++) $(BITBYTE_FOUNDATION_TIER1_INCLUDES) $(BITBYTE_FOUNDATION_TIER1_DEFINES) $(BITBYTE_FOUNDATION_TIER1_CFLAGS) $(call cc-input,$<) $(call cc-output,$@)
+	$(call c++) $(BITBYTE_FOUNDATION_TIER1_INCLUDES) $(BITBYTE_FOUNDATION_TIER1_DEFINES) $(BITBYTE_FOUNDATION_TIER1_CFLAGS) $(call cc-input,$<) -MM -MT $@ >$(patsubst %.o,%.d,$@)
 
-$(TIER1): $(OBJECTS)
+$(OBJ_DIR)/bitbyte/foundation/tier1.o: $(SRC_DIR)/bitbyte/foundation/tier1.cc
+	@echo "[CC] $<"
+	@mkdir -p ${@D}
+	$(call c++) $(BITBYTE_FOUNDATION_TIER0_INCLUDES) $(BITBYTE_FOUNDATION_TIER0_DEFINES) $(BITBYTE_FOUNDATION_TIER0_CFLAGS) $(call cc-input,$<) $(call cc-output,$@)
+	$(call c++) $(BITBYTE_FOUNDATION_TIER0_INCLUDES) $(BITBYTE_FOUNDATION_TIER0_DEFINES) $(BITBYTE_FOUNDATION_TIER0_CFLAGS) $(call cc-input,$<) -MM -MT $@ >$(patsubst %.o,%.d,$@)
+
+$(TIER1): $(BITBYTE_FOUNDATION_TIER1_OBJECTS)
 	@echo "[LD] $@"
 	@mkdir -p ${@D}
 ifeq ($(BITBYTE_FOUNDATION_TIER1_LINKAGE),statically)
-	$(call ar++) $(BITBYTE_FOUNDATION_TIER1_ARFLAGS) $(call ar-output,$@) $(foreach input,$^,$(call ar-input,$(input))) $(DEPENDENCIES)
+	$(call ar++) $(BITBYTE_FOUNDATION_TIER1_ARFLAGS) $(call ar-output,$@) $(foreach input,$^,$(call ar-input,$(input)))
 endif
 ifeq ($(BITBYTE_FOUNDATION_TIER1_LINKAGE),dynamically)
-	$(call ld++) $(call ld-shared) $(BITBYTE_FOUNDATION_TIER1_LDFLAGS) $(call ld-output,$@) $(foreach input,$^,$(call ld-input,$(input))) $(DEPENDENCIES)
+	$(call ld++) $(call ld-shared) $(BITBYTE_FOUNDATION_TIER1_LDFLAGS) $(call ld-output,$@) $(foreach input,$^,$(call ld-input,$(input))) $(BITBYTE_FOUNDATION_TIER1_DEPENDENCIES)
 endif
