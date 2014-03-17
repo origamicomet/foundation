@@ -75,3 +75,4 @@ endif
 include $(SRC_DIR)/bitbyte/foundation/tier0.mk
 include $(SRC_DIR)/bitbyte/foundation/tier1.mk
 include $(SRC_DIR)/bitbyte/foundation/tier2.mk
+include $(SRC_DIR)/bitbyte/foundation/tier3.mk

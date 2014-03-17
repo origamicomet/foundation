@@ -39,7 +39,7 @@ all: foundation
 
 include src/Makefile
 
-foundation: $(TIER0) $(TIER1) $(TIER2)
+foundation: $(TIER0) $(TIER1) $(TIER2) $(TIER3)
 
 docs:
 	@echo "[DOXYGEN] Doxyfile"
