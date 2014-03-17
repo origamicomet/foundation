@@ -10,7 +10,7 @@ A public domain foundation library.
 | Windows   | MinGW/MSYS              | <span>&#10003;</span> |
 | Windows   | Cygwin                  |         Never         |
 | Mac OSX   | GCC or Clang            |                       |
-| Linux     | GCC or Clang            | <span>&#10003;</span> |
+| Linux     | GCC or Clang            |                       |
 | BSD       | GCC or Clang            |                       |
 | Android   | GCC or Clang            |                       |
 | iOS       | GCC or Clang            |                       |
