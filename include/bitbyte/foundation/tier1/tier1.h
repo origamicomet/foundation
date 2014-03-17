@@ -27,3 +27,8 @@
 #include <bitbyte/foundation/tier1/logger.h>
 #include <bitbyte/foundation/tier1/log.h>
 
+//===----------------------------------------------------------------------===//
+// Memory Management
+//
+
+#include <bitbyte/foundation/tier1/allocator.h>

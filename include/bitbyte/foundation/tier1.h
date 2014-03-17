@@ -17,8 +17,8 @@
 #define _BITBYTE_FOUNDATION_TIER1_H_
 
 /// @namespace ::bitbyte::foundation::tier1
-/// @brief Provides powerful assertion and logging utilities.
-///
+/// @brief Provides powerful assertion, logging, and memory management
+///  utilities.
 ///
 namespace bitbyte {
 namespace foundation {
