@@ -19,7 +19,6 @@
 /// @namespace ::bitbyte::foundation::tier2
 /// @brief Abstracts target specifics.
 ///
-///
 namespace bitbyte {
 namespace foundation {
 
