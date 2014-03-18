@@ -217,7 +217,7 @@ class SwitchesAndOptions
     end
     switches_and_options.platform     = (option 'platform')
     switches_and_options.linkage      = (option 'linkage')
-      switches_and_options.linkage ||= 'dynamically'
+      switches_and_options.linkage ||= 'statically'
     switches_and_options.windows_sdk  = (option 'windows_sdk')
     switches_and_options.vs_path      = (option 'vs_path')
 
