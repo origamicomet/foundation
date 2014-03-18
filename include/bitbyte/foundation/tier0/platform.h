@@ -23,6 +23,31 @@
 // Pre-processor defines
 //
 
+/// @def BITBYTE_FOUNDATION_PLATFORM_WINDOWS
+/// @brief Microsoft Windows.
+///
+#define BITBYTE_FOUNDATION_PLATFORM_WINDOWS 0
+
+/// @def BITBYTE_FOUNDATION_PLATFORM_MACOSX
+/// @brief Mac OS X.
+///
+#define BITBYTE_FOUNDATION_PLATFORM_MACOSX 1
+
+/// @def BITBYTE_FOUNDATION_PLATFORM_LINUX
+/// @brief Linux.
+///
+#define BITBYTE_FOUNDATION_PLATFORM_LINUX 2
+
+/// @def BITBYTE_FOUNDATION_PLATFORM_IOS
+/// @brief Apple iOS.
+///
+#define BITBYTE_FOUNDATION_PLATFORM_IOS 3
+
+/// @def BITBYTE_FOUNDATION_PLATFORM_ANDROID
+/// @brief Google Android.
+///
+#define BITBYTE_FOUNDATION_PLATFORM_ANDROID 4
+
 /// @def BITBYTE_FOUNDATION_HOST_PLATFORM
 /// @brief ...
 ///
@@ -52,23 +77,18 @@
   #endif
 #else
   #if (defined(_WIN32) || defined(_WIN64))
-    #define BITBYTE_FOUNDATION_PLATFORM_WINDOWS 0
     #define BITBYTE_FOUNDATION_TARGET_PLATFORM 0
   #elif defined(__APPLE__)
     #include <TargetConditionals.h>
     #if defined(TARGET_OS_IPHONE)
-    #define BITBYTE_FOUNDATION_PLATFORM_IOS 3
       #define BITBYTE_FOUNDATION_TARGET_PLATFORM 3
     #else
-    #define BITBYTE_FOUNDATION_PLATFORM_MACOSX 1
       #define BITBYTE_FOUNDATION_TARGET_PLATFORM 1
     #endif
   #elif defined(__linux__)
     #if defined(ANDROID)
-    #define BITBYTE_FOUNDATION_PLATFORM_ANDROID 4
       #define BITBYTE_FOUNDATION_TARGET_PLATFORM 4
     #else
-    #define BITBYTE_FOUNDATION_PLATFORM_LINUX 2
       #define BITBYTE_FOUNDATION_TARGET_PLATFORM 2
     #endif
   #else

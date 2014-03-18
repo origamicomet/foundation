@@ -24,6 +24,16 @@
 // Pre-processor defines
 //
 
+/// @def BITBYTE_FOUNDATION_ARCHITECTURE_X86
+/// @brief Intel x86.
+///
+#define BITBYTE_FOUNDATION_ARCHITECTURE_X86 0
+
+/// @def BITBYTE_FOUNDATION_ARCHITECTURE_X86_64
+/// @brief AMD64.
+///
+#define BITBYTE_FOUNDATION_ARCHITECTURE_X86_64 1
+
 /// @def BITBYTE_FOUNDATION_HOST_ARCHITECTURE
 /// @brief ...
 ///
@@ -53,10 +63,8 @@
   #endif
 #else
   #if (defined(_M_IX86) || defined(__i386__))
-    #define BITBYTE_FOUNDATION_ARCHITECTURE_X86 0
     #define BITBYTE_FOUNDATION_TARGET_ARCHITECTURE 0
   #elif (defined(_M_X64) || defined(_M_AMD64) || defined(__x86_64) || defined(__x86_64__) || defined(__amd64) || defined(__amd64__))
-    #define BITBYTE_FOUNDATION_ARCHITECTURE_X86_64 1
     #define BITBYTE_FOUNDATION_TARGET_ARCHITECTURE 1
   #else
     #error ("You are building Foundation for an unknown or unsupported architecture.")

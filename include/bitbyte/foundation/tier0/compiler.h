@@ -23,6 +23,21 @@
 // Pre-processor defines
 //
 
+/// @def BITBYTE_FOUNDATION_COMPILER_MSVC
+/// @brief Intel x86.
+///
+#define BITBYTE_FOUNDATION_COMPILER_MSVC 0
+
+/// @def BITBYTE_FOUNDATION_COMPILER_GCC
+/// @brief GNU Compiler Collection.
+///
+#define BITBYTE_FOUNDATION_COMPILER_GCC 1
+
+/// @def BITBYTE_FOUNDATION_COMPILER_CLANG
+/// @brief LLVM/Clang.
+///
+#define BITBYTE_FOUNDATION_COMPILER_CLANG 2
+
 /// @def BITBYTE_FOUNDATION_DONT_AUTODETECT_COMPILER
 /// @brief If defined, Foundation won't attempt to detect the current compiler
 ///  based on pre-processor defines.
@@ -41,13 +56,10 @@
   #endif
 #else
   #if defined(_MSC_VER)
-    #define BITBYTE_FOUNDATION_COMPILER_MSVC 0
     #define BITBYTE_FOUNDATION_COMPILER 0
   #elif defined(__GNUC__)
-    #define BITBYTE_FOUNDATION_COMPILER_GCC 1
     #define BITBYTE_FOUNDATION_COMPILER 1
   #elif defined(__clang__)
-    #define BITBYTE_FOUNDATION_COMPILER_CLANG 2
     #define BITBYTE_FOUNDATION_COMPILER 2
   #else
     #error ("You are building Foundation with an unknown or unsupported compiler.")
