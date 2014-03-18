@@ -153,7 +153,10 @@ namespace relaxed {
 
 atomic::s32 add(volatile atomic::s32 *lhs, atomic::s32 rhs) {
 #if (BITBYTE_FOUNDATION_COMPILER == BITBYTE_FOUNDATION_COMPILER_MSVC)
-  return (atomic::s32)_InterlockedExchangeAdd((volatile long *)lhs, (long)rhs);
+  return static_cast<atomic::s32>(
+    _InterlockedExchangeAdd(
+      reinterpret_cast<volatile long *>(lhs),
+      static_cast<long>(rhs)));
 #elif (BITBYTE_FOUNDATION_COMPILER == BITBYTE_FOUNDATION_COMPILER_GCC) || \
       (BITBYTE_FOUNDATION_COMPILER == BITBYTE_FOUNDATION_COMPILER_CLANG)
   return __sync_fetch_and_add(lhs, rhs);
@@ -162,7 +165,10 @@ atomic::s32 add(volatile atomic::s32 *lhs, atomic::s32 rhs) {
 
 atomic::s32 sub(volatile atomic::s32 *lhs, atomic::s32 rhs) {
 #if (BITBYTE_FOUNDATION_COMPILER == BITBYTE_FOUNDATION_COMPILER_MSVC)
-  return (atomic::s32)_InterlockedExchangeAdd((volatile long *)lhs, (long)-rhs);
+  return static_cast<atomic::s32>(
+    _InterlockedExchangeAdd(
+      reinterpret_cast<volatile long *>(lhs),
+      -static_cast<long>(rhs)));
 #elif (BITBYTE_FOUNDATION_COMPILER == BITBYTE_FOUNDATION_COMPILER_GCC) || \
       (BITBYTE_FOUNDATION_COMPILER == BITBYTE_FOUNDATION_COMPILER_CLANG)
   return __sync_fetch_and_sub(lhs, rhs);
@@ -171,7 +177,10 @@ atomic::s32 sub(volatile atomic::s32 *lhs, atomic::s32 rhs) {
 
 atomic::u32 add(volatile atomic::u32 *lhs, atomic::u32 rhs) {
 #if (BITBYTE_FOUNDATION_COMPILER == BITBYTE_FOUNDATION_COMPILER_MSVC)
-  return (*(atomic::u32 *)&_InterlockedExchangeAdd((volatile long *)lhs, *((long *)&rhs)));
+  return static_cast<atomic::u32>(
+    _InterlockedExchangeAdd(
+      reinterpret_cast<volatile long *>(lhs),
+      static_cast<long>(rhs)));
 #elif (BITBYTE_FOUNDATION_COMPILER == BITBYTE_FOUNDATION_COMPILER_GCC) || \
       (BITBYTE_FOUNDATION_COMPILER == BITBYTE_FOUNDATION_COMPILER_CLANG)
   return __sync_fetch_and_add(lhs, rhs);
@@ -180,7 +189,10 @@ atomic::u32 add(volatile atomic::u32 *lhs, atomic::u32 rhs) {
 
 atomic::u32 sub(volatile atomic::u32 *lhs, atomic::u32 rhs) {
 #if (BITBYTE_FOUNDATION_COMPILER == BITBYTE_FOUNDATION_COMPILER_MSVC)
-  return (*(atomic::u32 *)&_InterlockedExchangeAdd((volatile long *)lhs, *((long *)&(-rhs))));
+  return static_cast<atomic::u32>(
+    _InterlockedExchangeAdd(
+      reinterpret_cast<volatile long *>(lhs),
+      -static_cast<long>(rhs)));
 #elif (BITBYTE_FOUNDATION_COMPILER == BITBYTE_FOUNDATION_COMPILER_GCC) || \
       (BITBYTE_FOUNDATION_COMPILER == BITBYTE_FOUNDATION_COMPILER_CLANG)
   return __sync_fetch_and_sub(lhs, rhs);
@@ -191,6 +203,10 @@ atomic::u32 sub(volatile atomic::u32 *lhs, atomic::u32 rhs) {
 
 atomic::s64 add(volatile atomic::s64 *lhs, atomic::s64 rhs) {
 #if (BITBYTE_FOUNDATION_COMPILER == BITBYTE_FOUNDATION_COMPILER_MSVC)
+  return static_cast<atomic::s64>(
+    _InterlockedExchangeAdd64(
+      reinterpret_cast<volatile __int64 *>(lhs),
+      static_cast<__int64>(rhs)));
 #elif (BITBYTE_FOUNDATION_COMPILER == BITBYTE_FOUNDATION_COMPILER_GCC) || \
       (BITBYTE_FOUNDATION_COMPILER == BITBYTE_FOUNDATION_COMPILER_CLANG)
   return __sync_fetch_and_add(lhs, rhs);
@@ -199,6 +215,10 @@ atomic::s64 add(volatile atomic::s64 *lhs, atomic::s64 rhs) {
 
 atomic::s64 sub(volatile atomic::s64 *lhs, atomic::s64 rhs) {
 #if (BITBYTE_FOUNDATION_COMPILER == BITBYTE_FOUNDATION_COMPILER_MSVC)
+  return static_cast<atomic::s64>(
+    _InterlockedExchangeAdd64(
+      reinterpret_cast<volatile __int64 *>(lhs),
+      -static_cast<__int64>(rhs)));
 #elif (BITBYTE_FOUNDATION_COMPILER == BITBYTE_FOUNDATION_COMPILER_GCC) || \
       (BITBYTE_FOUNDATION_COMPILER == BITBYTE_FOUNDATION_COMPILER_CLANG)
   return __sync_fetch_and_sub(lhs, rhs);
@@ -207,7 +227,10 @@ atomic::s64 sub(volatile atomic::s64 *lhs, atomic::s64 rhs) {
 
 atomic::u64 add(volatile atomic::u64 *lhs, atomic::u64 rhs) {
 #if (BITBYTE_FOUNDATION_COMPILER == BITBYTE_FOUNDATION_COMPILER_MSVC)
-  return (*(atomic::u64 *)&_InterlockedExchangeAdd((volatile __int64 *)lhs, *((__int64 *)&rhs)));
+  return static_cast<atomic::u64>(
+    _InterlockedExchangeAdd64(
+      reinterpret_cast<volatile __int64 *>(lhs),
+      static_cast<__int64>(rhs)));
 #elif (BITBYTE_FOUNDATION_COMPILER == BITBYTE_FOUNDATION_COMPILER_GCC) || \
       (BITBYTE_FOUNDATION_COMPILER == BITBYTE_FOUNDATION_COMPILER_CLANG)
   return __sync_fetch_and_add(lhs, rhs);
@@ -216,7 +239,10 @@ atomic::u64 add(volatile atomic::u64 *lhs, atomic::u64 rhs) {
 
 atomic::u64 sub(volatile atomic::u64 *lhs, atomic::u64 rhs) {
 #if (BITBYTE_FOUNDATION_COMPILER == BITBYTE_FOUNDATION_COMPILER_MSVC)
-  return (*(atomic::u64 *)&_InterlockedExchangeAdd((volatile __int64 *)lhs, *((__int64 *)&(-rhs))));
+  return static_cast<atomic::u64>(
+    _InterlockedExchangeAdd64(
+      reinterpret_cast<volatile __int64 *>(lhs),
+      -static_cast<__int64>(rhs)));
 #elif (BITBYTE_FOUNDATION_COMPILER == BITBYTE_FOUNDATION_COMPILER_GCC) || \
       (BITBYTE_FOUNDATION_COMPILER == BITBYTE_FOUNDATION_COMPILER_CLANG)
   return __sync_fetch_and_sub(lhs, rhs);
@@ -241,7 +267,11 @@ atomic::s32 compare_and_swap(
   atomic::s32 desired)
 {
 #if (BITBYTE_FOUNDATION_COMPILER == BITBYTE_FOUNDATION_COMPILER_MSVC)
-  return (atomic::s32 )_InterlockedCompareExchange((volatile long *)v, (long)desired, (long)expected);
+  return static_cast<atomic::s32>(
+    _InterlockedCompareExchange(
+      reinterpret_cast<volatile long *>(v),
+      static_cast<long>(desired),
+      static_cast<long>(expected)));
 #elif (BITBYTE_FOUNDATION_COMPILER == BITBYTE_FOUNDATION_COMPILER_GCC) || \
       (BITBYTE_FOUNDATION_COMPILER == BITBYTE_FOUNDATION_COMPILER_CLANG)
   return __sync_val_compare_and_swap(v, expected, desired);
@@ -254,7 +284,11 @@ atomic::u32 compare_and_swap(
   atomic::u32 desired)
 {
 #if (BITBYTE_FOUNDATION_COMPILER == BITBYTE_FOUNDATION_COMPILER_MSVC)
-  return *((atomic::u32 *)&_InterlockedCompareExchange((volatile long *)v, *((long *)&desired), *((long *)&expected)));
+  return static_cast<atomic::u32>(
+    _InterlockedCompareExchange(
+      reinterpret_cast<volatile long *>(v),
+      static_cast<long>(desired),
+      static_cast<long>(expected)));
 #elif (BITBYTE_FOUNDATION_COMPILER == BITBYTE_FOUNDATION_COMPILER_GCC) || \
       (BITBYTE_FOUNDATION_COMPILER == BITBYTE_FOUNDATION_COMPILER_CLANG)
   return __sync_val_compare_and_swap(v, expected, desired);
@@ -269,7 +303,11 @@ atomic::s64 compare_and_swap(
   atomic::s64 desired)
 {
 #if (BITBYTE_FOUNDATION_COMPILER == BITBYTE_FOUNDATION_COMPILER_MSVC)
-  return (atomic::s64 )_InterlockedCompareExchange64((volatile __int64 *)v, (__int64)desired, (__int64)expected);
+  return static_cast<atomic::s64>(
+    _InterlockedCompareExchange(
+      reinterpret_cast<volatile __int64 *>(v),
+      static_cast<__int64>(desired),
+      static_cast<__int64>(expected)));
 #elif (BITBYTE_FOUNDATION_COMPILER == BITBYTE_FOUNDATION_COMPILER_GCC) || \
       (BITBYTE_FOUNDATION_COMPILER == BITBYTE_FOUNDATION_COMPILER_CLANG)
   return __sync_val_compare_and_swap(v, expected, desired);
@@ -282,7 +320,11 @@ atomic::u64 compare_and_swap(
   atomic::u64 desired)
 {
 #if (BITBYTE_FOUNDATION_COMPILER == BITBYTE_FOUNDATION_COMPILER_MSVC)
-  return *((atomic::u64 *)&_InterlockedCompareExchange64((volatile __int64 *)v, *((__int64 *)&desired), *((__int64 *)&expected)));
+  return static_cast<atomic::u64>(
+    _InterlockedCompareExchange(
+      reinterpret_cast<volatile __int64 *>(v),
+      static_cast<__int64>(desired),
+      static_cast<__int64>(expected)));
 #elif (BITBYTE_FOUNDATION_COMPILER == BITBYTE_FOUNDATION_COMPILER_GCC) || \
       (BITBYTE_FOUNDATION_COMPILER == BITBYTE_FOUNDATION_COMPILER_CLANG)
   return __sync_val_compare_and_swap(v, expected, desired);

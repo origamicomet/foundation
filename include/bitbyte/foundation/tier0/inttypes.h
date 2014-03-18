@@ -16,6 +16,8 @@
 #ifndef _BITBYTE_FOUNDATION_INTTYPES_H_
 #define _BITBYTE_FOUNDATION_INTTYPES_H_
 
+#include <bitbyte/foundation/tier0/stdint.h>
+
 #ifndef __STDC_FORMAT_MACROS // [
   #define __STDC_FORMAT_MACROS
 #endif // __STDC_FORMAT_MACROS ]

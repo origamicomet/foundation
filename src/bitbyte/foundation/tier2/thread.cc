@@ -14,6 +14,9 @@
 #if (BITBYTE_FOUNDATION_TARGET_PLATFORM == BITBYTE_FOUNDATION_PLATFORM_WINDOWS)
   #define WIN32_LEAN_AND_MEAN
   #include <Windows.h>
+  #if (BITBYTE_FOUNDATION_COMPILER == BITBYTE_FOUNDATION_COMPILER_MSVC)
+    #include <process.h>
+  #endif
 #else
   #error ("Unknown or unsupported platform.")
 #endif
@@ -63,17 +66,35 @@ Thread &Thread::set_affinity(const Thread::Affinity affinity) {
 Thread &Thread::create(Thread::EntryPoint entry_point, void *up) {
   bitbyte_foundation_assert(debug, entry_point != NULL);
 #if (BITBYTE_FOUNDATION_TARGET_PLATFORM == BITBYTE_FOUNDATION_PLATFORM_WINDOWS)
+  struct EntryPoint_ {
+    Thread::EntryPoint entry_point;
+    void *up;
+  };
+
+  EntryPoint_ *entry_point_ = new EntryPoint_;
+  entry_point_->entry_point = entry_point;
+  entry_point_->up = up;
+
+  Thread_ *thread = new Thread_;
+
   #if (BITBYTE_FOUNDATION_COMPILER == BITBYTE_FOUNDATION_COMPILER_MSVC)
-  #else
-    struct EntryPoint_ {
-      Thread::EntryPoint entry_point;
-      void *up;
+    struct StartRoutine {
+      static unsigned __stdcall run(void *entry_point_) {
+        EntryPoint entry_point = ((const EntryPoint_ *)entry_point_)->entry_point;
+        void *up = ((const EntryPoint_ *)entry_point_)->up;
+        delete (EntryPoint_ *)entry_point_;
+        entry_point(up);
+        return 0x0000000ul;
+      }
     };
 
-    EntryPoint_ *entry_point_ = new EntryPoint_;
-    entry_point_->entry_point = entry_point;
-    entry_point_->up = up;
-
+    thread->handle_ =
+      reinterpret_cast<HANDLE>(
+        _beginthreadex(
+          NULL, 0,
+          &StartRoutine::run, (void *)entry_point_,
+          CREATE_SUSPENDED, NULL));
+  #else
     struct StartRoutine {
       static DWORD WINAPI run(LPVOID entry_point_) {
         EntryPoint entry_point = ((const EntryPoint_ *)entry_point_)->entry_point;
@@ -84,13 +105,15 @@ Thread &Thread::create(Thread::EntryPoint entry_point, void *up) {
       }
     };
 
-    Thread_ *thread = new Thread_;
     thread->handle_ =
-      ::CreateThread(NULL, 0, &StartRoutine::run, (LPVOID)entry_point_, CREATE_SUSPENDED, NULL);
-    bitbyte_foundation_assert(always, thread->handle_ != NULL);
-
-    return *((Thread *)thread);
+      ::CreateThread(
+        NULL, 0,
+        &StartRoutine::run, (LPVOID)entry_point_,
+        CREATE_SUSPENDED, NULL);
   #endif
+
+  bitbyte_foundation_assert(always, thread->handle_ != NULL);
+  return *((Thread *)thread);
 #endif
 }
 
@@ -121,7 +144,10 @@ Thread &Thread::resume() {
 void Thread::terminate() {
 #if (BITBYTE_FOUNDATION_TARGET_PLATFORM == BITBYTE_FOUNDATION_PLATFORM_WINDOWS)
   Thread_ *thread = (Thread_ *)this;
+  // This might leak memory in MSVC builds.
   bitbyte_foundation_assert(always, ::TerminateThread(thread->handle_, 0xFFFFFFFFul) != 0);
+  ::CloseHandle(thread->handle_);
+  delete thread;
 #endif
 }
 

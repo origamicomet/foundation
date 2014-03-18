@@ -17,12 +17,13 @@
 #define _BITBYTE_FOUNDATION_STDBOOL_H_
 
 #include <stdio.h>
+#include <stdarg.h>
 
 #if defined(_MSC_VER)
   #define vsnprintf __vsnprintf__
-  inline int __vsnprintf__(const char *buf, size_t sz, const char *fmt, va_list ap) {
+  inline int __vsnprintf__(char *buf, size_t sz, const char *fmt, va_list ap) {
     int count = -1;
-    if (size != 0)
+    if (sz != 0)
       count = _vsnprintf_s(buf, sz, _TRUNCATE, fmt, ap);
     if (count == -1)
       count = _vscprintf(fmt, ap);
@@ -30,7 +31,7 @@
   }
 
   #define snprintf __snprintf__
-  inline int __snprintf__(const char *buf, size_t sz, const char *fmt, ...) {
+  inline int __snprintf__(char *buf, size_t sz, const char *fmt, ...) {
     va_list ap;
     va_start(ap, fmt);
     return __vsnprintf__(buf, sz, fmt, ap);
