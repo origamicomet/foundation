@@ -20,19 +20,6 @@ include build/toolchain.mk
 include build/platform.mk
 include build/architecture.mk
 
-#==============================================================================#
-# Binary, library, object, and source directories
-#
-
-BIN_DIR := bin
-LIB_DIR := lib
-OBJ_DIR := obj
-SRC_DIR := src
-
-#==============================================================================#
-# Rules
-#
-
 .PHONY: all docs clean foundation
 
 all: foundation
@@ -47,7 +34,7 @@ docs:
 
 clean:
 	@echo "Cleaning..."
-	@rm -R -f $(BIN_DIR)
-	@rm -R -f $(LIB_DIR)
-	@rm -R -f $(OBJ_DIR)
+	@rm -R -f bin
+	@rm -R -f lib
+	@rm -R -f obj
 	@rm -R -f docs/html

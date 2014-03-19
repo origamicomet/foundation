@@ -13,4 +13,4 @@
 ## @brief ...
 ##
 
-include $(SRC_DIR)/bitbyte/foundation.mk
+include src/bitbyte/foundation.mk

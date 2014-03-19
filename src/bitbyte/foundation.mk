@@ -72,7 +72,7 @@ endif
 # Sub-projects
 #
 
-include $(SRC_DIR)/bitbyte/foundation/tier0.mk
-include $(SRC_DIR)/bitbyte/foundation/tier1.mk
-include $(SRC_DIR)/bitbyte/foundation/tier2.mk
-include $(SRC_DIR)/bitbyte/foundation/tier3.mk
+include src/bitbyte/foundation/tier0.mk
+include src/bitbyte/foundation/tier1.mk
+include src/bitbyte/foundation/tier2.mk
+include src/bitbyte/foundation/tier3.mk

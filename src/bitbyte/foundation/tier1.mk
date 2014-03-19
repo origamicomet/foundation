@@ -24,10 +24,10 @@ BITBYTE_FOUNDATION_TIER1_ARFLAGS := $(BITBYTE_FOUNDATION_ARFLAGS)
 #
 
 ifeq ($(BITBYTE_FOUNDATION_TIER1_LINKAGE),statically)
-  TIER1 := $(LIB_DIR)/$(STATIC_LIB_PREFIX)tier1$(STATIC_LIB_SUFFIX)$(STATIC_LIB_EXTENSION)
+  TIER1 := lib/$(STATIC_LIB_PREFIX)tier1$(STATIC_LIB_SUFFIX)$(STATIC_LIB_EXTENSION)
 endif
 ifeq ($(BITBYTE_FOUNDATION_TIER1_LINKAGE),dynamically)
-  TIER1 := $(BIN_DIR)/$(SHARED_LIB_PREFIX)tier1$(SHARED_LIB_SUFFIX)$(SHARED_LIB_EXTENSION)
+  TIER1 := bin/$(SHARED_LIB_PREFIX)tier1$(SHARED_LIB_SUFFIX)$(SHARED_LIB_EXTENSION)
 endif
 
 ifeq ($(TOOLCHAIN),msvc)
@@ -39,21 +39,21 @@ endif
 BITBYTE_FOUNDATION_TIER1_INCLUDES := $(call cc-includes,include)
 BITBYTE_FOUNDATION_TIER1_DEPENDENCIES := $(call ld-link,$(TIER0_IMPORT_LIB))
 
-BITBYTE_FOUNDATION_TIER1_SOURCES := $(shell find $(SRC_DIR)/bitbyte/foundation/tier1 -name '*.cc')
-BITBYTE_FOUNDATION_TIER1_OBJECTS := $(addprefix $(OBJ_DIR)/, $(subst $(SRC_DIR)/,,$(BITBYTE_FOUNDATION_TIER1_SOURCES:%.cc=%.o)))
-BITBYTE_FOUNDATION_TIER1_OBJECTS += $(OBJ_DIR)/bitbyte/foundation/tier1.o
+BITBYTE_FOUNDATION_TIER1_SOURCES := $(shell find src/bitbyte/foundation/tier1 -name '*.cc')
+BITBYTE_FOUNDATION_TIER1_OBJECTS := $(addprefix obj/, $(subst src/,,$(BITBYTE_FOUNDATION_TIER1_SOURCES:%.cc=%.o)))
+BITBYTE_FOUNDATION_TIER1_OBJECTS += obj/bitbyte/foundation/tier1.o
 
 BITBYTE_FOUNDATION_TIER1_DEFINES := $(call cc-define,BITBYTE_FOUNDATION_TIER1_COMPILING)
 
 -include $(BITBYTE_FOUNDATION_TIER1_OBJECTS:%.o=%.d)
 
-$(OBJ_DIR)/bitbyte/foundation/tier1/%.o: $(SRC_DIR)/bitbyte/foundation/tier1/%.cc
+obj/bitbyte/foundation/tier1/%.o: src/bitbyte/foundation/tier1/%.cc
 	@echo "[CC] $<"
 	@mkdir -p ${@D}
 	$(call c++) $(BITBYTE_FOUNDATION_TIER1_INCLUDES) $(BITBYTE_FOUNDATION_TIER1_DEFINES) $(BITBYTE_FOUNDATION_TIER1_CFLAGS) $(call cc-input,$<) $(call cc-output,$@)
 	$(call c++) $(BITBYTE_FOUNDATION_TIER1_INCLUDES) $(BITBYTE_FOUNDATION_TIER1_DEFINES) $(BITBYTE_FOUNDATION_TIER1_CFLAGS) $(call cc-input,$<) -MM -MT $@ >$(patsubst %.o,%.d,$@)
 
-$(OBJ_DIR)/bitbyte/foundation/tier1.o: $(SRC_DIR)/bitbyte/foundation/tier1.cc
+obj/bitbyte/foundation/tier1.o: src/bitbyte/foundation/tier1.cc
 	@echo "[CC] $<"
 	@mkdir -p ${@D}
 	$(call c++) $(BITBYTE_FOUNDATION_TIER0_INCLUDES) $(BITBYTE_FOUNDATION_TIER0_DEFINES) $(BITBYTE_FOUNDATION_TIER0_CFLAGS) $(call cc-input,$<) $(call cc-output,$@)
