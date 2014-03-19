@@ -78,11 +78,28 @@
 
 //===----------------------------------------------------------------------===//
 
-#define bitbyte_foundation_assert_always(_Predicate) \
-  bitbyte_foundation_assert_(_Predicate)
+#define bitbyte_foundation_assert_always(_Message) \
+  do { \
+    ::bitbyte::foundation::tier1::Assertion assertion; \
+    assertion.predicate = NULL; \
+    assertion.file = bitbyte_foundation_stringify(__FILE__); \
+    assertion.line = __LINE__; \
+    assertion.message = _Message; \
+    assertion.handle(); \
+  } while (0)
 
-#define bitbyte_foundation_assertf_always(_Predicate, _Format, ...) \
-  bitbyte_foundation_assertf_(_Predicate, _Format, ##__VA_ARGS__)
+#define bitbyte_foundation_assertf_always(_Format, ...) \
+  do { \
+    ::bitbyte::foundation::tier1::Assertion assertion; \
+    assertion.predicate = NULL; \
+    assertion.file = bitbyte_foundation_stringify(__FILE__); \
+    assertion.line = __LINE__; \
+    const size_t message_len = snprintf(NULL, 0, _Format, ##__VA_ARGS__) + 1; \
+    char *message = (const char *)alloca(message_len + 1); \
+    snprintf(message, message_len + 1, _Format, ##__VA_ARGS__); \
+    assertion.message = (const char *)message; \
+    assertion.handle(); \
+  } while (0)
 
 #ifdef BITBYTE_FOUNDATION_PARANOID
   #define bitbyte_foundation_assert_paranoid(_Predicate) \

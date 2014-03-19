@@ -42,7 +42,7 @@ Thread::~Thread() {
 Thread::Affinity Thread::affinity() const {
 #if (BITBYTE_FOUNDATION_TARGET_PLATFORM == BITBYTE_FOUNDATION_PLATFORM_WINDOWS)
   const Thread_ *thread = (const Thread_ *)this;
-  bitbyte_foundation_assert(always, ::SuspendThread(thread->handle_) >= 1);
+  bitbyte_foundation_assert_(::SuspendThread(thread->handle_) >= 1);
   ::SuspendThread(thread->handle_);
   const DWORD_PTR mask = ((DWORD_PTR)1);
   const DWORD_PTR original_mask = ::SetThreadAffinityMask(thread->handle_, mask);
@@ -55,7 +55,7 @@ Thread::Affinity Thread::affinity() const {
 Thread &Thread::set_affinity(const Thread::Affinity affinity) {
 #if (BITBYTE_FOUNDATION_TARGET_PLATFORM == BITBYTE_FOUNDATION_PLATFORM_WINDOWS)
   Thread_ *thread = (Thread_ *)this;
-  bitbyte_foundation_assert(always, ::SuspendThread(thread->handle_) >= 1);
+  bitbyte_foundation_assert_(::SuspendThread(thread->handle_) >= 1);
   const DWORD_PTR mask = ((DWORD_PTR)affinity);
   ::SetThreadAffinityMask(thread->handle_, mask);
   ::ResumeThread(thread->handle_);
@@ -112,7 +112,7 @@ Thread &Thread::create(Thread::EntryPoint entry_point, void *up) {
         CREATE_SUSPENDED, NULL);
   #endif
 
-  bitbyte_foundation_assert(always, thread->handle_ != NULL);
+  bitbyte_foundation_assert_(thread->handle_ != NULL);
   return *((Thread *)thread);
 #endif
 }
@@ -120,7 +120,7 @@ Thread &Thread::create(Thread::EntryPoint entry_point, void *up) {
 Thread &Thread::start() {
 #if (BITBYTE_FOUNDATION_TARGET_PLATFORM == BITBYTE_FOUNDATION_PLATFORM_WINDOWS)
   Thread_ *thread = (Thread_ *)this;
-  bitbyte_foundation_assert(always, ::ResumeThread(thread->handle_) == 1);
+  bitbyte_foundation_assert_(::ResumeThread(thread->handle_) == 1);
   return *this;
 #endif
 }
@@ -128,7 +128,7 @@ Thread &Thread::start() {
 Thread &Thread::suspend() {
 #if (BITBYTE_FOUNDATION_TARGET_PLATFORM == BITBYTE_FOUNDATION_PLATFORM_WINDOWS)
   Thread_ *thread = (Thread_ *)this;
-  bitbyte_foundation_assert(always, ::SuspendThread(thread->handle_) == 1);
+  bitbyte_foundation_assert_(::SuspendThread(thread->handle_) == 1);
   return *this;
 #endif
 }
@@ -136,7 +136,7 @@ Thread &Thread::suspend() {
 Thread &Thread::resume() {
 #if (BITBYTE_FOUNDATION_TARGET_PLATFORM == BITBYTE_FOUNDATION_PLATFORM_WINDOWS)
   Thread_ *thread = (Thread_ *)this;
-  bitbyte_foundation_assert(always, ::ResumeThread(thread->handle_) == 1);
+  bitbyte_foundation_assert_(::ResumeThread(thread->handle_) == 1);
   return *this;
 #endif
 }
@@ -145,7 +145,7 @@ void Thread::terminate() {
 #if (BITBYTE_FOUNDATION_TARGET_PLATFORM == BITBYTE_FOUNDATION_PLATFORM_WINDOWS)
   Thread_ *thread = (Thread_ *)this;
   // This might leak memory in MSVC builds.
-  bitbyte_foundation_assert(always, ::TerminateThread(thread->handle_, 0xFFFFFFFFul) != 0);
+  bitbyte_foundation_assert_(::TerminateThread(thread->handle_, 0xFFFFFFFFul) != 0);
   ::CloseHandle(thread->handle_);
   delete thread;
 #endif
@@ -163,7 +163,7 @@ void Thread::detach() {
 void Thread::join() {
 #if (BITBYTE_FOUNDATION_TARGET_PLATFORM == BITBYTE_FOUNDATION_PLATFORM_WINDOWS)
   Thread_ *thread = (Thread_ *)this;
-  bitbyte_foundation_assert(always, ::ResumeThread(thread->handle_) <= 1);
+  bitbyte_foundation_assert_(::ResumeThread(thread->handle_) <= 1);
   ::WaitForSingleObject(thread->handle_, INFINITE);
   ::CloseHandle(thread->handle_);
   delete thread;

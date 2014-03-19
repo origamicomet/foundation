@@ -13,8 +13,8 @@
 /// @brief Provides an ISO C9x compliant stdio.h when possible.
 ///
 
-#ifndef _BITBYTE_FOUNDATION_STDBOOL_H_
-#define _BITBYTE_FOUNDATION_STDBOOL_H_
+#ifndef _BITBYTE_FOUNDATION_STDIO_H_
+#define _BITBYTE_FOUNDATION_STDIO_H_
 
 #include <stdio.h>
 #include <stdarg.h>
@@ -38,4 +38,4 @@
   }
 #endif
 
-#endif // _BITBYTE_FOUNDATION_STDBOOL_H_
+#endif // _BITBYTE_FOUNDATION_STDIO_H_
