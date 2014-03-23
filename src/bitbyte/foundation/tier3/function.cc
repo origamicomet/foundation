@@ -1,4 +1,4 @@
-//=== bitbyte/foundation/tier3/tier3.h =======================================//
+//=== bitbyte/foundation/tier3/function.cc ===================================//
 //                                                                            //
 //  Foundation                                                                //
 //                                                                            //
@@ -8,13 +8,5 @@
 //   Michael Williams <mwilliams@bitbyte.ca>                                  //
 //                                                                            //
 //===----------------------------------------------------------------------===//
-
-/// @file bitbyte/foundation/tier3/tier3.h
-/// @brief Includes everything in bitbyte/foundation/tier3.
-///
-
-//===----------------------------------------------------------------------===//
-// Binding
-//
 
 #include <bitbyte/foundation/tier3/function.h>
