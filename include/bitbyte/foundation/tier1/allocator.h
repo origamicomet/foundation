@@ -62,10 +62,10 @@ class BITBYTE_FOUNDATION_TIER1_EXPORT Allocator {
 
   public: // methods:
     /// ...
-    virtual void *alloc(size_t sz, size_t alignment = alignof(int)) = 0;
+    virtual void *alloc(size_t sz, size_t alignment = bitbyte_foundation_alignof(int)) = 0;
 
     /// ...
-    virtual void *realloc(void *ptr, size_t sz, size_t alignment = alignof(int)) = 0;
+    virtual void *realloc(void *ptr, size_t sz, size_t alignment = bitbyte_foundation_alignof(int)) = 0;
 
     /// ...
     virtual void free(void *ptr) = 0;
