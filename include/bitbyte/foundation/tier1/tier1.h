@@ -32,3 +32,4 @@
 //
 
 #include <bitbyte/foundation/tier1/allocator.h>
+#include <bitbyte/foundation/tier1/heap.h>

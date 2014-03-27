@@ -25,13 +25,13 @@ namespace foundation {
 namespace tier1 {
 
 class BITBYTE_FOUNDATION_TIER1_EXPORT Allocator {
-  private: // constructors:
+  protected: // constructors:
     Allocator();
 
-  private: // copy-constructors:
+  protected: // copy-constructors:
     Allocator(const Allocator &allocator);
 
-  private: // assignment operators:
+  protected: // assignment operators:
     Allocator &operator=(const Allocator &allocator);
 
   public: // destructor:
