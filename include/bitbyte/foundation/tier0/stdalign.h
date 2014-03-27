@@ -16,6 +16,7 @@
 #ifndef _BITBYTE_FOUNDATION_STDALIGN_H_
 #define _BITBYTE_FOUNDATION_STDALIGN_H_
 
+
 #if defined(__cplusplus)
   // Bless me, Father, for I have sinned.
   template <typename _Type> struct __fnd_alignof;
@@ -32,11 +33,18 @@
 #endif
 
 #if defined(_MSC_VER)
+  // Prevent xkeycheck.h from bitching about redefining keywords in 2012+.
+  // See http://msdn.microsoft.com/en-us/library/bb531344.aspx.
+  #define _ALLOW_KEYWORD_MACROS
+
   // Microsoft Visual Studio 2010
   #if _MSC_VER < 1600
     #define alignof bitbyte_foundation_alignof
+  #else
+    #define alignof __alignof
   #endif
 #else
+  #include <stdalign.h>
   #if defined(__cplusplus)
     #if (__cplusplus < 201103L) && (!defined(__GXX_EXPERIMENTAL_CXX0X__))
       #define alignof bitbyte_foundation_alignof
