@@ -13,8 +13,8 @@
 /// @brief Includes bitbyte/foundation/tier3.h and imports tier3.
 ///
 
-#ifndef _BITBYTE_FOUNDATION_TIER2_H_
-#define _BITBYTE_FOUNDATION_TIER2_H_
+#ifndef _BITBYTE_FOUNDATION_TIER3_H_
+#define _BITBYTE_FOUNDATION_TIER3_H_
 
 /// @namespace ::bitbyte::foundation::tier3
 /// @brief Provides algorithims and data structures.
@@ -30,4 +30,4 @@ using namespace ::bitbyte::foundation::tier3;
 
 #include <bitbyte/foundation/tier3/tier3.h>
 
-#endif // _BITBYTE_FOUNDATION_TIER2_H_
+#endif // _BITBYTE_FOUNDATION_TIER3_H_
