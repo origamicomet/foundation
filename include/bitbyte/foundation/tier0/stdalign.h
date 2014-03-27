@@ -16,7 +16,6 @@
 #ifndef _BITBYTE_FOUNDATION_STDALIGN_H_
 #define _BITBYTE_FOUNDATION_STDALIGN_H_
 
-
 #if defined(__cplusplus)
   // Bless me, Father, for I have sinned.
   template <typename _Type> struct __fnd_alignof;
