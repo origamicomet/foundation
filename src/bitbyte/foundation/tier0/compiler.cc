@@ -15,6 +15,10 @@ namespace bitbyte {
 namespace foundation {
 namespace tier0 {
 
+//===----------------------------------------------------------------------===//
+// Singleton
+//
+
 const Compiler compiler() {
   static const Compiler compiler = (Compilers::_)BITBYTE_FOUNDATION_COMPILER;
   return compiler;

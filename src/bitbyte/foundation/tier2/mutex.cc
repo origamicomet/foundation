@@ -30,11 +30,23 @@ namespace {
 }
 #endif
 
+//===----------------------------------------------------------------------===//
+// Constructors
+//
+
 Mutex::Mutex() {
 }
 
+//===----------------------------------------------------------------------===//
+// Destructor
+//
+
 Mutex::~Mutex() {
 }
+
+//===----------------------------------------------------------------------===//
+// Mutex::create
+//
 
 Mutex &Mutex::create() {
 #if (BITBYTE_FOUNDATION_TARGET_PLATFORM == BITBYTE_FOUNDATION_PLATFORM_WINDOWS)
@@ -44,12 +56,20 @@ Mutex &Mutex::create() {
 #endif
 }
 
+//===----------------------------------------------------------------------===//
+// Mutex::lock
+//
+
 void Mutex::lock() {
 #if (BITBYTE_FOUNDATION_TARGET_PLATFORM == BITBYTE_FOUNDATION_PLATFORM_WINDOWS)
   Mutex_ *mutex = (Mutex_ *)this;
   ::EnterCriticalSection(&mutex->cs_);
 #endif
 }
+
+//===----------------------------------------------------------------------===//
+// Mutex::try_lock
+//
 
 bool Mutex::try_lock() {
 #if (BITBYTE_FOUNDATION_TARGET_PLATFORM == BITBYTE_FOUNDATION_PLATFORM_WINDOWS)
@@ -58,12 +78,20 @@ bool Mutex::try_lock() {
 #endif
 }
 
+//===----------------------------------------------------------------------===//
+// Mutex::unlock
+//
+
 void Mutex::unlock() {
 #if (BITBYTE_FOUNDATION_TARGET_PLATFORM == BITBYTE_FOUNDATION_PLATFORM_WINDOWS)
   Mutex_ *mutex = (Mutex_ *)this;
   ::LeaveCriticalSection(&mutex->cs_);
 #endif
 }
+
+//===----------------------------------------------------------------------===//
+// Mutex::destroy
+//
 
 void Mutex::destroy() {
 #if (BITBYTE_FOUNDATION_TARGET_PLATFORM == BITBYTE_FOUNDATION_PLATFORM_WINDOWS)

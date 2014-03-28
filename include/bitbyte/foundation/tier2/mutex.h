@@ -25,14 +25,16 @@ namespace bitbyte {
 namespace foundation {
 namespace tier2 {
 
+/// @brief
+///
 class BITBYTE_FOUNDATION_TIER2_EXPORT Mutex {
-  private: // constructor:
+  private: // constructors:
     Mutex();
 
-  private: // copy-constructor:
+  private: // copy-constructors:
     Mutex(const Mutex &mutex);
 
-  private: // assignment operator:
+  private: // assignment operators:
     Mutex &operator=(const Mutex &mutex);
 
   private: // destructor:

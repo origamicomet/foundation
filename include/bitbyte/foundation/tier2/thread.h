@@ -25,21 +25,23 @@ namespace bitbyte {
 namespace foundation {
 namespace tier2 {
 
+/// @brief
+///
 class BITBYTE_FOUNDATION_TIER2_EXPORT Thread {
   public: // types:
-    ///
+    /// ...
     typedef uint32_t Affinity;
 
-    ///
+    /// ...
     typedef void (*EntryPoint)(void *up);
 
   private: // constructor:
     Thread();
 
-  private: // copy-constructor:
+  private: // copy-constructors:
     Thread(const Thread &thread);
 
-  private: // assignment operator:
+  private: // assignment operators:
     Thread &operator=(const Thread &thread);
 
   private: // destructor:

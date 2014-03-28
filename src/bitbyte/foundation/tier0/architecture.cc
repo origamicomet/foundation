@@ -15,6 +15,10 @@ namespace bitbyte {
 namespace foundation {
 namespace tier0 {
 
+//===----------------------------------------------------------------------===//
+// Architecture::compatiable
+//
+
 template <>
 bool Architecture::compatible<Architectures::x86>() {
   return (_ == Architectures::x86) || (_ == Architectures::x86_64);

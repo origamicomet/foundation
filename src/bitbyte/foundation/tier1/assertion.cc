@@ -21,15 +21,27 @@ namespace tier1 {
 static Assertion::Handler assertion_handler_ = NULL;
 static void *assertion_handler_up_ = NULL;
 
+//===----------------------------------------------------------------------===//
+// Assertion::handler
+//
+
 void Assertion::handler(Handler &handler, void *&up) {
   handler = assertion_handler_;
   up = assertion_handler_up_;
 }
 
+//===----------------------------------------------------------------------===//
+// Assertion::set_handler
+//
+
 void Assertion::set_handler(Handler handler, void *up) {
   assertion_handler_ = handler;
   assertion_handler_up_ = up;
 }
+
+//===----------------------------------------------------------------------===//
+// Assertion::handle
+//
 
 void Assertion::handle() const {
   if (assertion_handler_)

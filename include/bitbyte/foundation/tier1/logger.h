@@ -32,10 +32,12 @@ typedef void (*Logger)(
   void *up);
 
 namespace loggers {
+
 /// ...
 extern BITBYTE_FOUNDATION_TIER1_EXPORT void add(
   Logger logger,
   void *up = NULL);
+
 } // loggers
 
 ///

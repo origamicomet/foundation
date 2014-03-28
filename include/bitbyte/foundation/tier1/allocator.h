@@ -24,6 +24,8 @@ namespace bitbyte {
 namespace foundation {
 namespace tier1 {
 
+/// @brief
+///
 class BITBYTE_FOUNDATION_TIER1_EXPORT Allocator {
   protected: // constructors:
     Allocator();
@@ -46,7 +48,7 @@ class BITBYTE_FOUNDATION_TIER1_EXPORT Allocator {
 
   public: // accessors:
     /// ...
-    virtual const char *name() const;
+    virtual const char *name() const { return "<unknown>"; }
 
     /// ...
     virtual size_t memory_usage() const = 0;

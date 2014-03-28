@@ -126,6 +126,7 @@ namespace Platforms {
   };
 }
 
+/// @brief
 ///
 class BITBYTE_FOUNDATION_TIER0_EXPORT Platform {
   public: // globals:

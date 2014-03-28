@@ -93,6 +93,7 @@ namespace Architectures {
   };
 }
 
+/// @brief
 ///
 class BITBYTE_FOUNDATION_TIER0_EXPORT Architecture {
   public: // globals:

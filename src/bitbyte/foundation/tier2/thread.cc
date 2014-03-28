@@ -33,11 +33,23 @@ namespace {
 }
 #endif
 
+//===----------------------------------------------------------------------===//
+// Constructors
+//
+
 Thread::Thread() {
 }
 
+//===----------------------------------------------------------------------===//
+// Destructor
+//
+
 Thread::~Thread() {
 }
+
+//===----------------------------------------------------------------------===//
+// Thread::affinity
+//
 
 Thread::Affinity Thread::affinity() const {
 #if (BITBYTE_FOUNDATION_TARGET_PLATFORM == BITBYTE_FOUNDATION_PLATFORM_WINDOWS)
@@ -52,6 +64,10 @@ Thread::Affinity Thread::affinity() const {
 #endif
 }
 
+//===----------------------------------------------------------------------===//
+// Thread::set_affinity
+//
+
 Thread &Thread::set_affinity(const Thread::Affinity affinity) {
 #if (BITBYTE_FOUNDATION_TARGET_PLATFORM == BITBYTE_FOUNDATION_PLATFORM_WINDOWS)
   Thread_ *thread = (Thread_ *)this;
@@ -62,6 +78,10 @@ Thread &Thread::set_affinity(const Thread::Affinity affinity) {
   return *this;
 #endif
 }
+
+//===----------------------------------------------------------------------===//
+// Thread::create
+//
 
 Thread &Thread::create(Thread::EntryPoint entry_point, void *up) {
   bitbyte_foundation_assert(debug, entry_point != NULL);
@@ -117,6 +137,10 @@ Thread &Thread::create(Thread::EntryPoint entry_point, void *up) {
 #endif
 }
 
+//===----------------------------------------------------------------------===//
+// Thread::start
+//
+
 Thread &Thread::start() {
 #if (BITBYTE_FOUNDATION_TARGET_PLATFORM == BITBYTE_FOUNDATION_PLATFORM_WINDOWS)
   Thread_ *thread = (Thread_ *)this;
@@ -124,6 +148,10 @@ Thread &Thread::start() {
   return *this;
 #endif
 }
+
+//===----------------------------------------------------------------------===//
+// Thread::suspend
+//
 
 Thread &Thread::suspend() {
 #if (BITBYTE_FOUNDATION_TARGET_PLATFORM == BITBYTE_FOUNDATION_PLATFORM_WINDOWS)
@@ -133,6 +161,10 @@ Thread &Thread::suspend() {
 #endif
 }
 
+//===----------------------------------------------------------------------===//
+// Thread::resume
+//
+
 Thread &Thread::resume() {
 #if (BITBYTE_FOUNDATION_TARGET_PLATFORM == BITBYTE_FOUNDATION_PLATFORM_WINDOWS)
   Thread_ *thread = (Thread_ *)this;
@@ -140,6 +172,10 @@ Thread &Thread::resume() {
   return *this;
 #endif
 }
+
+//===----------------------------------------------------------------------===//
+// Thread::terminate
+//
 
 void Thread::terminate() {
 #if (BITBYTE_FOUNDATION_TARGET_PLATFORM == BITBYTE_FOUNDATION_PLATFORM_WINDOWS)
@@ -151,6 +187,10 @@ void Thread::terminate() {
 #endif
 }
 
+//===----------------------------------------------------------------------===//
+// Thread::detach
+//
+
 void Thread::detach() {
 #if (BITBYTE_FOUNDATION_TARGET_PLATFORM == BITBYTE_FOUNDATION_PLATFORM_WINDOWS)
   Thread_ *thread = (Thread_ *)this;
@@ -159,6 +199,10 @@ void Thread::detach() {
   delete thread;
 #endif
 }
+
+//===----------------------------------------------------------------------===//
+// Thread::join
+//
 
 void Thread::join() {
 #if (BITBYTE_FOUNDATION_TARGET_PLATFORM == BITBYTE_FOUNDATION_PLATFORM_WINDOWS)

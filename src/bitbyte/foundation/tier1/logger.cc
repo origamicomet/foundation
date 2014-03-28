@@ -24,12 +24,20 @@ struct Logger_ {
 static Logger_ loggers_[256];
 static size_t loggers_n_ = 0;
 
+//===----------------------------------------------------------------------===//
+// Management
+//
+
 void loggers::add(Logger logger, void *up) {
   bitbyte_foundation_assert(debug, loggers_n_ < 256);
   Logger_ *logger_ = &loggers_[loggers_n_++];
   logger_->logger = logger;
   logger_->up = up;
 }
+
+//===----------------------------------------------------------------------===//
+// Logging
+//
 
 void log(const char *file, size_t line, const char *message) {
   for (size_t logger = 0; logger < loggers_n_; ++logger) {

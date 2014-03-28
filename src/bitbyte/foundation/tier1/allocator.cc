@@ -26,20 +26,40 @@ static RegisteredAllocator_ *registered_allocators_ = NULL;
 
 }
 
+//===----------------------------------------------------------------------===//
+// Constructors
+//
+
 Allocator::Allocator() {
 }
+
+//===----------------------------------------------------------------------===//
+// Copy constructors
+//
 
 Allocator::Allocator(const Allocator &allocator) {
   (void)allocator;
 }
+
+//===----------------------------------------------------------------------===//
+// Assignment operators
+//
 
 Allocator &Allocator::operator=(const Allocator &allocator) {
   (void)allocator;
   return *this;
 }
 
+//===----------------------------------------------------------------------===//
+// Destructor
+//
+
 Allocator::~Allocator() {
 }
+
+//===----------------------------------------------------------------------===//
+// Allocator::register_for_inspection
+//
 
 void Allocator::register_for_inspection() const {
   RegisteredAllocator_ *registered_allocator = new RegisteredAllocator_;
@@ -47,6 +67,10 @@ void Allocator::register_for_inspection() const {
   registered_allocator->allocator = this;
   registered_allocators_ = registered_allocator;
 }
+
+//===----------------------------------------------------------------------===//
+// Allocator::unregister_from_inspection
+//
 
 void Allocator::unregister_from_inspection() const {
   RegisteredAllocator_ **iter = &registered_allocators_;
@@ -62,9 +86,9 @@ void Allocator::unregister_from_inspection() const {
   }
 }
 
-const char *Allocator::name() const {
-  return "<unnamed>";
-}
+//===----------------------------------------------------------------------===//
+// Inspection
+//
 
 namespace allocators {
 

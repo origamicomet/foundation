@@ -24,6 +24,8 @@ namespace bitbyte {
 namespace foundation {
 namespace tier1 {
 
+/// @brief
+///
 class BITBYTE_FOUNDATION_TIER1_EXPORT Assertion {
   public: // types:
     typedef bool (*Handler)(const Assertion &assertion, void *up);
@@ -67,7 +69,7 @@ class BITBYTE_FOUNDATION_TIER1_EXPORT Assertion {
     ///
     void handle() const;
 
-  public:
+  public: // members:
     const char *predicate;
     const char *file;
     size_t line;

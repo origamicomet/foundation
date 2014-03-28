@@ -90,6 +90,10 @@ namespace Compilers {
   };
 }
 
+/// ...
+extern BITBYTE_FOUNDATION_TIER0_EXPORT const class Compiler compiler();
+
+/// @brief
 ///
 class BITBYTE_FOUNDATION_TIER0_EXPORT Compiler {
   public: // constructors:
@@ -141,9 +145,6 @@ class BITBYTE_FOUNDATION_TIER0_EXPORT Compiler {
   private:
     Compilers::_ _;
 };
-
-/// ...
-extern BITBYTE_FOUNDATION_TIER0_EXPORT const Compiler compiler();
 
 } // tier0
 } // foundation
