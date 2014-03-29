@@ -25,4 +25,5 @@
 
 #include <bitbyte/foundation/tier2/atomics.h>
 #include <bitbyte/foundation/tier2/mutex.h>
+#include <bitbyte/foundation/tier2/event.h>
 #include <bitbyte/foundation/tier2/thread.h>
