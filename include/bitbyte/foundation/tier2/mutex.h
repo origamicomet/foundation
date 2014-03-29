@@ -40,9 +40,12 @@ class BITBYTE_FOUNDATION_TIER2_EXPORT Mutex {
   private: // destructor:
     ~Mutex();
 
-  public: // static methods:
+  public: // management:
     /// ...
     static Mutex &create();
+
+    /// ...
+    void destroy();
 
   public: // methods:
     /// ...
@@ -53,9 +56,6 @@ class BITBYTE_FOUNDATION_TIER2_EXPORT Mutex {
 
     /// ...
     void unlock();
-
-    /// ...
-    void destroy();
 };
 
 } // tier2

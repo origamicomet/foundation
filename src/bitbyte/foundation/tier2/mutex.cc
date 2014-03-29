@@ -57,6 +57,18 @@ Mutex &Mutex::create() {
 }
 
 //===----------------------------------------------------------------------===//
+// Mutex::destroy
+//
+
+void Mutex::destroy() {
+#if (BITBYTE_FOUNDATION_TARGET_PLATFORM == BITBYTE_FOUNDATION_PLATFORM_WINDOWS)
+  Mutex_ *mutex = (Mutex_ *)this;
+  ::DeleteCriticalSection(&mutex->cs_);
+  delete mutex;
+#endif
+}
+
+//===----------------------------------------------------------------------===//
 // Mutex::lock
 //
 
@@ -86,18 +98,6 @@ void Mutex::unlock() {
 #if (BITBYTE_FOUNDATION_TARGET_PLATFORM == BITBYTE_FOUNDATION_PLATFORM_WINDOWS)
   Mutex_ *mutex = (Mutex_ *)this;
   ::LeaveCriticalSection(&mutex->cs_);
-#endif
-}
-
-//===----------------------------------------------------------------------===//
-// Mutex::destroy
-//
-
-void Mutex::destroy() {
-#if (BITBYTE_FOUNDATION_TARGET_PLATFORM == BITBYTE_FOUNDATION_PLATFORM_WINDOWS)
-  Mutex_ *mutex = (Mutex_ *)this;
-  ::DeleteCriticalSection(&mutex->cs_);
-  delete mutex;
 #endif
 }
 
