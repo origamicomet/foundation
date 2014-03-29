@@ -82,6 +82,4 @@ class BITBYTE_FOUNDATION_TIER3_EXPORT Bitset {
 } // foundation
 } // bitbyte
 
-#include <bitbyte/foundation/tier3/bitset.inl>
-
 #endif // _BITBYTE_FOUNDATION_TIER3_BITSET_H_
