@@ -1,4 +1,4 @@
-//=== bitbyte/foundation/tier3/tier3.h =======================================//
+//=== bitbyte/foundation/tier3/bitset.cc =====================================//
 //                                                                            //
 //  Foundation                                                                //
 //                                                                            //
@@ -9,24 +9,4 @@
 //                                                                            //
 //===----------------------------------------------------------------------===//
 
-/// @file bitbyte/foundation/tier3/tier3.h
-/// @brief Includes everything in bitbyte/foundation/tier3.
-///
-
-//===----------------------------------------------------------------------===//
-// Data structures:
-//
-
 #include <bitbyte/foundation/tier3/bitset.h>
-
-//===----------------------------------------------------------------------===//
-// Lock-free data structures:
-//
-
-#include <bitbyte/foundation/tier3/lockfree/mp_mc_queue.h>
-
-//===----------------------------------------------------------------------===//
-// Misc.
-//
-
-#include <bitbyte/foundation/tier3/function.h>
