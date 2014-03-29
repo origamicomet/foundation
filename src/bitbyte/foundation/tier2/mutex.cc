@@ -13,7 +13,7 @@
 
 #if (BITBYTE_FOUNDATION_TARGET_PLATFORM == BITBYTE_FOUNDATION_PLATFORM_WINDOWS)
   #define WIN32_LEAN_AND_MEAN
-  #include <Windows.h>
+  #include <windows.h>
 #else
   #error ("Unknown or unsupported platform.")
 #endif
