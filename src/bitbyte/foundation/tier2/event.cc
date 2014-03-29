@@ -34,15 +34,29 @@ namespace {
 // Constructors
 //
 
-Event::Event() {
-}
+Event::Event() {}
 
 //===----------------------------------------------------------------------===//
-// Destructor
+// Copy constructors:
 //
 
-Event::~Event() {
-}
+#if 0
+Event::Event(const Event &event) {}
+#endif
+
+//===----------------------------------------------------------------------===//
+// Assignment operators:
+//
+
+#if 0
+Event &Event::operator=(const Event &event) {}
+#endif
+
+//===----------------------------------------------------------------------===//
+// Destructor:
+//
+
+Event::~Event() {}
 
 //===----------------------------------------------------------------------===//
 // Event::create

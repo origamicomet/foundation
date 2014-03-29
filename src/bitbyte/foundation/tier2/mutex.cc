@@ -34,15 +34,29 @@ namespace {
 // Constructors
 //
 
-Mutex::Mutex() {
-}
+Mutex::Mutex() {}
 
 //===----------------------------------------------------------------------===//
-// Destructor
+// Copy constructors:
 //
 
-Mutex::~Mutex() {
-}
+#if 0
+Mutex::Mutex(const Mutex &mutex) {}
+#endif
+
+//===----------------------------------------------------------------------===//
+// Assignment operators:
+//
+
+#if 0
+Mutex &Mutex::operator=(const Mutex &mutex) {}
+#endif
+
+//===----------------------------------------------------------------------===//
+// Destructor:
+//
+
+Mutex::~Mutex() {}
 
 //===----------------------------------------------------------------------===//
 // Mutex::create

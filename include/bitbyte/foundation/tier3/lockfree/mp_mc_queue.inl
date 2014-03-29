@@ -9,7 +9,7 @@
 //                                                                            //
 //===----------------------------------------------------------------------===//
 
-/// @file bitbyte/foundation/tier3/mp_mc_queue.inl
+/// @file bitbyte/foundation/tier3/lockfree/mp_mc_queue.inl
 /// @brief ...
 ///
 
@@ -28,7 +28,7 @@ namespace tier3 {
 namespace lockfree {
 
 //===----------------------------------------------------------------------===//
-// Constructors
+// Constructors:
 //
 
 template <typename T>
@@ -46,7 +46,25 @@ MpMcQueue<T>::MpMcQueue(uint32_t sz, foundation::tier1::Allocator &allocator)
 }
 
 //===----------------------------------------------------------------------===//
-// Destructor
+// Copy constructors:
+//
+
+#if 0
+template <typename T>
+MpMcQueue<T>::MpMcQueue(const MpMcQueue<T> &queue) {}
+#endif
+
+//===----------------------------------------------------------------------===//
+// Assignment operators:
+//
+
+#if 0
+template <typename T>
+MpMcQueue<T> &MpMcQueue<T>::operator=(const MpMcQueue<T> &queue) {}
+#endif
+
+//===----------------------------------------------------------------------===//
+// Destructor:
 //
 
 template <typename T>

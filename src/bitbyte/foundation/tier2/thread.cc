@@ -37,15 +37,29 @@ namespace {
 // Constructors
 //
 
-Thread::Thread() {
-}
+Thread::Thread() {}
 
 //===----------------------------------------------------------------------===//
-// Destructor
+// Copy constructors:
 //
 
-Thread::~Thread() {
-}
+#if 0
+Thread::Thread(const Thread &thread) {}
+#endif
+
+//===----------------------------------------------------------------------===//
+// Assignment operators:
+//
+
+#if 0
+Thread &Thread::operator=(const Thread &thread) {}
+#endif
+
+//===----------------------------------------------------------------------===//
+// Destructor:
+//
+
+Thread::~Thread() {}
 
 //===----------------------------------------------------------------------===//
 // Thread::affinity

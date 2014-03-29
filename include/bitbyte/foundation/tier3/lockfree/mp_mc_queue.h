@@ -9,7 +9,7 @@
 //                                                                            //
 //===----------------------------------------------------------------------===//
 
-/// @file bitbyte/foundation/tier3/mp_mc_queue.h
+/// @file bitbyte/foundation/tier3/lockfree/mp_mc_queue.h
 /// @brief Provides a fixed-size, multi-producer, and multi-consumer queue.
 ///
 

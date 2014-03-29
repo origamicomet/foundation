@@ -35,7 +35,8 @@ class BITBYTE_FOUNDATION_TIER1_EXPORT Assertion {
       : predicate(NULL)
       , file(NULL)
       , line(0)
-      , message(NULL) {
+      , message(NULL)
+    {
     }
 
   public: // copy-constructors:
@@ -43,20 +44,19 @@ class BITBYTE_FOUNDATION_TIER1_EXPORT Assertion {
       : predicate(assertion.predicate)
       , file(assertion.file)
       , line(assertion.line)
-      , message(assertion.message) {
+      , message(assertion.message)
+    {
     }
 
   public: // assignment operators:
-    Assertion &operator=(const Assertion &assertion) {
+    Assertion &operator=(const Assertion &assertion)
+    {
       predicate = assertion.predicate;
       file = assertion.file;
       line = assertion.line;
       message = assertion.message;
       return *this;
     }
-
-  public: // destructor:
-    // ~Assertion() {}
 
   public: // static methods:
     ///

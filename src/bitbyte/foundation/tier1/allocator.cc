@@ -27,35 +27,28 @@ static RegisteredAllocator_ *registered_allocators_ = NULL;
 }
 
 //===----------------------------------------------------------------------===//
-// Constructors
+// Constructors:
 //
 
-Allocator::Allocator() {
-}
+Allocator::Allocator() {}
 
 //===----------------------------------------------------------------------===//
-// Copy constructors
+// Copy constructors:
 //
 
-Allocator::Allocator(const Allocator &allocator) {
-  (void)allocator;
-}
+Allocator::Allocator(const Allocator &/*allocator*/) {}
 
 //===----------------------------------------------------------------------===//
-// Assignment operators
+// Assignment operators:
 //
 
-Allocator &Allocator::operator=(const Allocator &allocator) {
-  (void)allocator;
-  return *this;
-}
+Allocator &Allocator::operator=(const Allocator &/*allocator*/) { return *this; }
 
 //===----------------------------------------------------------------------===//
-// Destructor
+// Destructor:
 //
 
-Allocator::~Allocator() {
-}
+Allocator::~Allocator() {}
 
 //===----------------------------------------------------------------------===//
 // Allocator::register_for_inspection
