@@ -41,13 +41,20 @@
 ///
 #define bitbyte_foundation_logf_(_Format, ...) \
   do { \
-    const size_t message_len = snprintf(NULL, 0, _Format, ##__VA_ARGS__) + 1; \
-    char *message = (const char *)alloca(message_len + 1); \
-    snprintf(message, message_len + 1, _Format, ##__VA_ARGS__); \
-    ::bitbyte::foundation::tier1::log( \
-      bitbyte_foundation_stringify(__FILE__), \
-      __LINE__, \
-      (const char *message)); \
+    struct __frame__ { \
+      static void logf(const char *fmt, ...) { \
+        va_list ap; \
+        va_start(ap, fmt); \
+        const size_t message_len = vsnprintf(NULL, 0, fmt, ap) + 1; \
+        char *message = (char *)alloca(message_len + 1); \
+        vsnprintf(message, message_len + 1, fmt, ap); \
+        ::bitbyte::foundation::tier1::log( \
+          bitbyte_foundation_stringify(__FILE__), \
+          __LINE__, \
+          (const char *)message); \
+      } \
+    }; \
+    __frame__::logf(_Format, ##__VA_ARGS__); \
   } while (0)
 
 //===----------------------------------------------------------------------===//
