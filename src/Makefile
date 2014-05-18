@@ -1,16 +1,17 @@
-#=== Makefile =================================================================#
-#                                                                              #
-#  Foundation                                                                  #
-#                                                                              #
-#  This file is distributed under the terms described in LICENSE.              #
-#                                                                              #
-#  Author(s):                                                                  #
-#   Michael Williams <mwilliams@bitbyte.ca>                                    #
-#                                                                              #
+#===-- Makefile ------------------------------------------------------------===#
+#
+#  Foundation
+#
+#  This file is distributed under the terms described in LICENSE.
+#
+#  Author(s):
+#
+#    * Michael Williams <mwilliams@bitbyte.ca>
+#
 #===------------------------------------------------------------------------===#
 
-## @file Makefile
-## @brief ...
+## \file src/Makefile
+## \brief ...
 ##
 
-include src/bitbyte/foundation.mk
+include src/bitbyte/Makefile

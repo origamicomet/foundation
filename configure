@@ -1,18 +1,19 @@
 #!/usr/bin/env ruby
 
-#=== configure ================================================================#
-#                                                                              #
-#  Foundation                                                                  #
-#                                                                              #
-#  This file is distributed under the terms described in LICENSE.              #
-#                                                                              #
-#  Author(s):                                                                  #
-#   Michael Williams <mwilliams@bitbyte.ca>                                    #
-#                                                                              #
+#===-- configure -----------------------------------------------------------===#
+#
+#  Foundation
+#
+#  This file is distributed under the terms described in LICENSE.
+#
+#  Author(s):
+#
+#    * Michael Williams <mwilliams@bitbyte.ca>
+#
 #===------------------------------------------------------------------------===#
 
-## @file configure
-## @brief Specifies compile-, link-, and runtime- behaviours via conf.mk.
+## \file configure
+## \brief Specifies compile-time, link-time, and runtime behaviours via conf.mk.
 ##
 
 require 'optparse'
@@ -37,8 +38,6 @@ class SwitchesAndOptions
   def self.is_known_configuration?(configuration)
     case configuration.downcase
     when "debug"
-      true
-    when "development"
       true
     when "release"
       true
@@ -217,7 +216,7 @@ class SwitchesAndOptions
     end
     switches_and_options.platform     = (option 'platform')
     switches_and_options.linkage      = (option 'linkage')
-      switches_and_options.linkage ||= 'statically'
+      switches_and_options.linkage ||= 'static'
     switches_and_options.windows_sdk  = (option 'windows_sdk')
     switches_and_options.vs_path      = (option 'vs_path')
 
@@ -250,7 +249,7 @@ class SwitchesAndOptions
                                         end
       end
 
-      opts.on("--linkage=LINKAGE", "Specifies statica or dynamic linkage.") do |linkage|
+      opts.on("--linkage=LINKAGE", "Specifies static or dynamic linkage.") do |linkage|
         switches_and_options.linkage = linkage.downcase
       end
 
@@ -340,7 +339,7 @@ class SwitchesAndOptions
       end
     end
 
-    if switches_and_options.linkage != 'statically' && switches_and_options.linkage != 'dynamically'
+    if switches_and_options.linkage != 'static' && switches_and_options.linkage != 'dynamic'
       puts "Unknown linkage '#{switches_and_options.linkage}'"
       return false
     end
@@ -360,20 +359,21 @@ class SwitchesAndOptions
 
   def self.generate(switches_and_options, path)
     File.open(path, 'wb') do |f|
-      f.write "#=== conf.mk ==================================================================#\n"
-      f.write "#                                                                              #\n"
-      f.write "#  Foundation                                                                  #\n"
-      f.write "#                                                                              #\n"
-      f.write "#  This file is distributed under the terms described in LICENSE.              #\n"
-      f.write "#                                                                              #\n"
-      f.write "#  Author(s):                                                                  #\n"
-      f.write "#   Michael Williams <mwilliams@bitbyte.ca>                                    #\n"
-      f.write "#                                                                              #\n"
-      f.write "#===------------------------------------------------------------------------===#\n"
+      f.write "#===-- config.mk ---------------------------------------------------------===#\n"
+      f.write "#\n"
+      f.write "#  Foundation\n"
+      f.write "#\n"
+      f.write "#  This file is distributed under the terms described in LICENSE.\n"
+      f.write "#\n"
+      f.write "#  Author(s):\n"
+      f.write "#\n"
+      f.write "#    * Michael Williams <mwilliams@bitbyte.ca>\n"
+      f.write "#\n"
+      f.write "#===----------------------------------------------------------------------===#\n"
       f.write "\n"
-      f.write "## @file conf.mk\n"
-      f.write "## @brief An auto-generated file by ./configure that specifies compile-, link-,\n"
-      f.write "##  and runtime behaviour.\n"
+      f.write "## \file config.mk\n"
+      f.write "## \brief An auto-generated file by ./configure that specifies compile-time,\n"
+      f.write "## link-time and runtime behaviour.\n"
       f.write "##\n"
       f.write "\n"
 
@@ -409,7 +409,7 @@ class SwitchesAndOptions
   end
 end
 
-puts "#============================================================================#"
+puts "#===------------------------------------------------------------------------===#"
 puts "# Foundation"
 puts "#"
 
@@ -427,9 +427,9 @@ if not (SwitchesAndOptions.sane? switches_and_options)
   exit false
 end
 
-if not (SwitchesAndOptions.generate(switches_and_options, 'conf.mk'))
-  puts "Generation of 'conf.mk' failed."
-  File.delete('conf.mk')
+if not (SwitchesAndOptions.generate(switches_and_options, 'config.mk'))
+  puts "Generation of 'config.mk' failed."
+  File.delete('config.mk')
   exit false
 end
 

@@ -1,175 +1,211 @@
-//=== bitbyte/foundation/tier0/architecture.h ================================//
-//                                                                            //
-//  Foundation                                                                //
-//                                                                            //
-//  This file is distributed under the terms described in LICENSE.            //
-//                                                                            //
-//  Author(s):                                                                //
-//   Michael Williams <mwilliams@bitbyte.ca>                                  //
-//                                                                            //
+//===-- bitbyte/foundation/tier0/architecture.h -----------------*- C++ -*-===//
+//
+//  Foundation
+//
+//  This file is distributed under the terms described in LICENSE.
+//
+//  Author(s):
+//
+//    * Michael Williams <mwilliams@bitbyte.ca>
+//
 //===----------------------------------------------------------------------===//
-
-/// @file bitbyte/foundation/tier0/architecture.h
-/// @brief Defines various architectures and convenient pre-processor values,
-///  and also provides compile- and run- time utilities related to processor
-///  architecture.
 ///
+/// \file
+/// \brief Defines various architectures and detects the target architecture
+/// based on pre-processor definitions.
+///
+//===----------------------------------------------------------------------===//
 
 #ifndef _BITBYTE_FOUNDATION_TIER0_ARCHITECTURE_H_
 #define _BITBYTE_FOUNDATION_TIER0_ARCHITECTURE_H_
 
-#include <bitbyte/foundation/tier0/export.h>
+//============================================================================//
+
+#include "bitbyte/foundation/tier0/linkage.h"
+
+//============================================================================//
+
+/// \def __FOUNDATION_ARCHITECTURE_UNKNOWN__
+/// \copydoc __BITBYTE_FOUNDATION_ARCHITECTURE_UNKNOWN__
+#ifdef __BITBYTE_FOUNDATION_IMPORT__
+  #define __FOUNDATION_ARCHITECTURE_UNKNOWN__ __BITBYTE_FOUNDATION_ARCHITECTURE_UNKNOWN__
+#endif // __BITBYTE_FOUNDATION_IMPORT__
+
+/// \def __BITBYTE_FOUNDATION_ARCHITECTURE_UNKNOWN__
+/// \copydoc __BITBYTE_FOUNDATION_TIER0_ARCHITECTURE_UNKNOWN__
+#define __BITBYTE_FOUNDATION_ARCHITECTURE_UNKNOWN__ __BITBYTE_FOUNDATION_TIER0_ARCHITECTURE_UNKNOWN__
+
+/// \def __BITBYTE_FOUNDATION_TIER0_ARCHITECTURE_UNKNOWN__
+/// \brief Unknown or unsupported architecture.
+///
+#define __BITBYTE_FOUNDATION_TIER0_ARCHITECTURE_UNKNOWN__ 0
 
 //===----------------------------------------------------------------------===//
-// Pre-processor defines
-//
 
-/// @def BITBYTE_FOUNDATION_ARCHITECTURE_X86
-/// @brief Intel x86.
-///
-#define BITBYTE_FOUNDATION_ARCHITECTURE_X86 0
+/// \def __FOUNDATION_ARCHITECTURE_X86__
+/// \copydoc __BITBYTE_FOUNDATION_ARCHITECTURE_X86__
+#ifdef __BITBYTE_FOUNDATION_IMPORT__
+  #define __FOUNDATION_ARCHITECTURE_X86__ __BITBYTE_FOUNDATION_ARCHITECTURE_X86__
+#endif // __BITBYTE_FOUNDATION_IMPORT__
 
-/// @def BITBYTE_FOUNDATION_ARCHITECTURE_X86_64
-/// @brief AMD64.
-///
-#define BITBYTE_FOUNDATION_ARCHITECTURE_X86_64 1
+/// \def __BITBYTE_FOUNDATION_ARCHITECTURE_X86__
+/// \copydoc __BITBYTE_FOUNDATION_TIER0_ARCHITECTURE_X86__
+#define __BITBYTE_FOUNDATION_ARCHITECTURE_X86__ __BITBYTE_FOUNDATION_TIER0_ARCHITECTURE_X86__
 
-/// @def BITBYTE_FOUNDATION_HOST_ARCHITECTURE
-/// @brief ...
+/// \def __BITBYTE_FOUNDATION_TIER0_ARCHITECTURE_X86__
+/// \brief Intel/AMD x86.
 ///
-#ifndef BITBYTE_FOUNDATION_HOST_ARCHITECTURE
-  #error ("Please specify which architecture you are building Foundation on by defining `BITBYTE_FOUNDATION_HOST_ARCHITECTURE`.")
-#else
-  #if (BITBYTE_FOUNDATION_HOST_ARCHITECTURE < 0) || (BITBYTE_FOUNDATION_HOST_ARCHITECTURE > 1)
-    #error ("You specified an unknown or unsupported architecture. Did you define `BITBYTE_FOUNDATION_HOST_ARCHITECTURE` correctly?")
-  #endif
-#endif
-
-/// @def BITBYTE_FOUNDATION_DONT_AUTODETECT_TARGET_ARCHITECTURE
-/// @brief If defined, Foundation won't attempt to detect the target
-///  architecture based on pre-processor defines.
-///
-
-/// @def BITBYTE_FOUNDATION_TARGET_ARCHITECTURE
-/// @brief ...
-///
-#ifdef BITBYTE_FOUNDATION_DONT_AUTODETECT_TARGET_ARCHITECTURE
-  #ifndef BITBYTE_FOUNDATION_TARGET_ARCHITECTURE
-    #error ("Please specify which architecture you are building Foundation for by defining `BITBYTE_FOUNDATION_TARGET_ARCHITECTURE`.")
-  #else
-    #if (BITBYTE_FOUNDATION_TARGET_ARCHITECTURE < 0) || (BITBYTE_FOUNDATION_TARGET_ARCHITECTURE > 1)
-      #error ("You specified an unknown or unsupported architecture. Did you define `BITBYTE_FOUNDATION_TARGET_ARCHITECTURE` correctly?")
-    #endif
-  #endif
-#else
-  #if (defined(_M_IX86) || defined(__i386__))
-    #define BITBYTE_FOUNDATION_TARGET_ARCHITECTURE 0
-  #elif (defined(_M_X64) || defined(_M_AMD64) || defined(__x86_64) || defined(__x86_64__) || defined(__amd64) || defined(__amd64__))
-    #define BITBYTE_FOUNDATION_TARGET_ARCHITECTURE 1
-  #else
-    #error ("You are building Foundation for an unknown or unsupported architecture.")
-  #endif
-#endif
+#define __BITBYTE_FOUNDATION_TIER0_ARCHITECTURE_X86__ 1
 
 //===----------------------------------------------------------------------===//
-// Compile- and run- time utilities
-//
+
+/// \def __FOUNDATION_ARCHITECTURE_X86_64__
+/// \copydoc __BITBYTE_FOUNDATION_ARCHITECTURE_X86_64__
+#ifdef __BITBYTE_FOUNDATION_IMPORT__
+  #define __FOUNDATION_ARCHITECTURE_X86_64__ __BITBYTE_FOUNDATION_ARCHITECTURE_X86_64__
+#endif // __BITBYTE_FOUNDATION_IMPORT__
+
+/// \def __BITBYTE_FOUNDATION_ARCHITECTURE_X86_64__
+/// \copydoc __BITBYTE_FOUNDATION_TIER0_ARCHITECTURE_X86_64__
+#define __BITBYTE_FOUNDATION_ARCHITECTURE_X86_64__ __BITBYTE_FOUNDATION_TIER0_ARCHITECTURE_X86_64__
+
+/// \def __BITBYTE_FOUNDATION_TIER0_ARCHITECTURE_X86_64__
+/// \brief Intel/AMD x86-64.
+///
+#define __BITBYTE_FOUNDATION_TIER0_ARCHITECTURE_X86_64__ 2
+
+//===----------------------------------------------------------------------===//
+
+/// \def FOUNDATION_ARCHITECTURE
+/// \copydoc BITBYTE_FOUNDATION_ARCHITECTURE
+#ifdef __BITBYTE_FOUNDATION_IMPORT__
+  #define FOUNDATION_ARCHITECTURE BITBYTE_FOUNDATION_ARCHITECTURE
+#endif // __BITBYTE_FOUNDATION_IMPORT__
+
+/// \def BITBYTE_FOUNDATION_ARCHITECTURE
+/// \copydoc BITBYTE_FOUNDATION_TIER0_ARCHITECTURE
+#define BITBYTE_FOUNDATION_ARCHITECTURE BITBYTE_FOUNDATION_TIER0_ARCHITECTURE
+
+/// \def BITBYTE_FOUNDATION_TIER0_ARCHITECTURE
+/// \brief The architecture Foundation is built for.
+///
+#if defined(_M_IX86) || defined(__i386__)
+  #define BITBYTE_FOUNDATION_TIER0_ARCHITECTURE __BITBYTE_FOUNDATION_TIER0_ARCHITECTURE_X86__
+#elif defined(_M_X64) || defined(_M_AMD64) || defined(__x86_64) || defined(__x86_64__) || defined(__amd64) || defined(__amd64__)
+  #define BITBYTE_FOUNDATION_TIER0_ARCHITECTURE __BITBYTE_FOUNDATION_TIER0_ARCHITECTURE_X86_64__
+#else
+  #error ("You are building Foundation for an unknown or unsupported architecture.")
+#endif
+
+//============================================================================//
+
+#ifdef __cplusplus
+extern "C" {
+#endif // __cplusplus
+
+//===----------------------------------------------------------------------===//
+
+/// \brief Runtime equivalent of BITBYTE_FOUNDATION_TIER0_ARCHITECTURE.
+///
+typedef enum bitbyte_foundation_tier0_architecture {
+  /// \copydoc __BITBYTE_FOUNDATION_TIER0_ARCHITECTURE_UNKNOWN__
+  BITBYTE_FOUNDATION_TIER0_ARCHITECTURE_UNKNOWN =
+    __BITBYTE_FOUNDATION_TIER0_ARCHITECTURE_UNKNOWN__,
+  /// \copydoc __BITBYTE_FOUNDATION_TIER0_ARCHITECTURE_X86__
+  BITBYTE_FOUNDATION_TIER0_ARCHITECTURE_X86 =
+    __BITBYTE_FOUNDATION_TIER0_ARCHITECTURE_X86__,
+  /// \copydoc __BITBYTE_FOUNDATION_TIER0_ARCHITECTURE_X86_64__
+  BITBYTE_FOUNDATION_TIER0_ARCHITECTURE_X86_64 =
+    __BITBYTE_FOUNDATION_TIER0_ARCHITECTURE_X86_64__,
+} bitbyte_foundation_tier0_architecture_t;
+
+/// \copydoc bitbyte_foundation_tier0_architecture_t
+typedef bitbyte_foundation_tier0_architecture_t bitbyte_foundation_architecture_t;
+
+#ifdef __BITBYTE_FOUNDATION_IMPORT__
+  /// \copydoc bitbyte_foundation_architecture_t
+  typedef bitbyte_foundation_architecture_t foundation_architecture_t;
+#endif // __BITBYTE_FOUNDATION_IMPORT__
+
+//===----------------------------------------------------------------------===//
+
+/// \def foundation_target_architecture
+/// \copydoc foundation_tier0_target_architecture
+#ifdef __BITBYTE_FOUNDATION_IMPORT__
+  #define foundation_target_architecture foundation_tier0_target_architecture
+#endif // __BITBYTE_FOUNDATION_IMPORT__
+
+/// \def foundation_tier0_target_architecture
+/// \copydoc bitbyte_foundation_tier0_target_architecture
+#ifdef __BITBYTE_FOUNDATION_IMPORT__
+  #define foundation_tier0_target_architecture bitbyte_foundation_tier0_target_architecture
+#endif // __BITBYTE_FOUNDATION_IMPORT__
+
+/// \brief Returns the architecture Foundation is built for.
+///
+extern
+BITBYTE_FOUNDATION_TIER0_EXPORT
+bitbyte_foundation_tier0_architecture_t
+bitbyte_foundation_tier0_target_architecture(void);
+
+//===----------------------------------------------------------------------===//
+
+#ifdef __cplusplus
+}
+#endif // __cplusplus
+
+//============================================================================//
+
+#ifdef __cplusplus
+
+//===----------------------------------------------------------------------===//
 
 namespace bitbyte {
 namespace foundation {
 namespace tier0 {
 
-/// @namespace ::bitbyte::foundation::tier0::Architectures
-/// @brief ...
-///
+//===----------------------------------------------------------------------===//
+
+/// \namespace bitbyte::foundation::tier0::Architectures
+/// \copydoc bitbyte_foundation_tier0_architecture_t
 namespace Architectures {
-  enum _ {
-    /// Unknown.
-    Unknown = -1,
-    /// Intel x86.
-    x86 = 0,
-    /// AMD64.
-    x86_64 = 1
-  };
+enum __Enum__ {
+  // \copydoc BITBYTE_FOUNDATION_TIER0_ARCHITECTURE_UNKNOWN
+  Unknown = BITBYTE_FOUNDATION_TIER0_ARCHITECTURE_UNKNOWN,
+  // \copydoc BITBYTE_FOUNDATION_TIER0_ARCHITECTURE_X86
+  x86 = BITBYTE_FOUNDATION_TIER0_ARCHITECTURE_X86,
+  // \copydoc BITBYTE_FOUNDATION_TIER0_ARCHITECTURE_X86_64
+  x86_64 = BITBYTE_FOUNDATION_TIER0_ARCHITECTURE_X86_64,
+};
 }
 
-/// @brief
-///
-class BITBYTE_FOUNDATION_TIER0_EXPORT Architecture {
-  public: // globals:
-    /// ...
-    static const Architecture host() {
-      static const Architecture host =
-        (Architectures::_)BITBYTE_FOUNDATION_HOST_ARCHITECTURE;
-      return host;
-    }
+/// \copydoc bitbyte_foundation_tier0_architecture_t
+typedef Architectures::__Enum__ Architecture;
 
-    /// ...
-    static const Architecture &target() {
-      static const Architecture target =
-        (Architectures::_)BITBYTE_FOUNDATION_TARGET_ARCHITECTURE;
-      return target;
-    }
+//===----------------------------------------------------------------------===//
 
-  public: // constructors:
-    Architecture(Architectures::_ architecture = Architectures::Unknown)
-      : _(architecture) {
-    }
+namespace target {
 
-  public: // copy-constructors:
-    Architecture(const Architecture &architecture)
-      : _(architecture._) {
-    }
+/// \copydoc bitbyte_foundation_tier0_target_architecture
+extern
+BITBYTE_FOUNDATION_TIER0_EXPORT
+Architecture
+architecture(void);
 
-  public: // assignment operators:
-    Architecture &operator=(const Architecture &architecture) {
-      _ = architecture._;
-      return *this;
-    }
+} // target
 
-    Architecture &operator=(const Architectures::_ architecture) {
-      _ = architecture;
-      return *this;
-    }
-
-  public: // destructor:
-    // ~Architecture() {}
-
-  public: // conversion operators:
-    operator Architectures::_() {
-      return _;
-    }
-
-  public: // comparison operators:
-    bool operator==(const Architectures::_ rhs) const {
-      return (_ == rhs);
-    }
-
-    bool operator==(const Architecture &rhs) const {
-      return (_ == rhs._);
-    }
-
-    bool operator!=(const Architectures::_ rhs) const {
-      return (_ != rhs);
-    }
-
-    bool operator!=(const Architecture &rhs) const {
-      return (_ != rhs._);
-    }
-
-  public: // properties
-    /// ...
-    template <Architectures::_ _Architecture>
-    bool compatible() {
-      return false;
-    }
-
-  private:
-    Architectures::_ _;
-};
+//===----------------------------------------------------------------------===//
 
 } // tier0
 } // foundation
 } // bitbyte
 
+//===----------------------------------------------------------------------===//
+
+#endif // __cplusplus
+
+//============================================================================//
+
 #endif // _BITBYTE_FOUNDATION_TIER0_ARCHITECTURE_H_
+
+//============================================================================//

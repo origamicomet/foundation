@@ -1,153 +1,235 @@
-//=== bitbyte/foundation/tier0/compiler.h ====================================//
-//                                                                            //
-//  Foundation                                                                //
-//                                                                            //
-//  This file is distributed under the terms described in LICENSE.            //
-//                                                                            //
-//  Author(s):                                                                //
-//   Michael Williams <mwilliams@bitbyte.ca>                                  //
-//                                                                            //
+//===-- bitbyte/foundation/tier0/compiler.h ---------------------*- C++ -*-===//
+//
+//  Foundation
+//
+//  This file is distributed under the terms described in LICENSE.
+//
+//  Author(s):
+//
+//    * Michael Williams <mwilliams@bitbyte.ca>
+//
 //===----------------------------------------------------------------------===//
-
-/// @file bitbyte/foundation/tier0/compiler.h
-/// @brief Defines various compilers and convenient pre-processor values,
-///  and also provides compile- and run- time utilities related to compilers.
 ///
+/// \file
+/// \brief Defines various compilers and detects the host compiler based on
+/// pre-processor definitions.
+///
+//===----------------------------------------------------------------------===//
 
 #ifndef _BITBYTE_FOUNDATION_TIER0_COMPILER_H_
 #define _BITBYTE_FOUNDATION_TIER0_COMPILER_H_
 
-#include <bitbyte/foundation/tier0/export.h>
+//============================================================================//
+
+#include "bitbyte/foundation/tier0/linkage.h"
+
+//============================================================================//
+
+/// \def __FOUNDATION_COMPILER_UNKNOWN__
+/// \copydoc __BITBYTE_FOUNDATION_COMPILER_UNKNOWN__
+#ifdef __BITBYTE_FOUNDATION_IMPORT__
+  #define __FOUNDATION_COMPILER_UNKNOWN__ __BITBYTE_FOUNDATION_COMPILER_UNKNOWN__
+#endif // __BITBYTE_FOUNDATION_IMPORT__
+
+/// \def __BITBYTE_FOUNDATION_COMPILER_UNKNOWN__
+/// \copydoc __BITBYTE_FOUNDATION_TIER0_COMPILER_UNKNOWN__
+#define __BITBYTE_FOUNDATION_COMPILER_UNKNOWN__ __BITBYTE_FOUNDATION_TIER0_COMPILER_UNKNOWN__
+
+/// \def __BITBYTE_FOUNDATION_TIER0_COMPILER_UNKNOWN__
+/// \brief Unknown or unsupported compiler.
+///
+#define __BITBYTE_FOUNDATION_TIER0_COMPILER_UNKNOWN__ 0
 
 //===----------------------------------------------------------------------===//
-// Pre-processor defines
-//
 
-/// @def BITBYTE_FOUNDATION_COMPILER_MSVC
-/// @brief Intel x86.
-///
-#define BITBYTE_FOUNDATION_COMPILER_MSVC 0
+/// \def __FOUNDATION_COMPILER_MSVC__
+/// \copydoc __BITBYTE_FOUNDATION_COMPILER_MSVC__
+#ifdef __BITBYTE_FOUNDATION_IMPORT__
+  #define __FOUNDATION_COMPILER_MSVC__ __BITBYTE_FOUNDATION_COMPILER_MSVC__
+#endif // __BITBYTE_FOUNDATION_IMPORT__
 
-/// @def BITBYTE_FOUNDATION_COMPILER_GCC
-/// @brief GNU Compiler Collection.
-///
-#define BITBYTE_FOUNDATION_COMPILER_GCC 1
+/// \def __BITBYTE_FOUNDATION_COMPILER_MSVC__
+/// \copydoc __BITBYTE_FOUNDATION_TIER0_COMPILER_MSVC__
+#define __BITBYTE_FOUNDATION_COMPILER_MSVC__ __BITBYTE_FOUNDATION_TIER0_COMPILER_MSVC__
 
-/// @def BITBYTE_FOUNDATION_COMPILER_CLANG
-/// @brief LLVM/Clang.
+/// \def __BITBYTE_FOUNDATION_TIER0_COMPILER_MSVC__
+/// \brief Microsoft Visual C/C++ Compiler.
 ///
-#define BITBYTE_FOUNDATION_COMPILER_CLANG 2
+#define __BITBYTE_FOUNDATION_TIER0_COMPILER_MSVC__ 1
 
-/// @def BITBYTE_FOUNDATION_DONT_AUTODETECT_COMPILER
-/// @brief If defined, Foundation won't attempt to detect the current compiler
-///  based on pre-processor defines.
-///
+//===----------------------------------------------------------------------===//
 
-/// @def BITBYTE_FOUNDATION_COMPILER
-/// @brief ...
+/// \def __FOUNDATION_COMPILER_GCC__
+/// \copydoc __BITBYTE_FOUNDATION_COMPILER_GCC__
+#ifdef __BITBYTE_FOUNDATION_IMPORT__
+  #define __FOUNDATION_COMPILER_GCC__ __BITBYTE_FOUNDATION_COMPILER_GCC__
+#endif // __BITBYTE_FOUNDATION_IMPORT__
+
+/// \def __BITBYTE_FOUNDATION_COMPILER_GCC__
+/// \copydoc __BITBYTE_FOUNDATION_TIER0_COMPILER_GCC__
+#define __BITBYTE_FOUNDATION_COMPILER_GCC__ __BITBYTE_FOUNDATION_TIER0_COMPILER_GCC__
+
+/// \def __BITBYTE_FOUNDATION_TIER0_COMPILER_GCC__
+/// \brief GNU Compiler Collection.
 ///
-#ifdef BITBYTE_FOUNDATION_DONT_AUTODETECT_COMPILER
-  #ifndef BITBYTE_FOUNDATION_COMPILER
-    #error ("Please specify which compiler you are building Foundation with by defining `BITBYTE_FOUNDATION_COMPILER`.")
-  #else
-    #if (BITBYTE_FOUNDATION_COMPILER < 0) || (BITBYTE_FOUNDATION_COMPILER > 2)
-      #error ("You specified an unknown or unsupported compiler. Did you define `BITBYTE_FOUNDATION_COMPILER` correctly?")
-    #endif
-  #endif
+#define __BITBYTE_FOUNDATION_TIER0_COMPILER_GCC__ 2
+
+//===----------------------------------------------------------------------===//
+
+/// \def __FOUNDATION_COMPILER_CLANG__
+/// \copydoc __BITBYTE_FOUNDATION_COMPILER_CLANG__
+#ifdef __BITBYTE_FOUNDATION_IMPORT__
+  #define __FOUNDATION_COMPILER_CLANG__ __BITBYTE_FOUNDATION_COMPILER_CLANG__
+#endif // __BITBYTE_FOUNDATION_IMPORT__
+
+/// \def __BITBYTE_FOUNDATION_COMPILER_CLANG__
+/// \copydoc __BITBYTE_FOUNDATION_TIER0_COMPILER_CLANG__
+#define __BITBYTE_FOUNDATION_COMPILER_CLANG__ __BITBYTE_FOUNDATION_TIER0_COMPILER_CLANG__
+
+/// \def __BITBYTE_FOUNDATION_TIER0_COMPILER_CLANG__
+/// \brief LLVM/Clang.
+///
+#define __BITBYTE_FOUNDATION_TIER0_COMPILER_CLANG__ 3
+
+//===----------------------------------------------------------------------===//
+
+/// \def FOUNDATION_COMPILER
+/// \copydoc BITBYTE_FOUNDATION_COMPILER
+#ifdef __BITBYTE_FOUNDATION_IMPORT__
+  #define FOUNDATION_COMPILER BITBYTE_FOUNDATION_COMPILER
+#endif // __BITBYTE_FOUNDATION_IMPORT__
+
+/// \def BITBYTE_FOUNDATION_COMPILER
+/// \copydoc BITBYTE_FOUNDATION_TIER0_COMPILER
+#define BITBYTE_FOUNDATION_COMPILER BITBYTE_FOUNDATION_TIER0_COMPILER
+
+/// \def BITBYTE_FOUNDATION_TIER0_COMPILER
+/// \brief The compiler used to build Foundation.
+///
+#if defined(_MSC_VER)
+  #define BITBYTE_FOUNDATION_TIER0_COMPILER __BITBYTE_FOUNDATION_TIER0_COMPILER_MSVC__
+#elif defined(__GNUC__)
+  #define BITBYTE_FOUNDATION_TIER0_COMPILER __BITBYTE_FOUNDATION_TIER0_COMPILER_GCC__
+#elif defined(__clang__)
+  #define BITBYTE_FOUNDATION_TIER0_COMPILER __BITBYTE_FOUNDATION_TIER0_COMPILER_CLANG__
 #else
-  #if defined(_MSC_VER)
-    #define BITBYTE_FOUNDATION_COMPILER 0
-  #elif defined(__GNUC__)
-    #define BITBYTE_FOUNDATION_COMPILER 1
-  #elif defined(__clang__)
-    #define BITBYTE_FOUNDATION_COMPILER 2
-  #else
-    #error ("You are building Foundation with an unknown or unsupported compiler.")
-  #endif
+  #error ("You are building Foundation with an unknown or unsupported compiler.")
 #endif
 
+//============================================================================//
+
+#ifdef __cplusplus
+extern "C" {
+#endif // __cplusplus
+
 //===----------------------------------------------------------------------===//
-// Compile- and run- time utilities
-//
+
+/// \brief Runtime equivalent of BITBYTE_FOUNDATION_TIER0_COMPILER.
+///
+typedef enum bitbyte_foundation_tier0_compiler {
+  /// \copydoc __BITBYTE_FOUNDATION_TIER0_COMPILER_UNKNOWN__
+  BITBYTE_FOUNDATION_TIER0_COMPILER_UNKNOWN =
+    __BITBYTE_FOUNDATION_TIER0_COMPILER_UNKNOWN__,
+  /// \copydoc __BITBYTE_FOUNDATION_TIER0_COMPILER_MSVC__
+  BITBYTE_FOUNDATION_TIER0_COMPILER_MSVC =
+    __BITBYTE_FOUNDATION_TIER0_COMPILER_MSVC__,
+  /// \copydoc __BITBYTE_FOUNDATION_TIER0_COMPILER_GCC__
+  BITBYTE_FOUNDATION_TIER0_COMPILER_GCC =
+    __BITBYTE_FOUNDATION_TIER0_COMPILER_GCC__,
+  /// \copydoc __BITBYTE_FOUNDATION_TIER0_COMPILER_CLANG__
+  BITBYTE_FOUNDATION_TIER0_COMPILER_CLANG =
+    __BITBYTE_FOUNDATION_TIER0_COMPILER_CLANG__
+} bitbyte_foundation_tier0_compiler_t;
+
+/// \copydoc bitbyte_foundation_tier0_compiler_t
+typedef bitbyte_foundation_tier0_compiler_t bitbyte_foundation_compiler_t;
+
+#ifdef __BITBYTE_FOUNDATION_IMPORT__
+  /// \copydoc bitbyte_foundation_compiler_t
+  typedef bitbyte_foundation_compiler_t foundation_compiler_t;
+#endif // __BITBYTE_FOUNDATION_IMPORT__
+
+//===----------------------------------------------------------------------===//
+
+/// \def foundation_host_compiler
+/// \copydoc foundation_tier0_host_compiler
+#ifdef __BITBYTE_FOUNDATION_IMPORT__
+  #define foundation_host_compiler foundation_tier0_host_compiler
+#endif // __BITBYTE_FOUNDATION_IMPORT__
+
+/// \def foundation_tier0_host_compiler
+/// \copydoc bitbyte_foundation_tier0_host_compiler
+#ifdef __BITBYTE_FOUNDATION_IMPORT__
+  #define foundation_tier0_host_compiler bitbyte_foundation_tier0_host_compiler
+#endif // __BITBYTE_FOUNDATION_IMPORT__
+
+/// \brief Returns the compiler used to build Foundation.
+///
+extern
+BITBYTE_FOUNDATION_TIER0_EXPORT
+bitbyte_foundation_tier0_compiler_t
+bitbyte_foundation_tier0_host_compiler(void);
+
+//===----------------------------------------------------------------------===//
+
+#ifdef __cplusplus
+}
+#endif // __cplusplus
+
+//============================================================================//
+
+#ifdef __cplusplus
+
+//===----------------------------------------------------------------------===//
 
 namespace bitbyte {
 namespace foundation {
 namespace tier0 {
 
-/// @namespace ::bitbyte::foundation::tier0::Compilers
-/// @brief ...
-///
+//===----------------------------------------------------------------------===//
+
+/// \namespace bitbyte::foundation::tier0::Compilers
+/// \copydoc bitbyte_foundation_tier0_compiler_t
 namespace Compilers {
-  enum _ {
-    /// Unknown.
-    Unknown = -1,
-    /// Microsoft Visual C/C++.
-    MSVC = 0,
-    /// GNU Compiler Collection.
-    GCC = 1,
-    /// LLVM/Clang.
-    Clang = 2
-  };
+enum __Enum__ {
+  /// \copydoc BITBYTE_FOUNDATION_TIER0_COMPILER_UNKNOWN
+  Unknown = BITBYTE_FOUNDATION_TIER0_COMPILER_UNKNOWN,
+  /// \copydoc BITBYTE_FOUNDATION_TIER0_COMPILER_MSVC
+  MSVC = BITBYTE_FOUNDATION_TIER0_COMPILER_MSVC,
+  /// \copydoc BITBYTE_FOUNDATION_TIER0_COMPILER_GCC
+  GCC = BITBYTE_FOUNDATION_TIER0_COMPILER_GCC,
+  /// \copydoc BITBYTE_FOUNDATION_TIER0_COMPILER_CLANG
+  Clang = BITBYTE_FOUNDATION_TIER0_COMPILER_CLANG
+};
 }
 
-/// ...
-extern BITBYTE_FOUNDATION_TIER0_EXPORT const class Compiler compiler();
+/// \copydoc bitbyte_foundation_tier0_compiler_t
+typedef Compilers::__Enum__ Compiler;
 
-/// @brief
-///
-class BITBYTE_FOUNDATION_TIER0_EXPORT Compiler {
-  public: // constructors:
-    Compiler(Compilers::_ compiler = Compilers::Unknown)
-      : _(compiler) {
-    }
+//===----------------------------------------------------------------------===//
 
-  public: // copy-constructors:
-    Compiler(const Compiler &compiler)
-      : _(compiler._) {
-    }
+namespace host {
 
-  public: // assignment operators:
-    Compiler &operator=(const Compiler &compiler) {
-      _ = compiler._;
-      return *this;
-    }
+/// \copydoc bitbyte_foundation_tier0_host_compiler
+extern
+BITBYTE_FOUNDATION_TIER0_EXPORT
+Compiler
+compiler(void);
 
-    Compiler &operator=(const Compilers::_ compiler) {
-      _ = compiler;
-      return *this;
-    }
+} // host
 
-  public: // destructor:
-    // ~Compiler() {}
-
-  public: // conversion operators:
-    operator Compilers::_() {
-      return _;
-    }
-
-  public: // comparison operators:
-    bool operator==(const Compilers::_ rhs) const {
-      return (_ == rhs);
-    }
-
-    bool operator==(const Compiler &rhs) const {
-      return (_ == rhs._);
-    }
-
-    bool operator!=(const Compilers::_ rhs) const {
-      return (_ != rhs);
-    }
-
-    bool operator!=(const Compiler &rhs) const {
-      return (_ != rhs._);
-    }
-
-  private:
-    Compilers::_ _;
-};
+//===----------------------------------------------------------------------===//
 
 } // tier0
 } // foundation
 } // bitbyte
 
+//===----------------------------------------------------------------------===//
+
+#endif // __cplusplus
+
+//============================================================================//
+
 #endif // _BITBYTE_FOUNDATION_TIER0_COMPILER_H_
+
+//============================================================================//

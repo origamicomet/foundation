@@ -1,32 +1,50 @@
-//=== bitbyte/foundation.h ===================================================//
-//                                                                            //
-//  Foundation                                                                //
-//                                                                            //
-//  This file is distributed under the terms described in LICENSE.            //
-//                                                                            //
-//  Author(s):                                                                //
-//   Michael Williams <mwilliams@bitbyte.ca>                                  //
-//                                                                            //
+//===-- bitbyte/foundation.h ------------------------------------*- C++ -*-===//
+//
+//  Foundation
+//
+//  This file is distributed under the terms described in LICENSE.
+//
+//  Author(s):
+//
+//    * Michael Williams <mwilliams@bitbyte.ca>
+//
 //===----------------------------------------------------------------------===//
-
-/// @file bitbyte/foundation.h
-/// @brief Includes bitbyte/foundation/foundation.h and imports foundation.
 ///
+/// \file
+/// \brief Imports Foundation into the global namespace.
+///
+//===----------------------------------------------------------------------===//
 
 #ifndef _BITBYTE_FOUNDATION_H_
 #define _BITBYTE_FOUNDATION_H_
 
-/// @namespace ::bitbyte::foundation
-/// @brief A public domain foundation library for C++.
+//============================================================================//
+
+/// \def __BITBYTE_FOUNDATION_IMPORT__
+/// \brief Defined implictly by bitbyte/foundation.h it results in the C-api
+/// of Foundation being "imported" into the global namespace, that is to say,
+/// bitbyte_foundation_xxx() becomes foundation_xxx().
 ///
-namespace bitbyte {
+#define __BITBYTE_FOUNDATION_IMPORT__
 
-namespace foundation {}
+//============================================================================//
 
-} // bitbyte
+#ifdef __cplusplus
 
+//===----------------------------------------------------------------------===//
+
+/// \namespace ::bitbyte::foundation
+/// \brief A public domain foundation library for C/C++.
+///
+namespace bitbyte { namespace foundation {} }
 using namespace ::bitbyte::foundation;
 
-#include <bitbyte/foundation/foundation.h>
+//===----------------------------------------------------------------------===//
+
+#endif // __cplusplus
+
+//============================================================================//
 
 #endif // _BITBYTE_FOUNDATION_H_
+
+//============================================================================//
