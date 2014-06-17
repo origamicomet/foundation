@@ -25,10 +25,12 @@ BITBYTE_FOUNDATION_ARFLAGS       :=
 ifeq ($(BITBYTE_FOUNDATION_LINKAGE),static)
   BITBYTE_FOUNDATION_CFLAGS += $(call cc-define,BITBYTE_FOUNDATION_TIER0_LINKAGE=BITBYTE_FOUNDATION_TIER0_STATIC_LINKAGE)
   BITBYTE_FOUNDATION_CFLAGS += $(call cc-define,BITBYTE_FOUNDATION_TIER1_LINKAGE=BITBYTE_FOUNDATION_TIER1_STATIC_LINKAGE)
+  BITBYTE_FOUNDATION_CFLAGS += $(call cc-define,BITBYTE_FOUNDATION_TIER2_LINKAGE=BITBYTE_FOUNDATION_TIER2_STATIC_LINKAGE)
 endif
 ifeq ($(BITBYTE_FOUNDATION_LINKAGE),dynamic)
   BITBYTE_FOUNDATION_CFLAGS += $(call cc-define,BITBYTE_FOUNDATION_TIER0_LINKAGE=BITBYTE_FOUNDATION_TIER0_DYNAMIC_LINKAGE)
   BITBYTE_FOUNDATION_CFLAGS += $(call cc-define,BITBYTE_FOUNDATION_TIER1_LINKAGE=BITBYTE_FOUNDATION_TIER1_DYNAMIC_LINKAGE)
+  BITBYTE_FOUNDATION_CFLAGS += $(call cc-define,BITBYTE_FOUNDATION_TIER2_LINKAGE=BITBYTE_FOUNDATION_TIER2_DYNAMIC_LINKAGE)
 endif
 
 ifeq ($(BITBYTE_FOUNDATION_CONFIGURATION),debug)
@@ -164,6 +166,68 @@ endif
 
 #==============================================================================#
 
-FOUNDATION := $(TIER0) $(TIER1)
+BITBYTE_FOUNDATION_TIER2_CONFIGURATION := $(BITBYTE_FOUNDATION_CONFIGURATION)
+BITBYTE_FOUNDATION_TIER2_LINKAGE       := $(BITBYTE_FOUNDATION_LINKAGE)
+BITBYTE_FOUNDATION_TIER2_CFLAGS        := $(BITBYTE_FOUNDATION_CFLAGS)
+BITBYTE_FOUNDATION_TIER2_LDFLAGS       := $(BITBYTE_FOUNDATION_LDFLAGS)
+BITBYTE_FOUNDATION_TIER2_ARFLAGS       := $(BITBYTE_FOUNDATION_ARFLAGS)
+
+#===------------------------------------------------------------------------===#
+
+ifeq ($(BITBYTE_FOUNDATION_TIER2_LINKAGE),static)
+  TIER2 := lib/$(STATIC_LIB_PREFIX)tier2$(STATIC_LIB_SUFFIX)$(STATIC_LIB_EXTENSION)
+endif
+ifeq ($(BITBYTE_FOUNDATION_TIER2_LINKAGE),dynamic)
+  TIER2 := bin/$(SHARED_LIB_PREFIX)tier2$(SHARED_LIB_SUFFIX)$(SHARED_LIB_EXTENSION)
+endif
+
+ifeq ($(TOOLCHAIN),msvc)
+  TIER2_IMPORT_LIB := $(STATIC_LIB_PREFIX)tier2$(STATIC_LIB_SUFFIX)
+else
+  TIER2_IMPORT_LIB := $(SHARED_LIB_PREFIX)tier2$(SHARED_LIB_SUFFIX)
+endif
+
+BITBYTE_FOUNDATION_TIER2_INCLUDES := $(call cc-includes,include)
+BITBYTE_FOUNDATION_TIER2_DEPENDENCIES := $(BITBYTE_FOUNDATION_TIER1_DEPENDENCIES) $(call ld-link,$(TIER1_IMPORT_LIB))
+
+ifeq ($(TOOLCHAIN),msvc)
+  BITBYTE_FOUNDATION_TIER2_DEPENDENCIES += $(call ld-link,dbghelp)
+endif
+
+BITBYTE_FOUNDATION_TIER2_SOURCES := $(shell find src/bitbyte/foundation/tier2 -name '*.c')
+BITBYTE_FOUNDATION_TIER2_OBJECTS := $(addprefix obj/, $(subst src/,,$(BITBYTE_FOUNDATION_TIER2_SOURCES:%.c=%.o)))
+BITBYTE_FOUNDATION_TIER2_OBJECTS += obj/bitbyte/foundation/tier2.o
+
+BITBYTE_FOUNDATION_TIER2_DEFINES := $(call cc-define,BITBYTE_FOUNDATION_TIER2_COMPILING)
+
+-include $(BITBYTE_FOUNDATION_TIER2_OBJECTS:%.o=%.d)
+
+obj/bitbyte/foundation/tier2/%.o: src/bitbyte/foundation/tier2/%.c
+	@echo "[CC] $<"
+	@mkdir -p ${@D}
+	$(call c++) $(BITBYTE_FOUNDATION_TIER2_INCLUDES) $(BITBYTE_FOUNDATION_TIER2_DEFINES) $(BITBYTE_FOUNDATION_TIER2_CFLAGS) $(call cc-input,$<) $(call cc-output,$@)
+	$(call c++) $(BITBYTE_FOUNDATION_TIER2_INCLUDES) $(BITBYTE_FOUNDATION_TIER2_DEFINES) $(BITBYTE_FOUNDATION_TIER2_CFLAGS) $(call cc-input,$<) -MM -MT $@ >$(patsubst %.o,%.d,$@)
+
+obj/bitbyte/foundation/tier2.o: src/bitbyte/foundation/tier2.c
+	@echo "[CC] $<"
+	@mkdir -p ${@D}
+	$(call c++) $(BITBYTE_FOUNDATION_TIER2_INCLUDES) $(BITBYTE_FOUNDATION_TIER2_DEFINES) $(BITBYTE_FOUNDATION_TIER2_CFLAGS) $(call cc-input,$<) $(call cc-output,$@)
+	$(call c++) $(BITBYTE_FOUNDATION_TIER2_INCLUDES) $(BITBYTE_FOUNDATION_TIER2_DEFINES) $(BITBYTE_FOUNDATION_TIER2_CFLAGS) $(call cc-input,$<) -MM -MT $@ >$(patsubst %.o,%.d,$@)
+
+$(TIER2): $(BITBYTE_FOUNDATION_TIER2_OBJECTS)
+	@echo "[LD] $@"
+	@mkdir -p bin
+	@mkdir -p lib
+	@mkdir -p ${@D}
+ifeq ($(BITBYTE_FOUNDATION_TIER2_LINKAGE),static)
+	$(call ar++) $(BITBYTE_FOUNDATION_TIER2_ARFLAGS) $(call ar-output,$@) $(foreach input,$^,$(call ar-input,$(input)))
+endif
+ifeq ($(BITBYTE_FOUNDATION_TIER2_LINKAGE),dynamic)
+	$(call ld++) $(call ld-shared) $(BITBYTE_FOUNDATION_TIER2_LDFLAGS) $(call ld-output,$@) $(foreach input,$^,$(call ld-input,$(input))) $(BITBYTE_FOUNDATION_TIER2_DEPENDENCIES)
+endif
+
+#==============================================================================#
+
+FOUNDATION := $(TIER0) $(TIER1) $(TIER2)
 
 #==============================================================================#
