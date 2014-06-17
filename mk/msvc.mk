@@ -130,4 +130,9 @@ ifeq ($(TARGET_ARCHITECTURE),x86-64)
   LDFLAGS     += -LIBPATH:"$(WINDOWS_SDK)/Lib/x64" -LIBPATH:"$(VS_PATH)/VC/Lib/amd64"
 endif
 
+# See http://stackoverflow.com/questions/14363929.
+ifeq ($(findstring 12.0,$(VS_PATH)),12.0)
+  CFLAGS += -D"_USING_V110_SDK71_=1"
+endif
+
 endif # _BITBYTE_FOUNDATION_BUILD_MSVC_MK_

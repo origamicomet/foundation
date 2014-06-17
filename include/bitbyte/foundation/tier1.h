@@ -44,6 +44,19 @@ using namespace ::bitbyte::foundation::tier1;
 
 //============================================================================//
 
+#include "bitbyte/foundation/tier1/linkage.h"
+
+//===----------------------------------------------------------------------===//
+
+#include "bitbyte/foundation/tier1/alignof.h"
+#include "bitbyte/foundation/tier1/inttypes.h"
+#include "bitbyte/foundation/tier1/malloc.h"
+#include "bitbyte/foundation/tier1/stdbool.h"
+#include "bitbyte/foundation/tier1/stdint.h"
+#include "bitbyte/foundation/tier1/stdio.h"
+
+//============================================================================//
+
 #endif // _BITBYTE_FOUNDATION_TIER1_H_
 
 //============================================================================//
