@@ -48,6 +48,8 @@ using namespace ::bitbyte::foundation::tier2;
 //===----------------------------------------------------------------------===//
 
 #include "bitbyte/foundation/tier2/assert.h"
+#include "bitbyte/foundation/tier2/exception.h"
+#include "bitbyte/foundation/tier2/signal.h"
 
 //============================================================================//
 
