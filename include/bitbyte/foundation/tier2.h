@@ -45,6 +45,10 @@ using namespace ::bitbyte::foundation::tier2;
 
 #include "bitbyte/foundation/tier2/linkage.h"
 
+//===----------------------------------------------------------------------===//
+
+#include "bitbyte/foundation/tier2/assert.h"
+
 //============================================================================//
 
 #endif // _BITBYTE_FOUNDATION_TIER2_H_
