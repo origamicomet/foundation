@@ -54,7 +54,7 @@
       assertion.context.occured.line = __LINE__; \
       bitbyte_foundation_tier2_assertion_handler_t handler; \
       void *ctx; \
-      bitbyte_foundation_tier2_assertion_handler(&assertion, &ctx); \
+      bitbyte_foundation_tier2_assertion_handler(&handler, &ctx); \
       if (handler) \
         handler(&assertion, ctx); \
       raise(SIGABRT); \
@@ -71,7 +71,7 @@
 
 /// \def bitbyte_foundation_assertf
 /// \copydoc bitbyte_foundation_tier2_assertf
-#define bitbyte_foundation_assert bitbyte_foundation_tier2_assert
+#define bitbyte_foundation_assertf bitbyte_foundation_tier2_assertf
 
 /// \def bitbyte_foundation_tier2_assertf
 /// \brief Asserts if `_Predicate` is not true and provides a  formated message.
@@ -89,7 +89,7 @@
       assertion.context.occured.line = __LINE__; \
       bitbyte_foundation_tier2_assertion_handler_t handler; \
       void *ctx; \
-      bitbyte_foundation_tier2_assertion_handler(&assertion, &ctx); \
+      bitbyte_foundation_tier2_assertion_handler(&handler, &ctx); \
       if (handler) \
         handler(&assertion, ctx); \
       raise(SIGABRT); \
