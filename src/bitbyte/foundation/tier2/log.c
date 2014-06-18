@@ -50,6 +50,10 @@ bitbyte_foundation_tier2_subscribe_logger(
 
   subscribed->next = NULL;
   subscribed->prev = subscribed_loggers_tail_;
+  if (subscribed_loggers_tail_)
+    subscribed_loggers_tail_->next = subscribed;
+  else
+    subscribed_loggers_head_ = subscribed;
   subscribed_loggers_tail_ = subscribed;
   subscribed->logger = logger;
   subscribed->ctx = ctx;
