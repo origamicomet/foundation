@@ -205,14 +205,14 @@ BITBYTE_FOUNDATION_TIER2_DEFINES := $(call cc-define,BITBYTE_FOUNDATION_TIER2_CO
 obj/bitbyte/foundation/tier2/%.o: src/bitbyte/foundation/tier2/%.c
 	@echo "[CC] $<"
 	@mkdir -p ${@D}
-	$(call c++) $(BITBYTE_FOUNDATION_TIER2_INCLUDES) $(BITBYTE_FOUNDATION_TIER2_DEFINES) $(BITBYTE_FOUNDATION_TIER2_CFLAGS) $(call cc-input,$<) $(call cc-output,$@)
-	$(call c++) $(BITBYTE_FOUNDATION_TIER2_INCLUDES) $(BITBYTE_FOUNDATION_TIER2_DEFINES) $(BITBYTE_FOUNDATION_TIER2_CFLAGS) $(call cc-input,$<) -MM -MT $@ >$(patsubst %.o,%.d,$@)
+	@$(call c++) $(BITBYTE_FOUNDATION_TIER2_INCLUDES) $(BITBYTE_FOUNDATION_TIER2_DEFINES) $(BITBYTE_FOUNDATION_TIER2_CFLAGS) $(call cc-input,$<) $(call cc-output,$@)
+	@$(call c++) $(BITBYTE_FOUNDATION_TIER2_INCLUDES) $(BITBYTE_FOUNDATION_TIER2_DEFINES) $(BITBYTE_FOUNDATION_TIER2_CFLAGS) $(call cc-input,$<) -MM -MT $@ >$(patsubst %.o,%.d,$@)
 
 obj/bitbyte/foundation/tier2.o: src/bitbyte/foundation/tier2.c
 	@echo "[CC] $<"
 	@mkdir -p ${@D}
-	$(call c++) $(BITBYTE_FOUNDATION_TIER2_INCLUDES) $(BITBYTE_FOUNDATION_TIER2_DEFINES) $(BITBYTE_FOUNDATION_TIER2_CFLAGS) $(call cc-input,$<) $(call cc-output,$@)
-	$(call c++) $(BITBYTE_FOUNDATION_TIER2_INCLUDES) $(BITBYTE_FOUNDATION_TIER2_DEFINES) $(BITBYTE_FOUNDATION_TIER2_CFLAGS) $(call cc-input,$<) -MM -MT $@ >$(patsubst %.o,%.d,$@)
+	@$(call c++) $(BITBYTE_FOUNDATION_TIER2_INCLUDES) $(BITBYTE_FOUNDATION_TIER2_DEFINES) $(BITBYTE_FOUNDATION_TIER2_CFLAGS) $(call cc-input,$<) $(call cc-output,$@)
+	@$(call c++) $(BITBYTE_FOUNDATION_TIER2_INCLUDES) $(BITBYTE_FOUNDATION_TIER2_DEFINES) $(BITBYTE_FOUNDATION_TIER2_CFLAGS) $(call cc-input,$<) -MM -MT $@ >$(patsubst %.o,%.d,$@)
 
 $(TIER2): $(BITBYTE_FOUNDATION_TIER2_OBJECTS)
 	@echo "[LD] $@"
@@ -220,10 +220,10 @@ $(TIER2): $(BITBYTE_FOUNDATION_TIER2_OBJECTS)
 	@mkdir -p lib
 	@mkdir -p ${@D}
 ifeq ($(BITBYTE_FOUNDATION_TIER2_LINKAGE),static)
-	$(call ar++) $(BITBYTE_FOUNDATION_TIER2_ARFLAGS) $(call ar-output,$@) $(foreach input,$^,$(call ar-input,$(input)))
+	@$(call ar++) $(BITBYTE_FOUNDATION_TIER2_ARFLAGS) $(call ar-output,$@) $(foreach input,$^,$(call ar-input,$(input)))
 endif
 ifeq ($(BITBYTE_FOUNDATION_TIER2_LINKAGE),dynamic)
-	$(call ld++) $(call ld-shared) $(BITBYTE_FOUNDATION_TIER2_LDFLAGS) $(call ld-output,$@) $(foreach input,$^,$(call ld-input,$(input))) $(BITBYTE_FOUNDATION_TIER2_DEPENDENCIES)
+	@$(call ld++) $(call ld-shared) $(BITBYTE_FOUNDATION_TIER2_LDFLAGS) $(call ld-output,$@) $(foreach input,$^,$(call ld-input,$(input))) $(BITBYTE_FOUNDATION_TIER2_DEPENDENCIES)
 endif
 
 #==============================================================================#
