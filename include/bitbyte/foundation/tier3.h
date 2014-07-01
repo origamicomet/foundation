@@ -45,6 +45,10 @@ using namespace ::bitbyte::foundation::tier3;
 
 #include "bitbyte/foundation/tier3/linkage.h"
 
+//===----------------------------------------------------------------------===//
+
+#include "bitbyte/foundation/tier3/cpu.h"
+
 //============================================================================//
 
 #endif // _BITBYTE_FOUNDATION_TIER3_H_
