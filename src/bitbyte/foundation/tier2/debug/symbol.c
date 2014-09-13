@@ -19,6 +19,8 @@
 #include "bitbyte/foundation/tier1/malloc.h"
 #include "bitbyte/foundation/tier1/stdio.h"
 
+#include <string.h>
+
 //============================================================================//
 
 #if BITBYTE_FOUNDATION_TIER0_SYSTEM == __BITBYTE_FOUNDATION_TIER0_SYSTEM_WINDOWS__

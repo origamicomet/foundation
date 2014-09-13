@@ -1,13 +1,16 @@
 # Foundation
 
-A public domain foundation library for C and C++.
+[![Build Status](https://travis-ci.org/bitbytestudios/foundation.png?branch=master)](http://travis-ci.org/bitbytestudios/foundation)
 
-## Supports
+Foundation library for C and C++.
+
+What platforms does it support?
+-------------------------------
 
 | Platform  | Toolchain               | Supported             |
 |:---------:|:-----------------------:|:---------------------:|
-| Windows   | Microsoft Visual Studio | <span>&#10003;</span> |
-| Windows   | MinGW/MSYS              | <span>&#10003;</span> |
+| Windows   | Microsoft Visual Studio |        Planned        |
+| Windows   | MinGW/MSYS              |        Planned        |
 | Windows   | Cygwin                  |         Never         |
 | Mac OS X  | GCC or Clang            |        Planned        |
 | Linux     | GCC or Clang            |        Planned        |
@@ -17,37 +20,30 @@ A public domain foundation library for C and C++.
 | Web       | Native Client           |        Planned        |
 | Web       | emscripten              |        Planned        |
 
-## Building
+How do I build it?
+------------------
 
-TODO
+    $ git clone https://github.com/bitbytestudios/foundation.git
+    $ cd foundation
+    $ ./configure
+    $ make
 
-### Configuring
+For more details please go [here](https://github.com/bitbytestudios/foundation/wiki/Building).
 
-Compile-time, link-time, and runtime behaviour is controlled by `./configure`
-switches and options as well as various pre-processor defines (which are
-documented in `include/bitbyte/foundation/config.h`).
+How do I contribute?
+--------------------
 
-#### via switches and options
+See our contribution guide [here](https://github.com/bitbytestudios/meta/wiki/Contributing).
 
-TODO
+How is it licensed?
+-------------------
 
-### Compiling
+Under the public domain.
 
-TODO
-
-## Testing
-
-TODO
-
-## License
-
-Public domain.
-
-### in legalese
-
+```
 Author(s):
 
-  * Michael Williams <mwilliams@bitbyte.ca>
+  * Michael Williams <mike@bitbyte.ca>
 
 This is free and unencumbered software released into the public domain. Anyone
 is free to copy, modify, publish, use, compile, sell, or distribute this
@@ -68,3 +64,4 @@ AUTHORS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
+```

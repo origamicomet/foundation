@@ -50,7 +50,7 @@ static void cpuid(unsigned info, unsigned *eax, unsigned *ebx, unsigned *ecx, un
   __asm__(
     "cpuid;"
     :"=a" (*eax), "=b" (*ebx), "=c" (*ecx), "=d" (*edx)
-    :"a" (info),
+    :"a" (info)
   );
 #endif
 }

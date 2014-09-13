@@ -1,29 +1,10 @@
 #!/usr/bin/env ruby
 
-#===-- mk/msvc -------------------------------------------------------------===#
-#
-#  Foundation
-#
-#  This file is distributed under the terms described in LICENSE.
-#
-#  Author(s):
-#
-#    * Michael Williams <mwilliams@bitbyte.ca>
-#
-#===------------------------------------------------------------------------===#
-
-## \file mk/msvc
-## \brief Handles 'inconsistencies' when dealing with `cl.exe`.
-##
-
 M_OR_MM = (!ARGV.grep(/^-M\z/).empty? || !ARGV.grep(/^-MM\z/).empty?)
-
-#===------------------------------------------------------------------------===#
-# Sanity checks
-#
 
 # This should not be an issue, but being explict is better than being implict.
 # Furthermore, this script assumes that input and output files are specified...
+#
 inputs = []
 ARGV.each_with_index { |argument, index|
   if argument =~ /^[^->]/
@@ -48,6 +29,7 @@ elsif inputs.length > 1
   # TODO(mwilliams): Handle more than one input file. This is only an issue
   # because the dependency generation code assumes only one input file.
   # Instead, it should error if more than one input file is specified.
+  #
   puts "More than one input file specified!"
   exit false
 end
@@ -64,9 +46,7 @@ if not M_OR_MM
   end
 end
 
-#===------------------------------------------------------------------------===#
-# Command reconstruction and massaging
-#
+# ===----------------------------------------------------------------------=== #
 
 _ = ARGV.dup
 
@@ -74,6 +54,7 @@ _ = ARGV.dup
 # parsing the notes that are generated as a result of specifying -showIncludes.
 # This obviously requires the -M, -MM, and -MT options to be removed from
 # invocation lest `cl.exe` misinterprets them or freaks out.
+#
 
 _.reject! { |argument|
   (argument =~ /^-M\z/) or (argument =~ /^-MM\z/)
@@ -106,9 +87,7 @@ _ = _.map { |argument|
   end
 }
 
-#===------------------------------------------------------------------------===#
-# Execution, parsing, and cleanup
-#
+# ===----------------------------------------------------------------------=== #
 
 begin
   COMMAND = {
@@ -116,13 +95,13 @@ begin
     :successful => $?.success?
   }
 rescue => e
-  puts "> #{e.to_s}"
-  puts "Is `cl.exe` in PATH?"
+  puts "Is `cl.exe` in PATH?\n  #{e.to_s}"
   exit false
 end
 
 # Proxy the output, unless -M or -MM was specified.
 # Otherwise invalid rules are generated, which freaks out make.
+#
 
 if not M_OR_MM
   print COMMAND[:output].lines.to_a[1..-1].join("")
@@ -133,6 +112,7 @@ end
 # unexpected behaviour. Thus, there is the possibility that a tool might
 # assume debugging information to be present. So it is just best to delete
 # debug information on compilation failure.
+#
 
 if not COMMAND[:successful]
   begin
@@ -150,7 +130,19 @@ if M_OR_MM
 
   SOURCE = ARGV.grep(/^[^\-].+?/).first
 
-  print "#{TARGET}: #{SOURCE}"
+  if TARGET =~ /^[a-z]:\/.+?\z/i
+    target = "/#{TARGET[0]}/#{TARGET[3..-1]}"
+  else
+    target = TARGET
+  end
+
+  if SOURCE =~ /^[a-z]:\/.+?\z/i
+    source = "/#{SOURCE[0]}/#{SOURCE[3..-1]}"
+  else
+    source = SOURCE
+  end
+
+  print "#{target}: #{source}"
 
   DEPENDENCIES = COMMAND[:output].lines.to_a.select { |line|
     line.start_with? "Note: including file: "
@@ -159,11 +151,16 @@ if M_OR_MM
   }.map { |line|
     if line =~ /^[a-z]:\/.+?\z/i
       if line.start_with? Dir.pwd
-        line.sub(/^#{Dir.pwd}/, '')[1..-1]
+        "$(ROOT)/#{line.sub(/^#{Dir.pwd}/, '')[1..-1]}"
+      else
+        # Ignore system includes.
+        # "/#{line[0]}/#{line[3..-1]}"
       end
     else
-      line
+      "$(ROOT)/#{line}"
     end
+  }.reject { |line|
+    line.nil? || line.empty?
   }.compact.map { |line|
     line.gsub("\\", "/")
   }.uniq

@@ -1,0 +1,252 @@
+# ===----------------------------------------------------------------------=== #
+#
+#  Foundation
+#
+#  This is free and unencumbered software released into the public domain.
+#
+#  Anyone is free to copy, modify, publish, use, compile, sell, or
+#  distribute this software, either in source code form or as a compiled
+#  binary, for any purpose, commercial or non-commercial, and by any
+#  means.
+#
+#  In jurisdictions that recognize copyright laws, the author or authors
+#  of this software dedicate any and all copyright interest in the
+#  software to the public domain. We make this dedication for the benefit
+#  of the public at large and to the detriment of our heirs and
+#  successors. We intend this dedication to be an overt act of
+#  relinquishment in perpetuity of all present and future rights to this
+#  software under copyright law.
+#
+#  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+#  EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+#  MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+#  IN NO EVENT SHALL THE AUTHORS BE LIABLE FOR ANY CLAIM, DAMAGES OR
+#  OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
+#  ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+#  OTHER DEALINGS IN THE SOFTWARE.
+#
+#  For more information, please refer to <http://unlicense.org/>
+#
+# ===----------------------------------------------------------------------=== #
+
+#
+# Verify that Linux is targetable:
+#
+
+ifneq ($(shell $(ROOT)/build/platform.sh),linux)
+  $(error Cannot cross-compile to 'linux' from '$(shell $(ROOT)/build/platform.sh)')
+endif
+
+#
+# Verify that GCC exists:
+#
+
+ifeq ($(shell $(ROOT)/build/toolchains/gcc.d/available),0)
+  $(error Compiliation with 'gcc' is not available on '$(shell $(ROOT)/build/platform.sh)'. \
+          The build system was unable to auto-detect GNU Compiler Toolchain.)
+endif
+
+#
+# Define CFLAGS, LDFLAGS, and ARFLAGS:
+#
+
+CFLAGS  := -Wall -Wextra -Wfloat-equal -Wshadow -Wunsafe-loop-optimizations \
+           -Wpointer-arith -Wcast-qual -Wcast-align \
+           -Wmissing-field-initializers -Wpacked -Wpadded -Wredundant-decls \
+           -Wunreachable-code -Winline
+LDFLAGS := -L"$(BUILD)/bin" -L"$(BUILD)/lib"
+ARFLAGS :=
+
+ifeq ($(ARCHITECTURE),x86)
+  CFLAGS += -m32
+  LDFLAGS += -m32
+endif
+ifeq ($(ARCHITECTURE),x86-64)
+  CFLAGS += -m64
+  LDFLAGS += -m64
+endif
+
+ifeq ($(CONFIGURATION),debug)
+  CFLAGS += -g
+  CFLAGS += -DBITBYTE_FOUNDATION_CONFIGURATION=BITBYTE_FOUNDATION_CONFIGURATION_DEBUG
+endif
+ifeq ($(CONFIGURATION),development)
+  CFLAGS += -g
+  CFLAGS += -DBITBYTE_FOUNDATION_CONFIGURATION=BITBYTE_FOUNDATION_CONFIGURATION_DEVELOPMENT
+endif
+ifeq ($(CONFIGURATION),release)
+  CFLAGS += -O3
+  CFLAGS += -DBITBYTE_FOUNDATION_CONFIGURATION=BITBYTE_FOUNDATION_CONFIGURATION_RELEASE
+endif
+
+ifeq ($(LINKAGE),static)
+  CLAGS += -DBITBYTE_FOUNDATION_TIER0_LINKAGE=BITBYTE_FOUNDATION_TIER0_STATIC_LINKAGE
+  CLAGS += -DBITBYTE_FOUNDATION_TIER1_LINKAGE=BITBYTE_FOUNDATION_TIER1_STATIC_LINKAGE
+  CLAGS += -DBITBYTE_FOUNDATION_TIER2_LINKAGE=BITBYTE_FOUNDATION_TIER2_STATIC_LINKAGE
+  CLAGS += -DBITBYTE_FOUNDATION_TIER3_LINKAGE=BITBYTE_FOUNDATION_TIER3_STATIC_LINKAGE
+endif
+ifeq ($(LINKAGE),dynamic)
+  CFLAGS += -fPIC
+  CLAGS += -DBITBYTE_FOUNDATION_TIER0_LINKAGE=BITBYTE_FOUNDATION_TIER0_DYNAMIC_LINKAGE
+  CLAGS += -DBITBYTE_FOUNDATION_TIER1_LINKAGE=BITBYTE_FOUNDATION_TIER1_DYNAMIC_LINKAGE
+  CLAGS += -DBITBYTE_FOUNDATION_TIER2_LINKAGE=BITBYTE_FOUNDATION_TIER2_DYNAMIC_LINKAGE
+  CLAGS += -DBITBYTE_FOUNDATION_TIER3_LINKAGE=BITBYTE_FOUNDATION_TIER3_DYNAMIC_LINKAGE
+endif
+
+#
+# Rules (tier0):
+#
+
+FOUNDATION_TIER0_SOURCES := $(shell find $(ROOT)/src/bitbyte/foundation/tier0 -name '*.c')
+FOUNDATION_TIER0_OBJECTS := $(subst $(ROOT)/src/,$(BUILD)/obj/,$(FOUNDATION_TIER0_SOURCES:%.c=%.o))
+FOUNDATION_TIER0_OBJECTS += $(BUILD)/obj/bitbyte/foundation/tier0.o
+
+-include $(FOUNDATION_TIER0_OBJECTS:%.o=%.d)
+
+$(BUILD)/obj/bitbyte/foundation/tier0/%.o: $(ROOT)/src/bitbyte/foundation/tier0/%.c
+	@echo "[CC] $<"
+	@mkdir -p ${@D}
+	@g++ -std=gnu++0x -pedantic $(CFLAGS) -I"$(ROOT)/include" -DBITBYTE_FOUNDATION_TIER0_COMPILING=1 -o "$@" -c "$<"
+	@g++ -std=gnu++0x -pedantic $(CFLAGS) -I"$(ROOT)/include" -DBITBYTE_FOUNDATION_TIER0_COMPILING=1 -c "$<" -MM -MT"$@" >$(patsubst %.o,%.d,$@)
+
+$(BUILD)/obj/bitbyte/foundation/tier0.o: $(ROOT)/src/bitbyte/foundation/tier0.c
+	@echo "[CC] $<"
+	@mkdir -p ${@D}
+	@g++ -std=gnu++0x -pedantic $(CFLAGS) -I"$(ROOT)/include" -DBITBYTE_FOUNDATION_TIER0_COMPILING=1 -o "$@" -c "$<"
+	@g++ -std=gnu++0x -pedantic $(CFLAGS) -I"$(ROOT)/include" -DBITBYTE_FOUNDATION_TIER0_COMPILING=1 -c "$<" -MM -MT"$@" >$(patsubst %.o,%.d,$@)
+
+ifeq ($(LINKAGE),static)
+$(BUILD)/lib/libtier0.a: $(FOUNDATION_TIER0_OBJECTS)
+	@echo "[AR] $@"
+	@mkdir -p ${@D}
+	@ar -rcs $(ARFLAGS) -o "$@" $(foreach obj,$(FOUNDATION_TIER0_OBJECTS),"$(obj)")
+
+tier0: $(BUILD)/lib/libtier0.a
+endif
+ifeq ($(LINKAGE),dynamic)
+$(BUILD)/bin/libtier0.so: $(FOUNDATION_TIER0_OBJECTS)
+	@echo "[LD] $@"
+	@mkdir -p ${@D}
+	@g++ -shared $(LDFLAGS) -o "$@" $(foreach obj,$(FOUNDATION_TIER0_OBJECTS),"$(obj)")
+
+tier0: $(BUILD)/bin/libtier0.so
+endif
+
+#
+# Rules (tier1):
+#
+
+FOUNDATION_TIER1_SOURCES := $(shell find $(ROOT)/src/bitbyte/foundation/tier1 -name '*.c')
+FOUNDATION_TIER1_OBJECTS := $(subst $(ROOT)/src/,$(BUILD)/obj/,$(FOUNDATION_TIER1_SOURCES:%.c=%.o))
+FOUNDATION_TIER1_OBJECTS += $(BUILD)/obj/bitbyte/foundation/tier1.o
+
+-include $(FOUNDATION_TIER1_OBJECTS:%.o=%.d)
+
+$(BUILD)/obj/bitbyte/foundation/tier1/%.o: $(ROOT)/src/bitbyte/foundation/tier1/%.c
+	@echo "[CC] $<"
+	@mkdir -p ${@D}
+	@g++ -std=gnu++0x -pedantic $(CFLAGS) -I"$(ROOT)/include" -DBITBYTE_FOUNDATION_TIER1_COMPILING=1 -o "$@" -c "$<"
+	@g++ -std=gnu++0x -pedantic $(CFLAGS) -I"$(ROOT)/include" -DBITBYTE_FOUNDATION_TIER1_COMPILING=1 -c "$<" -MM -MT"$@" >$(patsubst %.o,%.d,$@)
+
+$(BUILD)/obj/bitbyte/foundation/tier1.o: $(ROOT)/src/bitbyte/foundation/tier1.c
+	@echo "[CC] $<"
+	@mkdir -p ${@D}
+	@g++ -std=gnu++0x -pedantic $(CFLAGS) -I"$(ROOT)/include" -DBITBYTE_FOUNDATION_TIER1_COMPILING=1 -o "$@" -c "$<"
+	@g++ -std=gnu++0x -pedantic $(CFLAGS) -I"$(ROOT)/include" -DBITBYTE_FOUNDATION_TIER1_COMPILING=1 -c "$<" -MM -MT"$@" >$(patsubst %.o,%.d,$@)
+
+ifeq ($(LINKAGE),static)
+$(BUILD)/lib/libtier1.a: $(FOUNDATION_TIER1_OBJECTS)
+	@echo "[AR] $@"
+	@mkdir -p ${@D}
+	@ar -rcs $(ARFLAGS) -o "$@" $(foreach obj,$(FOUNDATION_TIER1_OBJECTS),"$(obj)")
+
+tier1: $(BUILD)/lib/libtier1.a
+endif
+ifeq ($(LINKAGE),dynamic)
+$(BUILD)/bin/libtier1.so: $(FOUNDATION_TIER1_OBJECTS)
+	@echo "[LD] $@"
+	@mkdir -p ${@D}
+	@g++ -shared $(LDFLAGS) -ltier0 -o "$@" $(foreach obj,$(FOUNDATION_TIER1_OBJECTS),"$(obj)")
+
+tier1: tier0 $(BUILD)/bin/libtier1.so
+endif
+
+#
+# Rules (tier2):
+#
+
+FOUNDATION_TIER2_SOURCES := $(shell find $(ROOT)/src/bitbyte/foundation/tier2 -name '*.c')
+FOUNDATION_TIER2_OBJECTS := $(subst $(ROOT)/src/,$(BUILD)/obj/,$(FOUNDATION_TIER2_SOURCES:%.c=%.o))
+FOUNDATION_TIER2_OBJECTS += $(BUILD)/obj/bitbyte/foundation/tier2.o
+
+-include $(FOUNDATION_TIER2_OBJECTS:%.o=%.d)
+
+$(BUILD)/obj/bitbyte/foundation/tier2/%.o: $(ROOT)/src/bitbyte/foundation/tier2/%.c
+	@echo "[CC] $<"
+	@mkdir -p ${@D}
+	@g++ -std=gnu++0x -pedantic $(CFLAGS) -I"$(ROOT)/include" -DBITBYTE_FOUNDATION_TIER2_COMPILING=1 -o "$@" -c "$<"
+	@g++ -std=gnu++0x -pedantic $(CFLAGS) -I"$(ROOT)/include" -DBITBYTE_FOUNDATION_TIER2_COMPILING=1 -c "$<" -MM -MT"$@" >$(patsubst %.o,%.d,$@)
+
+$(BUILD)/obj/bitbyte/foundation/tier2.o: $(ROOT)/src/bitbyte/foundation/tier2.c
+	@echo "[CC] $<"
+	@mkdir -p ${@D}
+	@g++ -std=gnu++0x -pedantic $(CFLAGS) -I"$(ROOT)/include" -DBITBYTE_FOUNDATION_TIER2_COMPILING=1 -o "$@" -c "$<"
+	@g++ -std=gnu++0x -pedantic $(CFLAGS) -I"$(ROOT)/include" -DBITBYTE_FOUNDATION_TIER2_COMPILING=1 -c "$<" -MM -MT"$@" >$(patsubst %.o,%.d,$@)
+
+ifeq ($(LINKAGE),static)
+$(BUILD)/lib/libtier2.a: $(FOUNDATION_TIER2_OBJECTS)
+	@echo "[AR] $@"
+	@mkdir -p ${@D}
+	@ar -rcs $(ARFLAGS) -o "$@" $(foreach obj,$(FOUNDATION_TIER2_OBJECTS),"$(obj)")
+
+tier2: $(BUILD)/lib/libtier2.a
+endif
+ifeq ($(LINKAGE),dynamic)
+$(BUILD)/bin/libtier2.so: $(FOUNDATION_TIER2_OBJECTS)
+	@echo "[LD] $@"
+	@mkdir -p ${@D}
+	@g++ -shared $(LDFLAGS) -ltier0 -ltier1 -o "$@" $(foreach obj,$(FOUNDATION_TIER2_OBJECTS),"$(obj)")
+
+tier2: tier0 tier1 $(BUILD)/bin/libtier2.so
+endif
+
+#
+# Rules (tier3):
+#
+
+FOUNDATION_TIER3_SOURCES := $(shell find $(ROOT)/src/bitbyte/foundation/tier3 -name '*.c')
+FOUNDATION_TIER3_OBJECTS := $(subst $(ROOT)/src/,$(BUILD)/obj/,$(FOUNDATION_TIER3_SOURCES:%.c=%.o))
+FOUNDATION_TIER3_OBJECTS += $(BUILD)/obj/bitbyte/foundation/tier3.o
+
+-include $(FOUNDATION_TIER3_OBJECTS:%.o=%.d)
+
+$(BUILD)/obj/bitbyte/foundation/tier3/%.o: $(ROOT)/src/bitbyte/foundation/tier3/%.c
+	@echo "[CC] $<"
+	@mkdir -p ${@D}
+	@g++ -std=gnu++0x -pedantic $(CFLAGS) -I"$(ROOT)/include" -DBITBYTE_FOUNDATION_TIER3_COMPILING=1 -o "$@" -c "$<"
+	@g++ -std=gnu++0x -pedantic $(CFLAGS) -I"$(ROOT)/include" -DBITBYTE_FOUNDATION_TIER3_COMPILING=1 -c "$<" -MM -MT"$@" >$(patsubst %.o,%.d,$@)
+
+$(BUILD)/obj/bitbyte/foundation/tier3.o: $(ROOT)/src/bitbyte/foundation/tier3.c
+	@echo "[CC] $<"
+	@mkdir -p ${@D}
+	@g++ -std=gnu++0x -pedantic $(CFLAGS) -I"$(ROOT)/include" -DBITBYTE_FOUNDATION_TIER3_COMPILING=1 -o "$@" -c "$<"
+	@g++ -std=gnu++0x -pedantic $(CFLAGS) -I"$(ROOT)/include" -DBITBYTE_FOUNDATION_TIER3_COMPILING=1 -c "$<" -MM -MT"$@" >$(patsubst %.o,%.d,$@)
+
+ifeq ($(LINKAGE),static)
+$(BUILD)/lib/libtier3.a: $(FOUNDATION_TIER3_OBJECTS)
+	@echo "[AR] $@"
+	@mkdir -p ${@D}
+	@ar -rcs $(ARFLAGS) -o "$@" $(foreach obj,$(FOUNDATION_TIER3_OBJECTS),"$(obj)")
+
+tier3: $(BUILD)/lib/libtier3.a
+endif
+ifeq ($(LINKAGE),dynamic)
+$(BUILD)/bin/libtier3.so: $(FOUNDATION_TIER3_OBJECTS)
+	@echo "[LD] $@"
+	@mkdir -p ${@D}
+	@g++ -shared $(LDFLAGS) -ltier0 -ltier1 -ltier2 -o "$@" $(foreach obj,$(FOUNDATION_TIER3_OBJECTS),"$(obj)")
+
+tier3: tier0 tier1 tier2 $(BUILD)/bin/libtier3.so
+endif
+
+foundation: tier0 tier1 tier2 tier3

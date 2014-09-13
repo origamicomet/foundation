@@ -193,7 +193,7 @@ namespace Signals {
     ProgramTerminationRequestedByUser =
       BITBYTE_FOUNDATION_TIER2_SIGNAL_PROGRAM_TERMINATION_REQUESTED_BY_USER,
   };
-};
+}
 
 /// \copydoc ::bitbyte_foundation_tier2_signal_t
 class BITBYTE_FOUNDATION_TIER2_EXPORT Signal {
