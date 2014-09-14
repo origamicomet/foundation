@@ -24,6 +24,9 @@
     (BITBYTE_FOUNDATION_TIER0_ARCHITECTURE == __BITBYTE_FOUNDATION_TIER0_ARCHITECTURE_X86_64__)
   #if BITBYTE_FOUNDATION_TIER0_COMPILER == __BITBYTE_FOUNDATION_TIER0_COMPILER_MSVC__
     #include <intrin.h>
+  #elif (BITBYTE_FOUNDATION_TIER0_COMPILER == __BITBYTE_FOUNDATION_TIER0_COMPILER_GCC__)   || \
+        (BITBYTE_FOUNDATION_TIER0_COMPILER == __BITBYTE_FOUNDATION_TIER0_COMPILER_CLANG__)
+    #include <cpuid.h>
   #endif
 #endif
 
@@ -47,11 +50,7 @@ static void cpuid(unsigned info, unsigned *eax, unsigned *ebx, unsigned *ecx, un
   *edx = registers[3];
 #elif (BITBYTE_FOUNDATION_TIER0_COMPILER == __BITBYTE_FOUNDATION_TIER0_COMPILER_GCC__)   || \
       (BITBYTE_FOUNDATION_TIER0_COMPILER == __BITBYTE_FOUNDATION_TIER0_COMPILER_CLANG__)
-  __asm__(
-    "cpuid;"
-    :"=a" (*eax), "=b" (*ebx), "=c" (*ecx), "=d" (*edx)
-    :"0" (info)
-  );
+  __get_cpuid(info, eax, ebx, ecx, edx);
 #endif
 }
 #endif
