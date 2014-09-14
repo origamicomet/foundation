@@ -258,7 +258,7 @@ namespace Exceptions {
     StackOverflow =
       BITBYTE_FOUNDATION_TIER2_EXCEPTION_STACK_OVERFLOW,
   };
-};
+}
 
 //===----------------------------------------------------------------------===//
 
