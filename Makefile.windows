@@ -1,0 +1,317 @@
+# ===----------------------------------------------------------------------=== #
+#
+#  Foundation
+#
+#  This is free and unencumbered software released into the public domain.
+#
+#  Anyone is free to copy, modify, publish, use, compile, sell, or
+#  distribute this software, either in source code form or as a compiled
+#  binary, for any purpose, commercial or non-commercial, and by any
+#  means.
+#
+#  In jurisdictions that recognize copyright laws, the author or authors
+#  of this software dedicate any and all copyright interest in the
+#  software to the public domain. We make this dedication for the benefit
+#  of the public at large and to the detriment of our heirs and
+#  successors. We intend this dedication to be an overt act of
+#  relinquishment in perpetuity of all present and future rights to this
+#  software under copyright law.
+#
+#  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+#  EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+#  MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+#  IN NO EVENT SHALL THE AUTHORS BE LIABLE FOR ANY CLAIM, DAMAGES OR
+#  OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
+#  ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+#  OTHER DEALINGS IN THE SOFTWARE.
+#
+#  For more information, please refer to <http://unlicense.org/>
+#
+# ===----------------------------------------------------------------------=== #
+
+#
+# Convenience helpers:
+#
+
+windows-to-posix = $(shell echo "$1" | sed 's/\\/\//g' | sed 's/://' | sed 's/^/\//')
+posix-to-windows = $(shell echo "$1" | sed 's/^\/./\0:/' | sed 's/^\///' | sed 's/\//\\/g')
+
+#
+# Verify that Windows is targetable:
+#
+
+ifneq ($(shell $(ROOT)/build/platform.sh),mingw)
+  $(error Cannot cross-compile to 'windows' from '$(shell $(ROOT)/build/platform.sh)')
+endif
+
+#
+# Verify that Microsoft Visual C/C++ exists:
+#
+
+ifeq ($(shell $(ROOT)/build/toolchains/msvc.d/available),0)
+  $(error Compiliation with 'msvc' is not available on '$(shell $(ROOT)/build/platform.sh)'. \
+          The build system was unable to auto-detect Microsoft Visual C/C++ and/or the Windows SDK. \
+          Try defining VCInstallDir and/or WindowsSdkDir)
+endif
+
+#
+# Inject Microsoft Visual C/C++ and the Windows SDK into PATH:
+#
+
+VCInstallDir := $(shell $(ROOT)/build/platforms/windows/mingw/VCInstallDir.sh)
+WindowsSdkDir := $(shell $(ROOT)/build/platforms/windows/mingw/WindowsSdkDir.sh)
+
+VCInstallDir_ := $(call windows-to-posix,$(VCInstallDir))
+WindowsSdkDir_ := $(call windows-to-posix,$(WindowsSdkDir))
+
+# HACK: The Common7/IDE path might not exist in older versions of Microsoft Visual Studio.
+CommonTools_ := $(shell readlink -f "$(VCInstallDir_)/../Common7")
+
+ifeq ($(ARCHITECTURE),x86)
+  export PATH := $(WindowsSdkDir_)/bin:$(CommonTools_)/IDE:$(VCInstallDir_)/bin:$(PATH)
+endif
+ifeq ($(ARCHITECTURE),x86-64)
+  export PATH := $(WindowsSdkDir_)/bin/x64:$(CommonTools_)/IDE:$(VCInstallDir_)/bin/x86_amd64:$(VCInstallDir_)/bin:$(PATH)
+endif
+
+#
+# Define CFLAGS, LDFLAGS, and ARFLAGS:
+#
+
+CFLAGS  := -nologo -c -favor:blend -GF -GR- -W4
+LDFLAGS := -nologo -manifest:embed -LIBPATH:"$(call posix-to-windows,$(BUILD)/bin)" -LIBPATH:"$(call posix-to-windows,$(BUILD)/lib)"
+ARFLAGS := -nologo
+
+ifeq ($(ARCHITECTURE),x86)
+  CFLAGS += -arch:IA32
+  LDFLAGS += -machine:X86
+  ARFLAGS += -machine:X86
+endif
+ifeq ($(ARCHITECTURE),x86-64)
+  LDFLAGS += -machine:X64
+  ARFLAGS += -machine:X64
+endif
+
+ifeq ($(ARCHITECTURE),x86)
+  CFLAGS += -I"$(WindowsSdkDir)/Include" -I"$(VCInstallDir)/include"
+  LDFLAGS += -LIBPATH:"$(WindowsSdkDir)/Lib" -LIBPATH:"$(VCInstallDir)/Lib"
+endif
+ifeq ($(ARCHITECTURE),x86-64)
+  CFLAGS += -I"$(WindowsSdkDir)/Include" -I"$(VCInstallDir)/include"
+  LDFLAGS += -LIBPATH:"$(WindowsSdkDir)/Lib/x64" -LIBPATH:"$(VCInstallDir)/Lib/amd64"
+endif
+
+# See http://stackoverflow.com/questions/14363929.
+ifeq ($(findstring 12.0,$(VCInstallDir)),12.0)
+  CFLAGS += -D"_USING_V110_SDK71_=1"
+endif
+
+ifeq ($(CONFIGURATION),debug)
+  CFLAGS += -MDd -Od -Zi -RTCsu -fp:precise -fp:except -D_DEBUG
+  CFLAGS += -DBITBYTE_FOUNDATION_CONFIGURATION=BITBYTE_FOUNDATION_CONFIGURATION_DEBUG
+  LDFLAGS += -DEBUG
+  ARFLAGS +=
+endif
+ifeq ($(CONFIGURATION),development)
+  CFLAGS += -MD -Zi -fp:fast -fp:except- -D_NDEBUG
+  CFLAGS += -DBITBYTE_FOUNDATION_CONFIGURATION=BITBYTE_FOUNDATION_CONFIGURATION_DEVELOPMENT
+  LDFLAGS += -DEBUG
+  ARFLAGS +=
+endif
+ifeq ($(CONFIGURATION),release)
+  CFLAGS += -MD -GL -Ox -fp:fast -fp:except- -D_NDEBUG
+  CFLAGS += -DBITBYTE_FOUNDATION_CONFIGURATION=BITBYTE_FOUNDATION_CONFIGURATION_RELEASE
+  LDFLAGS += -LTCG
+  ARFLAGS += -LTCG
+endif
+
+ifeq ($(LINKAGE),static)
+  CFLAGS += -DBITBYTE_FOUNDATION_TIER0_LINKAGE=BITBYTE_FOUNDATION_TIER0_STATIC_LINKAGE
+  CFLAGS += -DBITBYTE_FOUNDATION_TIER1_LINKAGE=BITBYTE_FOUNDATION_TIER1_STATIC_LINKAGE
+  CFLAGS += -DBITBYTE_FOUNDATION_TIER2_LINKAGE=BITBYTE_FOUNDATION_TIER2_STATIC_LINKAGE
+  CFLAGS += -DBITBYTE_FOUNDATION_TIER3_LINKAGE=BITBYTE_FOUNDATION_TIER3_STATIC_LINKAGE
+endif
+ifeq ($(LINKAGE),dynamic)
+  CFLAGS += -DBITBYTE_FOUNDATION_TIER0_LINKAGE=BITBYTE_FOUNDATION_TIER0_DYNAMIC_LINKAGE
+  CFLAGS += -DBITBYTE_FOUNDATION_TIER1_LINKAGE=BITBYTE_FOUNDATION_TIER1_DYNAMIC_LINKAGE
+  CFLAGS += -DBITBYTE_FOUNDATION_TIER2_LINKAGE=BITBYTE_FOUNDATION_TIER2_DYNAMIC_LINKAGE
+  CFLAGS += -DBITBYTE_FOUNDATION_TIER3_LINKAGE=BITBYTE_FOUNDATION_TIER3_DYNAMIC_LINKAGE
+endif
+
+#
+# Rules (tier0):
+#
+
+FOUNDATION_TIER0_SOURCES := $(shell find $(ROOT)/src/bitbyte/foundation/tier0 -name '*.c')
+FOUNDATION_TIER0_OBJECTS := $(subst $(ROOT)/src/,$(BUILD)/obj/,$(FOUNDATION_TIER0_SOURCES:%.c=%.obj))
+FOUNDATION_TIER0_OBJECTS += $(BUILD)/obj/bitbyte/foundation/tier0.obj
+
+-include $(FOUNDATION_TIER0_OBJECTS:%.obj=%.d)
+
+$(BUILD)/obj/bitbyte/foundation/tier0/%.obj: $(ROOT)/src/bitbyte/foundation/tier0/%.c
+	@echo "[CC] $<"
+	@mkdir -p ${@D}
+	@$(ROOT)/build/toolchains/msvc.d/cl -TP $(CFLAGS) -I"$(call posix-to-windows,$(ROOT)/include)" -DBITBYTE_FOUNDATION_TIER0_COMPILING=1 -Fo"$(call posix-to-windows,$@)" -Fd"$(call posix-to-windows,$(patsubst %.obj,%.pdb,$@))" "$<"
+	@$(ROOT)/build/toolchains/msvc.d/cl -TP $(CFLAGS) -I"$(call posix-to-windows,$(ROOT)/include)" -DBITBYTE_FOUNDATION_TIER0_COMPILING=1 "$<" -MM -MT $@ >$(patsubst %.obj,%.d,$@)
+
+$(BUILD)/obj/bitbyte/foundation/tier0.obj: $(ROOT)/src/bitbyte/foundation/tier0.c
+	@echo "[CC] $<"
+	@mkdir -p ${@D}
+	@$(ROOT)/build/toolchains/msvc.d/cl -TP $(CFLAGS) -I"$(call posix-to-windows,$(ROOT)/include)" -DBITBYTE_FOUNDATION_TIER0_COMPILING=1 -Fo"$(call posix-to-windows,$@)" -Fd"$(call posix-to-windows,$(patsubst %.obj,%.pdb,$@))" "$<"
+	@$(ROOT)/build/toolchains/msvc.d/cl -TP $(CFLAGS) -I"$(call posix-to-windows,$(ROOT)/include)" -DBITBYTE_FOUNDATION_TIER0_COMPILING=1 "$<" -MM -MT $@ >$(patsubst %.obj,%.d,$@)
+
+ifeq ($(LINKAGE),static)
+$(BUILD)/lib/tier0.lib: $(FOUNDATION_TIER0_OBJECTS)
+	@echo "[AR] $@"
+	@mkdir -p ${@D}
+	@lib $(ARFLAGS) -OUT:"$(call posix-to-windows,$@)" $(foreach obj,$(FOUNDATION_TIER0_OBJECTS),"$(call posix-to-windows,$(obj))")
+
+tier0: $(BUILD)/lib/tier0.lib
+endif
+ifeq ($(LINKAGE),dynamic)
+$(BUILD)/bin/tier0.dll: $(FOUNDATION_TIER0_OBJECTS)
+	@echo "[LD] $@"
+	@mkdir -p ${@D}
+	@link -DLL $(LDFLAGS) -OUT:"$(call posix-to-windows,$@)" $(foreach obj,$(FOUNDATION_TIER0_OBJECTS),"$(call posix-to-windows,$(obj))")
+
+$(BUILD)/lib/tier0.lib: $(BUILD)/bin/tier0.dll
+	@echo "[AR] $@"
+	@mkdir -p ${@D}
+	@-mv -f -u $(basename $<).lib $@
+
+tier0: $(BUILD)/bin/tier0.dll $(BUILD)/lib/tier0.lib
+endif
+
+#
+# Rules (tier1):
+#
+
+FOUNDATION_TIER1_SOURCES := $(shell find $(ROOT)/src/bitbyte/foundation/tier1 -name '*.c')
+FOUNDATION_TIER1_OBJECTS := $(subst $(ROOT)/src/,$(BUILD)/obj/,$(FOUNDATION_TIER1_SOURCES:%.c=%.obj))
+FOUNDATION_TIER1_OBJECTS += $(BUILD)/obj/bitbyte/foundation/tier1.obj
+
+-include $(FOUNDATION_TIER1_OBJECTS:%.obj=%.d)
+
+$(BUILD)/obj/bitbyte/foundation/tier1/%.obj: $(ROOT)/src/bitbyte/foundation/tier1/%.c
+	@echo "[CC] $<"
+	@mkdir -p ${@D}
+	@$(ROOT)/build/toolchains/msvc.d/cl -TP $(CFLAGS) -I"$(call posix-to-windows,$(ROOT)/include)" -DBITBYTE_FOUNDATION_TIER1_COMPILING=1 -Fo"$(call posix-to-windows,$@)" -Fd"$(call posix-to-windows,$(patsubst %.obj,%.pdb,$@))" "$<"
+	@$(ROOT)/build/toolchains/msvc.d/cl -TP $(CFLAGS) -I"$(call posix-to-windows,$(ROOT)/include)" -DBITBYTE_FOUNDATION_TIER1_COMPILING=1 "$<" -MM -MT $@ >$(patsubst %.obj,%.d,$@)
+
+$(BUILD)/obj/bitbyte/foundation/tier1.obj: $(ROOT)/src/bitbyte/foundation/tier1.c
+	@echo "[CC] $<"
+	@mkdir -p ${@D}
+	@$(ROOT)/build/toolchains/msvc.d/cl -TP $(CFLAGS) -I"$(call posix-to-windows,$(ROOT)/include)" -DBITBYTE_FOUNDATION_TIER1_COMPILING=1 -Fo"$(call posix-to-windows,$@)" -Fd"$(call posix-to-windows,$(patsubst %.obj,%.pdb,$@))" "$<"
+	@$(ROOT)/build/toolchains/msvc.d/cl -TP $(CFLAGS) -I"$(call posix-to-windows,$(ROOT)/include)" -DBITBYTE_FOUNDATION_TIER1_COMPILING=1 "$<" -MM -MT $@ >$(patsubst %.obj,%.d,$@)
+
+ifeq ($(LINKAGE),static)
+$(BUILD)/lib/tier1.lib: $(FOUNDATION_TIER1_OBJECTS)
+	@echo "[AR] $@"
+	@mkdir -p ${@D}
+	@lib $(ARFLAGS) -OUT:"$(call posix-to-windows,$@)" $(foreach obj,$(FOUNDATION_TIER1_OBJECTS),"$(call posix-to-windows,$(obj))")
+
+tier1: $(BUILD)/lib/tier1.lib
+endif
+ifeq ($(LINKAGE),dynamic)
+$(BUILD)/bin/tier1.dll: $(FOUNDATION_TIER1_OBJECTS)
+	@echo "[LD] $@"
+	@mkdir -p ${@D}
+	@link -DLL $(LDFLAGS) -OUT:"$(call posix-to-windows,$@)" tier0.lib $(foreach obj,$(FOUNDATION_TIER1_OBJECTS),"$(call posix-to-windows,$(obj))")
+
+$(BUILD)/lib/tier1.lib: $(BUILD)/bin/tier1.dll
+	@echo "[AR] $@"
+	@mkdir -p ${@D}
+	@-mv -f -u $(basename $<).lib $@
+
+tier1: $(BUILD)/bin/tier1.dll $(BUILD)/lib/tier1.lib
+endif
+
+#
+# Rules (tier2):
+#
+
+FOUNDATION_TIER2_SOURCES := $(shell find $(ROOT)/src/bitbyte/foundation/tier2 -name '*.c')
+FOUNDATION_TIER2_OBJECTS := $(subst $(ROOT)/src/,$(BUILD)/obj/,$(FOUNDATION_TIER2_SOURCES:%.c=%.obj))
+FOUNDATION_TIER2_OBJECTS += $(BUILD)/obj/bitbyte/foundation/tier2.obj
+
+-include $(FOUNDATION_TIER2_OBJECTS:%.obj=%.d)
+
+$(BUILD)/obj/bitbyte/foundation/tier2/%.obj: $(ROOT)/src/bitbyte/foundation/tier2/%.c
+	@echo "[CC] $<"
+	@mkdir -p ${@D}
+	@$(ROOT)/build/toolchains/msvc.d/cl -TP $(CFLAGS) -I"$(call posix-to-windows,$(ROOT)/include)" -DBITBYTE_FOUNDATION_TIER2_COMPILING=2 -Fo"$(call posix-to-windows,$@)" -Fd"$(call posix-to-windows,$(patsubst %.obj,%.pdb,$@))" "$<"
+	@$(ROOT)/build/toolchains/msvc.d/cl -TP $(CFLAGS) -I"$(call posix-to-windows,$(ROOT)/include)" -DBITBYTE_FOUNDATION_TIER2_COMPILING=2 "$<" -MM -MT $@ >$(patsubst %.obj,%.d,$@)
+
+$(BUILD)/obj/bitbyte/foundation/tier2.obj: $(ROOT)/src/bitbyte/foundation/tier2.c
+	@echo "[CC] $<"
+	@mkdir -p ${@D}
+	@$(ROOT)/build/toolchains/msvc.d/cl -TP $(CFLAGS) -I"$(call posix-to-windows,$(ROOT)/include)" -DBITBYTE_FOUNDATION_TIER2_COMPILING=2 -Fo"$(call posix-to-windows,$@)" -Fd"$(call posix-to-windows,$(patsubst %.obj,%.pdb,$@))" "$<"
+	@$(ROOT)/build/toolchains/msvc.d/cl -TP $(CFLAGS) -I"$(call posix-to-windows,$(ROOT)/include)" -DBITBYTE_FOUNDATION_TIER2_COMPILING=2 "$<" -MM -MT $@ >$(patsubst %.obj,%.d,$@)
+
+ifeq ($(LINKAGE),static)
+$(BUILD)/lib/tier2.lib: $(FOUNDATION_TIER2_OBJECTS)
+	@echo "[AR] $@"
+	@mkdir -p ${@D}
+	@lib $(ARFLAGS) -OUT:"$(call posix-to-windows,$@)" $(foreach obj,$(FOUNDATION_TIER2_OBJECTS),"$(call posix-to-windows,$(obj))")
+
+tier2: $(BUILD)/lib/tier2.lib
+endif
+ifeq ($(LINKAGE),dynamic)
+$(BUILD)/bin/tier2.dll: $(FOUNDATION_TIER2_OBJECTS)
+	@echo "[LD] $@"
+	@mkdir -p ${@D}
+	@link -DLL $(LDFLAGS) -OUT:"$(call posix-to-windows,$@)" tier0.lib tier1.lib dbghelp.lib $(foreach obj,$(FOUNDATION_TIER2_OBJECTS),"$(call posix-to-windows,$(obj))")
+
+$(BUILD)/lib/tier2.lib: $(BUILD)/bin/tier2.dll
+	@echo "[AR] $@"
+	@mkdir -p ${@D}
+	@-mv -f -u $(basename $<).lib $@
+
+tier2: $(BUILD)/bin/tier2.dll $(BUILD)/lib/tier2.lib
+endif
+
+#
+# Rules (tier3):
+#
+
+FOUNDATION_TIER3_SOURCES := $(shell find $(ROOT)/src/bitbyte/foundation/tier3 -name '*.c')
+FOUNDATION_TIER3_OBJECTS := $(subst $(ROOT)/src/,$(BUILD)/obj/,$(FOUNDATION_TIER3_SOURCES:%.c=%.obj))
+FOUNDATION_TIER3_OBJECTS += $(BUILD)/obj/bitbyte/foundation/tier3.obj
+
+-include $(FOUNDATION_TIER3_OBJECTS:%.obj=%.d)
+
+$(BUILD)/obj/bitbyte/foundation/tier3/%.obj: $(ROOT)/src/bitbyte/foundation/tier3/%.c
+	@echo "[CC] $<"
+	@mkdir -p ${@D}
+	@$(ROOT)/build/toolchains/msvc.d/cl -TP $(CFLAGS) -I"$(call posix-to-windows,$(ROOT)/include)" -DBITBYTE_FOUNDATION_TIER3_COMPILING=3 -Fo"$(call posix-to-windows,$@)" -Fd"$(call posix-to-windows,$(patsubst %.obj,%.pdb,$@))" "$<"
+	@$(ROOT)/build/toolchains/msvc.d/cl -TP $(CFLAGS) -I"$(call posix-to-windows,$(ROOT)/include)" -DBITBYTE_FOUNDATION_TIER3_COMPILING=3 "$<" -MM -MT $@ >$(patsubst %.obj,%.d,$@)
+
+$(BUILD)/obj/bitbyte/foundation/tier3.obj: $(ROOT)/src/bitbyte/foundation/tier3.c
+	@echo "[CC] $<"
+	@mkdir -p ${@D}
+	@$(ROOT)/build/toolchains/msvc.d/cl -TP $(CFLAGS) -I"$(call posix-to-windows,$(ROOT)/include)" -DBITBYTE_FOUNDATION_TIER3_COMPILING=3 -Fo"$(call posix-to-windows,$@)" -Fd"$(call posix-to-windows,$(patsubst %.obj,%.pdb,$@))" "$<"
+	@$(ROOT)/build/toolchains/msvc.d/cl -TP $(CFLAGS) -I"$(call posix-to-windows,$(ROOT)/include)" -DBITBYTE_FOUNDATION_TIER3_COMPILING=3 "$<" -MM -MT $@ >$(patsubst %.obj,%.d,$@)
+
+ifeq ($(LINKAGE),static)
+$(BUILD)/lib/tier3.lib: $(FOUNDATION_TIER3_OBJECTS)
+	@echo "[AR] $@"
+	@mkdir -p ${@D}
+	@lib $(ARFLAGS) -OUT:"$(call posix-to-windows,$@)" $(foreach obj,$(FOUNDATION_TIER3_OBJECTS),"$(call posix-to-windows,$(obj))")
+
+tier3: $(BUILD)/lib/tier3.lib
+endif
+ifeq ($(LINKAGE),dynamic)
+$(BUILD)/bin/tier3.dll: $(FOUNDATION_TIER3_OBJECTS)
+	@echo "[LD] $@"
+	@mkdir -p ${@D}
+	@link -DLL $(LDFLAGS) -OUT:"$(call posix-to-windows,$@)" tier0.lib tier1.lib tier2.lib $(foreach obj,$(FOUNDATION_TIER3_OBJECTS),"$(call posix-to-windows,$(obj))")
+
+$(BUILD)/lib/tier3.lib: $(BUILD)/bin/tier3.dll
+	@echo "[AR] $@"
+	@mkdir -p ${@D}
+	@-mv -f -u $(basename $<).lib $@
+
+tier3: $(BUILD)/bin/tier3.dll $(BUILD)/lib/tier3.lib
+endif
+
+foundation: tier0 tier1 tier2 tier3
