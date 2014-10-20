@@ -315,3 +315,8 @@ tier3: $(BUILD)/bin/tier3.dll $(BUILD)/lib/tier3.lib
 endif
 
 foundation: tier0 tier1 tier2 tier3
+
+package-foundation: foundation
+	@mkdir -p $(BUILD)/pkg
+	@-cp $(BUILD)/bin/*.dll $(BUILD)/pkg/
+	@-cp $(BUILD)/bin/*.pdb $(BUILD)/pkg/

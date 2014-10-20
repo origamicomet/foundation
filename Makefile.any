@@ -61,7 +61,7 @@ endif
 
 export
 
-.PHONY: all test docs clean
+.PHONY: all test docs package clean
 
 all: foundation
 
@@ -72,6 +72,10 @@ docs:
 	@echo "[DOXYGEN] Doxyfile"
 	@doxygen Doxyfile
 
+package:
+	@echo "[PACKAGE] foundation"
+	@make package-foundation
+
 clean:
 	@echo "[RM] $(BUILD)/obj"
 	@rm -R -f $(BUILD)/obj
@@ -79,5 +83,7 @@ clean:
 	@rm -R -f $(BUILD)/lib
 	@echo "[RM] $(BUILD)/bin"
 	@rm -R -f $(BUILD)/bin
+	@echo "[RM] $(BUILD)/pkg"
+	@rm -R -f $(BUILD)/pkg
 
 include $(ROOT)/Makefile.$(PLATFORM)

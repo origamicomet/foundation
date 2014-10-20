@@ -250,3 +250,7 @@ tier3: tier0 tier1 tier2 $(BUILD)/bin/libtier3.so
 endif
 
 foundation: tier0 tier1 tier2 tier3
+
+package-foundation: foundation
+	@mkdir -p $(BUILD)/pkg
+	@-cp $(BUILD)/bin/*.so $(BUILD)/pkg/
