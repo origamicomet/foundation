@@ -64,9 +64,7 @@ bitbyte_foundation_tier3_timer_destroy(
 {
   bitbyte_foundation_tier3_timer_impl_t *impl =
     (bitbyte_foundation_tier3_timer_impl_t *)timer;
-#if BITBYTE_FOUNDATION_TIER0_SYSTEM == __BITBYTE_FOUNDATION_TIER0_SYSTEM_WINDOWS__
   free((void *)impl);
-#endif
 }
 
 //===----------------------------------------------------------------------===//
