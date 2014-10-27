@@ -21,6 +21,10 @@
 
 #if BITBYTE_FOUNDATION_TIER0_SYSTEM == __BITBYTE_FOUNDATION_TIER0_SYSTEM_WINDOWS__
   #include <windows.h>
+#elif BITBYTE_FOUNDATION_TIER0_SYSTEM == __BITBYTE_FOUNDATION_TIER0_SYSTEM_MAC_OS_X__
+#elif BITBYTE_FOUNDATION_TIER0_SYSTEM == __BITBYTE_FOUNDATION_TIER0_SYSTEM_LINUX__
+  #include <unistd.h>
+  #include <time.h>
 #endif
 
 //============================================================================//
@@ -35,6 +39,9 @@ typedef struct bitbyte_foundation_tier3_timer_impl {
 #if BITBYTE_FOUNDATION_TIER0_SYSTEM == __BITBYTE_FOUNDATION_TIER0_SYSTEM_WINDOWS__
   LARGE_INTEGER epoch;
   LARGE_INTEGER freq;
+#elif BITBYTE_FOUNDATION_TIER0_SYSTEM == __BITBYTE_FOUNDATION_TIER0_SYSTEM_MAC_OS_X__
+#elif BITBYTE_FOUNDATION_TIER0_SYSTEM == __BITBYTE_FOUNDATION_TIER0_SYSTEM_LINUX__
+  uint64_t epoch;
 #endif
 } bitbyte_foundation_tier3_timer_impl_t;
 
@@ -52,6 +59,11 @@ bitbyte_foundation_tier3_timer_create(void)
   bitbyte_foundation_tier2_assert(bHasPerformanceCounterFrequency);
   BOOL bHasEpoch = QueryPerformanceCounter(&timer->epoch);
   bitbyte_foundation_tier2_assert(bHasEpoch);
+#elif BITBYTE_FOUNDATION_TIER0_SYSTEM == __BITBYTE_FOUNDATION_TIER0_SYSTEM_MAC_OS_X__
+#elif BITBYTE_FOUNDATION_TIER0_SYSTEM == __BITBYTE_FOUNDATION_TIER0_SYSTEM_LINUX__
+  struct timespec ts;
+  clock_gettime(CLOCK_MONOTONIC, &ts);
+  timer->epoch = ts.tv_sec * UINT64_C(1000000000) + ts.tv_nsec;
 #endif
   return (bitbyte_foundation_tier3_timer_t *)timer;
 }
@@ -78,6 +90,11 @@ bitbyte_foundation_tier3_timer_reset(
 #if BITBYTE_FOUNDATION_TIER0_SYSTEM == __BITBYTE_FOUNDATION_TIER0_SYSTEM_WINDOWS__
   const BOOL bHasNewEpoch = QueryPerformanceCounter(&impl->epoch);
   bitbyte_foundation_tier2_assert(bHasNewEpoch);
+#elif BITBYTE_FOUNDATION_TIER0_SYSTEM == __BITBYTE_FOUNDATION_TIER0_SYSTEM_MAC_OS_X__
+#elif BITBYTE_FOUNDATION_TIER0_SYSTEM == __BITBYTE_FOUNDATION_TIER0_SYSTEM_LINUX__
+  struct timespec ts;
+  clock_gettime(CLOCK_MONOTONIC, &ts);
+  impl->epoch = ts.tv_sec * UINT64_C(1000000000) + ts.tv_nsec;
 #endif
 }
 
@@ -96,6 +113,12 @@ bitbyte_foundation_tier3_timer_secs(
   LARGE_INTEGER liElapsed;
   liElapsed.QuadPart = (liNow.QuadPart - impl->epoch.QuadPart);
   return (liElapsed.QuadPart / impl->freq.QuadPart);
+#elif BITBYTE_FOUNDATION_TIER0_SYSTEM == __BITBYTE_FOUNDATION_TIER0_SYSTEM_MAC_OS_X__
+#elif BITBYTE_FOUNDATION_TIER0_SYSTEM == __BITBYTE_FOUNDATION_TIER0_SYSTEM_LINUX__
+  struct timespec ts;
+  clock_gettime(CLOCK_MONOTONIC, &ts);
+  const uint64_t elapsed = (ts.tv_sec * UINT64_C(1000000000) + ts.tv_nsec) - impl->epoch;
+  return (elapsed / UINT64_C(1000000000));
 #endif
 }
 
@@ -114,6 +137,12 @@ bitbyte_foundation_tier3_timer_msecs(
   LARGE_INTEGER liElapsed;
   liElapsed.QuadPart = (liNow.QuadPart - impl->epoch.QuadPart);
   return ((liElapsed.QuadPart * UINT64_C(1000)) / impl->freq.QuadPart);
+#elif BITBYTE_FOUNDATION_TIER0_SYSTEM == __BITBYTE_FOUNDATION_TIER0_SYSTEM_MAC_OS_X__
+#elif BITBYTE_FOUNDATION_TIER0_SYSTEM == __BITBYTE_FOUNDATION_TIER0_SYSTEM_LINUX__
+  struct timespec ts;
+  clock_gettime(CLOCK_MONOTONIC, &ts);
+  const uint64_t elapsed = (ts.tv_sec * UINT64_C(1000000000) + ts.tv_nsec) - impl->epoch;
+  return (elapsed / UINT64_C(1000000));
 #endif
 }
 
@@ -132,6 +161,12 @@ bitbyte_foundation_tier3_timer_usecs(
   LARGE_INTEGER liElapsed;
   liElapsed.QuadPart = (liNow.QuadPart - impl->epoch.QuadPart);
   return ((liElapsed.QuadPart * UINT64_C(1000000)) / impl->freq.QuadPart);
+#elif BITBYTE_FOUNDATION_TIER0_SYSTEM == __BITBYTE_FOUNDATION_TIER0_SYSTEM_MAC_OS_X__
+#elif BITBYTE_FOUNDATION_TIER0_SYSTEM == __BITBYTE_FOUNDATION_TIER0_SYSTEM_LINUX__
+  struct timespec ts;
+  clock_gettime(CLOCK_MONOTONIC, &ts);
+  const uint64_t elapsed = (ts.tv_sec * UINT64_C(1000000000) + ts.tv_nsec) - impl->epoch;
+  return (elapsed / UINT64_C(1000));
 #endif
 }
 
@@ -150,6 +185,12 @@ bitbyte_foundation_tier3_timer_nsecs(
   LARGE_INTEGER liElapsed;
   liElapsed.QuadPart = (liNow.QuadPart - impl->epoch.QuadPart);
   return ((liElapsed.QuadPart * UINT64_C(1000000000)) / impl->freq.QuadPart);
+#elif BITBYTE_FOUNDATION_TIER0_SYSTEM == __BITBYTE_FOUNDATION_TIER0_SYSTEM_MAC_OS_X__
+#elif BITBYTE_FOUNDATION_TIER0_SYSTEM == __BITBYTE_FOUNDATION_TIER0_SYSTEM_LINUX__
+  struct timespec ts;
+  clock_gettime(CLOCK_MONOTONIC, &ts);
+  const uint64_t elapsed = (ts.tv_sec * UINT64_C(1000000000) + ts.tv_nsec) - impl->epoch;
+  return elapsed;
 #endif
 }
 
