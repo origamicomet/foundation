@@ -48,6 +48,7 @@ using namespace ::bitbyte::foundation::tier3;
 //===----------------------------------------------------------------------===//
 
 #include "bitbyte/foundation/tier3/cpu.h"
+#include "bitbyte/foundation/tier3/timer.h"
 
 //============================================================================//
 

@@ -193,7 +193,7 @@ bitbyte_foundation_tier3_timer_usecs(
 ///
 /// \warning Nanosecond resolution is not guaranteed on some platforms, namely
 /// Microsoft Windows as QueryPerformanceCounter usually takes the worst code
-/// path possible
+/// path possible.
 ///
 extern
 BITBYTE_FOUNDATION_TIER3_EXPORT
