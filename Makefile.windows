@@ -177,7 +177,7 @@ $(BUILD)/bin/tier0.dll: $(FOUNDATION_TIER0_OBJECTS)
 $(BUILD)/lib/tier0.lib: $(BUILD)/bin/tier0.dll
 	@echo "[AR] $@"
 	@mkdir -p ${@D}
-	@-mv -f -u $(basename $<).lib $@
+	-@mv -f -u $(basename $<).lib $@
 
 tier0: $(BUILD)/bin/tier0.dll $(BUILD)/lib/tier0.lib
 endif
@@ -221,7 +221,7 @@ $(BUILD)/bin/tier1.dll: $(FOUNDATION_TIER1_OBJECTS)
 $(BUILD)/lib/tier1.lib: $(BUILD)/bin/tier1.dll
 	@echo "[AR] $@"
 	@mkdir -p ${@D}
-	@-mv -f -u $(basename $<).lib $@
+	-@mv -f -u $(basename $<).lib $@
 
 tier1: $(BUILD)/bin/tier1.dll $(BUILD)/lib/tier1.lib
 endif
@@ -265,7 +265,7 @@ $(BUILD)/bin/tier2.dll: $(FOUNDATION_TIER2_OBJECTS)
 $(BUILD)/lib/tier2.lib: $(BUILD)/bin/tier2.dll
 	@echo "[AR] $@"
 	@mkdir -p ${@D}
-	@-mv -f -u $(basename $<).lib $@
+	-@mv -f -u $(basename $<).lib $@
 
 tier2: $(BUILD)/bin/tier2.dll $(BUILD)/lib/tier2.lib
 endif
@@ -309,7 +309,7 @@ $(BUILD)/bin/tier3.dll: $(FOUNDATION_TIER3_OBJECTS)
 $(BUILD)/lib/tier3.lib: $(BUILD)/bin/tier3.dll
 	@echo "[AR] $@"
 	@mkdir -p ${@D}
-	@-mv -f -u $(basename $<).lib $@
+	-@mv -f -u $(basename $<).lib $@
 
 tier3: $(BUILD)/bin/tier3.dll $(BUILD)/lib/tier3.lib
 endif
