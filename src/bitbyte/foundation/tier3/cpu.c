@@ -100,8 +100,8 @@ bitbyte_foundation_tier3_cpu_threads(void)
 {
 #if (BITBYTE_FOUNDATION_TIER0_ARCHITECTURE == __BITBYTE_FOUNDATION_TIER0_ARCHITECTURE_X86__)    || \
     (BITBYTE_FOUNDATION_TIER0_ARCHITECTURE == __BITBYTE_FOUNDATION_TIER0_ARCHITECTURE_X86_64__)
-  // TODO(mwilliams): This breaks in a variety of "strange" corner cases, but
-  // fuck people who game on server hardware.
+  // TODO(mike): This breaks in a variety of "strange" corner cases, but fuck
+  // end users who game on server hardware.
   unsigned eax, ebx, ecx, edx;
 
   char vendor[12];

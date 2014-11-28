@@ -92,7 +92,7 @@ bitbyte_foundation_tier2_debug_symbol_from_address(
   } else {
     snprintf(&symbol->name[0], 256, "%p", address);
   }
-  // TODO(mwilliams): Extract file and line information.
+  // TODO(mike): Extract file and line information.
   symbol->file[0] = '\0';
   symbol->line = 0;
 #endif

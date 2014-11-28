@@ -43,7 +43,7 @@ bitbyte_foundation_tier4_uuid_generate(
   GUID guid;
   CoCreateGuid(&guid);
 
-  // TODO(mwilliams): Take native endianness into account.
+  // TODO(mike): Take native endianness into account.
   uuid->_raw[0]  = (guid.Data1 >> 24) & 0xff;
   uuid->_raw[1]  = (guid.Data1 >> 16) & 0xff;
   uuid->_raw[2]  = (guid.Data1 >> 8) & 0xff;

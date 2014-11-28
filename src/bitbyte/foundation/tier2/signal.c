@@ -97,7 +97,7 @@ bitbyte_foundation_tier2_set_signal_handler(
   signal_handler_ = handler;
   ctx = ctx;
 
-  // TODO(mwilliams): Use sigaction on POSIX.
+  // TODO(mike): Use sigaction on POSIX.
   // See http://stackoverflow.com/questions/2485028.
   signal(SIGTERM, &_signal_handler);
   signal(SIGABRT, &_signal_handler);
