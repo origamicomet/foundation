@@ -69,7 +69,7 @@ bitbyte_foundation_tier4_uuid_generate(
 void
 bitbyte_foundation_tier4_uuid_to_s(
   const bitbyte_foundation_uuid_t *uuid,
-  char buf[21])
+  char buf[37])
 {
   bitbyte_foundation_tier2_assert(uuid != NULL);
   // HACK: This is really nasty. There's probably a better way.
@@ -106,7 +106,7 @@ void UUID::generate(UUID *uuid)
 
 //===----------------------------------------------------------------------===//
 
-void UUID::to_s(char buf[21])
+void UUID::to_s(char buf[37])
 {
   ::bitbyte_foundation_tier4_uuid_to_s((const bitbyte_foundation_tier4_uuid_t *)this, buf);
 }

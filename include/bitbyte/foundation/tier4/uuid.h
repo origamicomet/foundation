@@ -88,7 +88,7 @@ BITBYTE_FOUNDATION_TIER4_EXPORT
 void
 bitbyte_foundation_tier4_uuid_to_s(
   const bitbyte_foundation_uuid_t *uuid,
-  char buf[21]);
+  char buf[37]);
 
 //===----------------------------------------------------------------------===//
 
@@ -117,7 +117,7 @@ class BITBYTE_FOUNDATION_TIER4_EXPORT UUID :
   static void generate(UUID *uuid);
  public:
   /// \copydoc ::bitbyte_foundation_tier4_uuid_to_s
-  void to_s(char buf[21]);
+  void to_s(char buf[37]);
 };
 
 //===----------------------------------------------------------------------===//
