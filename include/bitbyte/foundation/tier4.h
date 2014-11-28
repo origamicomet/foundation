@@ -45,6 +45,10 @@ using namespace ::bitbyte::foundation::tier4;
 
 #include "bitbyte/foundation/tier4/linkage.h"
 
+//===----------------------------------------------------------------------===//
+
+#include "bitbyte/foundation/tier4/uuid.h"
+
 //============================================================================//
 
 #endif // _BITBYTE_FOUNDATION_TIER4_H_
