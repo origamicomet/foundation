@@ -67,7 +67,7 @@ bitbyte_foundation_tier4_uuid_generate(
 //===----------------------------------------------------------------------===//
 
 void
-bitbyte_foundation_tier4_uuid_to_string(
+bitbyte_foundation_tier4_uuid_to_s(
   const bitbyte_foundation_uuid_t *uuid,
   char buf[21])
 {
