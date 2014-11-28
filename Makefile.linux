@@ -84,6 +84,7 @@ ifeq ($(LINKAGE),static)
   CFLAGS += -DBITBYTE_FOUNDATION_TIER1_LINKAGE=BITBYTE_FOUNDATION_TIER1_STATIC_LINKAGE
   CFLAGS += -DBITBYTE_FOUNDATION_TIER2_LINKAGE=BITBYTE_FOUNDATION_TIER2_STATIC_LINKAGE
   CFLAGS += -DBITBYTE_FOUNDATION_TIER3_LINKAGE=BITBYTE_FOUNDATION_TIER3_STATIC_LINKAGE
+  CFLAGS += -DBITBYTE_FOUNDATION_TIER4_LINKAGE=BITBYTE_FOUNDATION_TIER4_STATIC_LINKAGE
 endif
 ifeq ($(LINKAGE),dynamic)
   CFLAGS += -fPIC
@@ -91,6 +92,7 @@ ifeq ($(LINKAGE),dynamic)
   CFLAGS += -DBITBYTE_FOUNDATION_TIER1_LINKAGE=BITBYTE_FOUNDATION_TIER1_DYNAMIC_LINKAGE
   CFLAGS += -DBITBYTE_FOUNDATION_TIER2_LINKAGE=BITBYTE_FOUNDATION_TIER2_DYNAMIC_LINKAGE
   CFLAGS += -DBITBYTE_FOUNDATION_TIER3_LINKAGE=BITBYTE_FOUNDATION_TIER3_DYNAMIC_LINKAGE
+  CFLAGS += -DBITBYTE_FOUNDATION_TIER4_LINKAGE=BITBYTE_FOUNDATION_TIER4_DYNAMIC_LINKAGE
 endif
 
 #
@@ -247,6 +249,45 @@ $(BUILD)/bin/libtier3.so: $(FOUNDATION_TIER3_OBJECTS)
 	@g++ -shared $(LDFLAGS) -ltier0 -ltier1 -ltier2 -o "$@" $(foreach obj,$(FOUNDATION_TIER3_OBJECTS),"$(obj)")
 
 tier3: tier0 tier1 tier2 $(BUILD)/bin/libtier3.so
+endif
+
+#
+# Rules (tier4):
+#
+
+FOUNDATION_TIER4_SOURCES := $(shell find $(ROOT)/src/bitbyte/foundation/tier4 -name '*.c')
+FOUNDATION_TIER4_OBJECTS := $(subst $(ROOT)/src/,$(BUILD)/obj/,$(FOUNDATION_TIER4_SOURCES:%.c=%.o))
+FOUNDATION_TIER4_OBJECTS += $(BUILD)/obj/bitbyte/foundation/tier4.o
+
+-include $(FOUNDATION_TIER4_OBJECTS:%.o=%.d)
+
+$(BUILD)/obj/bitbyte/foundation/tier4/%.o: $(ROOT)/src/bitbyte/foundation/tier4/%.c
+	@echo "[CC] $<"
+	@mkdir -p ${@D}
+	@g++ -std=gnu++0x -pedantic $(CFLAGS) -I"$(ROOT)/include" -DBITBYTE_FOUNDATION_TIER4_COMPILING=1 -o "$@" -c "$<"
+	@g++ -std=gnu++0x -pedantic $(CFLAGS) -I"$(ROOT)/include" -DBITBYTE_FOUNDATION_TIER4_COMPILING=1 -c "$<" -MM -MT"$@" >$(patsubst %.o,%.d,$@)
+
+$(BUILD)/obj/bitbyte/foundation/tier4.o: $(ROOT)/src/bitbyte/foundation/tier4.c
+	@echo "[CC] $<"
+	@mkdir -p ${@D}
+	@g++ -std=gnu++0x -pedantic $(CFLAGS) -I"$(ROOT)/include" -DBITBYTE_FOUNDATION_TIER4_COMPILING=1 -o "$@" -c "$<"
+	@g++ -std=gnu++0x -pedantic $(CFLAGS) -I"$(ROOT)/include" -DBITBYTE_FOUNDATION_TIER4_COMPILING=1 -c "$<" -MM -MT"$@" >$(patsubst %.o,%.d,$@)
+
+ifeq ($(LINKAGE),static)
+$(BUILD)/lib/libtier4.a: $(FOUNDATION_TIER4_OBJECTS)
+	@echo "[AR] $@"
+	@mkdir -p ${@D}
+	@ar -rcs $(ARFLAGS) -o "$@" $(foreach obj,$(FOUNDATION_TIER4_OBJECTS),"$(obj)")
+
+tier4: $(BUILD)/lib/libtier4.a
+endif
+ifeq ($(LINKAGE),dynamic)
+$(BUILD)/bin/libtier4.so: $(FOUNDATION_TIER4_OBJECTS)
+	@echo "[LD] $@"
+	@mkdir -p ${@D}
+	@g++ -shared $(LDFLAGS) -ltier0 -ltier1 -ltier2 -ltier3 -o "$@" $(foreach obj,$(FOUNDATION_TIER4_OBJECTS),"$(obj)")
+
+tier4: tier0 tier1 tier2 $(BUILD)/bin/libtier4.so
 endif
 
 foundation: tier0 tier1 tier2 tier3

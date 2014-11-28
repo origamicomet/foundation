@@ -130,12 +130,14 @@ ifeq ($(LINKAGE),static)
   CFLAGS += -DBITBYTE_FOUNDATION_TIER1_LINKAGE=BITBYTE_FOUNDATION_TIER1_STATIC_LINKAGE
   CFLAGS += -DBITBYTE_FOUNDATION_TIER2_LINKAGE=BITBYTE_FOUNDATION_TIER2_STATIC_LINKAGE
   CFLAGS += -DBITBYTE_FOUNDATION_TIER3_LINKAGE=BITBYTE_FOUNDATION_TIER3_STATIC_LINKAGE
+  CFLAGS += -DBITBYTE_FOUNDATION_TIER4_LINKAGE=BITBYTE_FOUNDATION_TIER4_STATIC_LINKAGE
 endif
 ifeq ($(LINKAGE),dynamic)
   CFLAGS += -DBITBYTE_FOUNDATION_TIER0_LINKAGE=BITBYTE_FOUNDATION_TIER0_DYNAMIC_LINKAGE
   CFLAGS += -DBITBYTE_FOUNDATION_TIER1_LINKAGE=BITBYTE_FOUNDATION_TIER1_DYNAMIC_LINKAGE
   CFLAGS += -DBITBYTE_FOUNDATION_TIER2_LINKAGE=BITBYTE_FOUNDATION_TIER2_DYNAMIC_LINKAGE
   CFLAGS += -DBITBYTE_FOUNDATION_TIER3_LINKAGE=BITBYTE_FOUNDATION_TIER3_DYNAMIC_LINKAGE
+  CFLAGS += -DBITBYTE_FOUNDATION_TIER4_LINKAGE=BITBYTE_FOUNDATION_TIER4_DYNAMIC_LINKAGE
 endif
 
 #
@@ -314,7 +316,51 @@ $(BUILD)/lib/tier3.lib: $(BUILD)/bin/tier3.dll
 tier3: $(BUILD)/bin/tier3.dll $(BUILD)/lib/tier3.lib
 endif
 
-foundation: tier0 tier1 tier2 tier3
+#
+# Rules (tier4):
+#
+
+FOUNDATION_TIER4_SOURCES := $(shell find $(ROOT)/src/bitbyte/foundation/tier4 -name '*.c')
+FOUNDATION_TIER4_OBJECTS := $(subst $(ROOT)/src/,$(BUILD)/obj/,$(FOUNDATION_TIER4_SOURCES:%.c=%.obj))
+FOUNDATION_TIER4_OBJECTS += $(BUILD)/obj/bitbyte/foundation/tier4.obj
+
+-include $(FOUNDATION_TIER4_OBJECTS:%.obj=%.d)
+
+$(BUILD)/obj/bitbyte/foundation/tier4/%.obj: $(ROOT)/src/bitbyte/foundation/tier4/%.c
+	@echo "[CC] $<"
+	@mkdir -p ${@D}
+	@$(ROOT)/build/toolchains/msvc.d/cl -TP $(CFLAGS) -I"$(call posix-to-windows,$(ROOT)/include)" -DBITBYTE_FOUNDATION_TIER4_COMPILING=4 -Fo"$(call posix-to-windows,$@)" -Fd"$(call posix-to-windows,$(patsubst %.obj,%.pdb,$@))" "$<"
+	@$(ROOT)/build/toolchains/msvc.d/cl -TP $(CFLAGS) -I"$(call posix-to-windows,$(ROOT)/include)" -DBITBYTE_FOUNDATION_TIER4_COMPILING=4 "$<" -MM -MT $@ >$(patsubst %.obj,%.d,$@)
+
+$(BUILD)/obj/bitbyte/foundation/tier4.obj: $(ROOT)/src/bitbyte/foundation/tier4.c
+	@echo "[CC] $<"
+	@mkdir -p ${@D}
+	@$(ROOT)/build/toolchains/msvc.d/cl -TP $(CFLAGS) -I"$(call posix-to-windows,$(ROOT)/include)" -DBITBYTE_FOUNDATION_TIER4_COMPILING=4 -Fo"$(call posix-to-windows,$@)" -Fd"$(call posix-to-windows,$(patsubst %.obj,%.pdb,$@))" "$<"
+	@$(ROOT)/build/toolchains/msvc.d/cl -TP $(CFLAGS) -I"$(call posix-to-windows,$(ROOT)/include)" -DBITBYTE_FOUNDATION_TIER4_COMPILING=4 "$<" -MM -MT $@ >$(patsubst %.obj,%.d,$@)
+
+ifeq ($(LINKAGE),static)
+$(BUILD)/lib/tier4.lib: $(FOUNDATION_TIER4_OBJECTS)
+	@echo "[AR] $@"
+	@mkdir -p ${@D}
+	@lib $(ARFLAGS) -OUT:"$(call posix-to-windows,$@)" $(foreach obj,$(FOUNDATION_TIER4_OBJECTS),"$(call posix-to-windows,$(obj))")
+
+tier4: $(BUILD)/lib/tier4.lib
+endif
+ifeq ($(LINKAGE),dynamic)
+$(BUILD)/bin/tier4.dll: $(FOUNDATION_TIER4_OBJECTS)
+	@echo "[LD] $@"
+	@mkdir -p ${@D}
+	@link -DLL $(LDFLAGS) -OUT:"$(call posix-to-windows,$@)" tier0.lib tier1.lib tier2.lib tier3.lib $(foreach obj,$(FOUNDATION_TIER4_OBJECTS),"$(call posix-to-windows,$(obj))")
+
+$(BUILD)/lib/tier4.lib: $(BUILD)/bin/tier4.dll
+	@echo "[AR] $@"
+	@mkdir -p ${@D}
+	-@mv -f -u $(basename $<).lib $@
+
+tier4: $(BUILD)/bin/tier4.dll $(BUILD)/lib/tier4.lib
+endif
+
+foundation: tier0 tier1 tier2 tier3 tier4
 
 package-foundation: foundation
 	@mkdir -p $(BUILD)/pkg
