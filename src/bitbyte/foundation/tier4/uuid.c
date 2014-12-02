@@ -23,6 +23,7 @@
   #include <objbase.h>
 #elif BITBYTE_FOUNDATION_TIER0_SYSTEM == __BITBYTE_FOUNDATION_TIER0_SYSTEM_MAC_OS_X__
 #elif BITBYTE_FOUNDATION_TIER0_SYSTEM == __BITBYTE_FOUNDATION_TIER0_SYSTEM_LINUX__
+  #include <uuid/uuid.h>
 #endif
 
 //============================================================================//
@@ -61,6 +62,8 @@ bitbyte_foundation_tier4_uuid_generate(
   uuid->_raw[15] = guid.Data4[7];
 #elif BITBYTE_FOUNDATION_TIER0_SYSTEM == __BITBYTE_FOUNDATION_TIER0_SYSTEM_MAC_OS_X__
 #elif BITBYTE_FOUNDATION_TIER0_SYSTEM == __BITBYTE_FOUNDATION_TIER0_SYSTEM_LINUX__
+  // We can just typecast to uuid_t, as it is just typedef'd to uint8_t[16].
+  uuid_generate_random((uint8_t *)&uuid);
 #endif
 }
 
