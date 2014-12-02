@@ -290,7 +290,7 @@ $(BUILD)/bin/libtier4.so: $(FOUNDATION_TIER4_OBJECTS)
 tier4: tier0 tier1 tier2 $(BUILD)/bin/libtier4.so
 endif
 
-foundation: tier0 tier1 tier2 tier3
+foundation: tier0 tier1 tier2 tier3 tier4
 
 package-foundation: foundation
 	@mkdir -p $(BUILD)/pkg
