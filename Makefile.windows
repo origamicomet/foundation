@@ -323,6 +323,7 @@ endif
 FOUNDATION_TIER4_SOURCES := $(shell find $(ROOT)/src/bitbyte/foundation/tier4 -name '*.c')
 FOUNDATION_TIER4_OBJECTS := $(subst $(ROOT)/src/,$(BUILD)/obj/,$(FOUNDATION_TIER4_SOURCES:%.c=%.obj))
 FOUNDATION_TIER4_OBJECTS += $(BUILD)/obj/bitbyte/foundation/tier4.obj
+FOUNDATION_TIER4_OBJECTS += $(BUILD)/obj/nedmalloc.obj
 
 -include $(FOUNDATION_TIER4_OBJECTS:%.obj=%.d)
 
@@ -337,6 +338,12 @@ $(BUILD)/obj/bitbyte/foundation/tier4.obj: $(ROOT)/src/bitbyte/foundation/tier4.
 	@mkdir -p ${@D}
 	@$(ROOT)/build/toolchains/msvc.d/cl -TP $(CFLAGS) -I"$(call posix-to-windows,$(ROOT)/include)" -DBITBYTE_FOUNDATION_TIER4_COMPILING=4 -Fo"$(call posix-to-windows,$@)" -Fd"$(call posix-to-windows,$(patsubst %.obj,%.pdb,$@))" "$<"
 	@$(ROOT)/build/toolchains/msvc.d/cl -TP $(CFLAGS) -I"$(call posix-to-windows,$(ROOT)/include)" -DBITBYTE_FOUNDATION_TIER4_COMPILING=4 "$<" -MM -MT $@ >$(patsubst %.obj,%.d,$@)
+
+$(BUILD)/obj/nedmalloc.obj: $(ROOT)/src/nedmalloc.cc
+	@echo "[CC] $<"
+	@mkdir -p ${@D}
+	@$(ROOT)/build/toolchains/msvc.d/cl -TP $(CFLAGS) -I"$(call posix-to-windows,$(ROOT)/include)" -Fo"$(call posix-to-windows,$@)" -Fd"$(call posix-to-windows,$(patsubst %.obj,%.pdb,$@))" "$<"
+	@$(ROOT)/build/toolchains/msvc.d/cl -TP $(CFLAGS) -I"$(call posix-to-windows,$(ROOT)/include)" "$<" -MM -MT $@ >$(patsubst %.obj,%.d,$@)
 
 ifeq ($(LINKAGE),static)
 $(BUILD)/lib/tier4.lib: $(FOUNDATION_TIER4_OBJECTS)
