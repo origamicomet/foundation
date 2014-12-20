@@ -174,6 +174,48 @@ class BITBYTE_FOUNDATION_TIER4_EXPORT Allocator
 
 //===----------------------------------------------------------------------===//
 
+/// \def foundation_allocator_new
+/// \copydoc bitbyte_foundation_allocator_new
+#ifdef __BITBYTE_FOUNDATION_IMPORT__
+  #define foundation_allocator_new bitbyte_foundation_allocator_new
+#endif // __BITBYTE_FOUNDATION_IMPORT__
+
+/// \def bitbyte_foundation_allocator_new
+/// \copydoc bitbyte_foundation_tier4_allocator_new
+#ifdef __BITBYTE_FOUNDATION_IMPORT__
+  #define bitbyte_foundation_allocator_new bitbyte_foundation_tier4_allocator_new
+#endif // __BITBYTE_FOUNDATION_IMPORT__
+
+/// \def bitbyte_foundation_tier4_allocator_new
+/// \brief Uses placement new syntax to allocate and initialize an object of a
+/// |_Type| using |_Allocator|.alloc.
+///
+#define bitbyte_foundation_tier4_allocator_new(_Allocator, _Type) \
+  new ((_Allocator.alloc(sizeof(_Type), _Alignof(_Type))) _Type
+
+//===----------------------------------------------------------------------===//
+
+/// \def foundation_allocator_delete
+/// \copydoc bitbyte_foundation_allocator_delete
+#ifdef __BITBYTE_FOUNDATION_IMPORT__
+  #define foundation_allocator_delete bitbyte_foundation_allocator_delete
+#endif // __BITBYTE_FOUNDATION_IMPORT__
+
+/// \def bitbyte_foundation_allocator_delete
+/// \copydoc bitbyte_foundation_tier4_allocator_delete
+#ifdef __BITBYTE_FOUNDATION_IMPORT__
+  #define bitbyte_foundation_allocator_delete bitbyte_foundation_tier4_allocator_delete
+#endif // __BITBYTE_FOUNDATION_IMPORT__
+
+/// \def bitbyte_foundation_tier4_allocator_delete
+/// \brief Explicitly calls teh destructor (specified implicitly by |_Type|) on
+/// |_Instance| prior to freeing the object using |_Allocator|.free.
+///
+#define bitbyte_foundation_tier4_allocator_delete(_Allocator, _Type, _Instance ) \
+  do { (_Instance)->~_Type(); _Allocator.free((void*)(_Instance)); } while (0, 0)
+
+//===----------------------------------------------------------------------===//
+
 } // bitbyte
 } // foundation
 } // tier4
