@@ -47,6 +47,8 @@ using namespace ::bitbyte::foundation::tier4;
 
 //===----------------------------------------------------------------------===//
 
+#include "bitbyte/foundation/tier4/allocator.h"
+#include "bitbyte/foundation/tier4/heap.h"
 #include "bitbyte/foundation/tier4/uuid.h"
 
 //============================================================================//
