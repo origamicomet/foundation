@@ -24,6 +24,12 @@
 #include "bitbyte/foundation/tier1/stdint.h"
 #include "bitbyte/foundation/tier4/linkage.h"
 
+//===----------------------------------------------------------------------===//
+
+#ifdef __cplusplus
+  #include <new>
+#endif // __cplusplus
+
 //============================================================================//
 
 #ifdef __cplusplus
@@ -191,7 +197,7 @@ class BITBYTE_FOUNDATION_TIER4_EXPORT Allocator
 /// |_Type| using |_Allocator|->alloc.
 ///
 #define bitbyte_foundation_tier4_allocator_new(_Allocator, _Type) \
-  new (((_Allocator)->alloc(sizeof(_Type), _Alignof(_Type))) _Type
+  new ((_Allocator)->alloc(sizeof(_Type), _Alignof(_Type))) _Type
 
 //===----------------------------------------------------------------------===//
 
