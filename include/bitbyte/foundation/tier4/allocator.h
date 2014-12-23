@@ -91,14 +91,14 @@ typedef bitbyte_foundation_tier4_allocator_free_fn bitbyte_foundation_allocator_
 
 /// \brief QQQ
 ///
-typedef struct bitbyte_foundation_tier4_allocator_t {
+typedef struct bitbyte_foundation_tier4_allocator {
   /// \copdoc bitbyte_foundation_tier4_allocator_alloc_fn
   bitbyte_foundation_tier4_allocator_alloc_fn alloc;
   /// \copydoc bitbyte_foundation_tier4_allocator_realloc_fn
   bitbyte_foundation_tier4_allocator_realloc_fn realloc;
   /// \copydoc bitbyte_foundation_tier4_allocator_free_fn
   bitbyte_foundation_tier4_allocator_free_fn free;
-} bitbyte_foundation_tier4_allocator_t_t;
+} bitbyte_foundation_tier4_allocator_t;
 
 /// \copydoc bitbyte_foundation_tier4_allocator_t
 typedef bitbyte_foundation_tier4_allocator_t bitbyte_foundation_allocator_t;
