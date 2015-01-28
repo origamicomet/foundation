@@ -73,8 +73,14 @@ typedef bitbyte_foundation_tier4_array_t bitbyte_foundation_array_t;
     Array() { /*_Name##_init((_Array_c *)this);*/ } \
     Array(const _Array_c *array) { /*_Name##_dup(array, (_Array_c *)this);*/ } \
     Array(const _Array_cxx &array) { /*_Name##_dup((const _Array_c *)&array, (_Array_c *)this);*/ } \
-    Array &operator=(const _Array_c *array) { /*_Name##_dup(array, (_Array_c *)this);*/ } \
-    Array &operator=(const _Array_cxx &array) { /*_Name##_dup((const _Array_c *)&array, (_Array_c *)this);*/ } \
+    Array &operator=(const _Array_c *array) { \
+      this->__array__._size = array->__array__._size; array->__array__._size = 0; \
+      this->__array__._capacity = array->__array__._capacity;  array->__array__._capacity = 0; \
+      return *this; } \
+    Array &operator=(const _Array_cxx &array) { \
+      this->__array__._size = array.__array__._size; array.__array__._size = 0; \
+      this->__array__._capacity = array.__array__._capacity;  array.__array__._capacity = 0; \
+      return *this; } \
     ~Array() { /*_Name##_destroy((const _Array_c *)&array, (_Array_c *)this);*/ } \
    public: \
     operator _Name##_t ()       { return (      _Array_c *)this; } \
@@ -191,6 +197,35 @@ class Array {
   /// TODO(mike): Document this.
   int to_s(char buf[], const size_t buf_sz);
 };
+
+// resize
+// reserve
+// grow
+// search
+// sort
+// any?
+// find
+// clear
+// at
+// condense/compact
+// each
+// empty?
+// include?
+// insert
+// join
+// sort
+// push/pop
+// replace
+// fill
+// first/last
+// front/back
+// begin/end
+// reverse
+// shift/unshift
+// slice
+// to_s
+// count
+// delete (del)
 
 //===----------------------------------------------------------------------===//
 
