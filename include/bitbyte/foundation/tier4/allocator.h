@@ -160,6 +160,14 @@ class BITBYTE_FOUNDATION_TIER4_EXPORT Allocator
   virtual ~Allocator();
 
  public:
+  /// \brief Converts to a ::bitbyte_foundation_tier4_allocator_t.
+        ::bitbyte_foundation_tier4_allocator_t *to_c()       { return &__allocator__; }
+  const ::bitbyte_foundation_tier4_allocator_t *to_c() const { return &__allocator__; }
+
+  operator       bitbyte_foundation_tier4_allocator_t *()       { return this->to_c(); }
+  operator const bitbyte_foundation_tier4_allocator_t *() const { return this->to_c(); }
+
+ public:
   /// \copydoc ::bitbyte_foundation_tier4_alloc
   virtual void *alloc(const size_t sz, const size_t alignment) = 0;
 

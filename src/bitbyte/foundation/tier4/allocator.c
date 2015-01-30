@@ -58,7 +58,6 @@ namespace tier4 {
 //===----------------------------------------------------------------------===//
 
 Allocator::Allocator()
-  : __self__(this)
 {
   struct Proxy {
     #define __allocator__ \
@@ -89,6 +88,8 @@ Allocator::Allocator()
   __allocator__.alloc = (bitbyte_foundation_tier4_allocator_alloc_fn)&Proxy::alloc;
   __allocator__.realloc = (bitbyte_foundation_tier4_allocator_realloc_fn)&Proxy::realloc;
   __allocator__.free = (bitbyte_foundation_tier4_allocator_free_fn)&Proxy::free;
+
+  __self__ = this;
 }
 
 Allocator::~Allocator()

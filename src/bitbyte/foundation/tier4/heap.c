@@ -58,7 +58,7 @@ void *bitbyte_foundation_tier4_heap_free(
 
 //===----------------------------------------------------------------------===//
 
-static bitbyte_foundation_tier4_allocator_t heap_ = {
+static bitbyte_foundation_tier4_allocator_t heap_c_ = {
   /* .alloc = */ (bitbyte_foundation_tier4_allocator_alloc_fn)&bitbyte_foundation_tier4_heap_alloc,
   /* .realloc = */ (bitbyte_foundation_tier4_allocator_realloc_fn)&bitbyte_foundation_tier4_heap_realloc,
   /* .free = */ (bitbyte_foundation_tier4_allocator_free_fn)&bitbyte_foundation_tier4_heap_free
@@ -67,7 +67,7 @@ static bitbyte_foundation_tier4_allocator_t heap_ = {
 bitbyte_foundation_tier4_allocator_t *
 bitbyte_foundation_tier4_heap(void)
 {
-  return &heap_;
+  return &heap_c_;
 }
 
 //===----------------------------------------------------------------------===//
@@ -112,10 +112,10 @@ class Heap :
 
 //===----------------------------------------------------------------------===//
 
-static Heap heap_;
+static Heap heap_cxx_;
 Allocator *heap(void)
 {
-  return (Allocator *)&heap_;
+  return (Allocator *)&heap_cxx_;
 }
 
 //===----------------------------------------------------------------------===//
