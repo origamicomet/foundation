@@ -446,6 +446,134 @@ _bitbyte_foundation_tier4_array_at_const(
 
 //===----------------------------------------------------------------------===//
 
+/// \def foundation_array_first
+/// \copydoc bitbyte_foundation_array_first
+#ifdef __BITBYTE_FOUNDATION_IMPORT__
+  #define foundation_array_first bitbyte_foundation_array_first
+#endif // __BITBYTE_FOUNDATION_IMPORT__
+
+/// \def bitbyte_foundation_array_first
+/// \copydoc bitbyte_foundation_tier4_array_first
+#ifdef __BITBYTE_FOUNDATION_IMPORT__
+  #define bitbyte_foundation_array_first bitbyte_foundation_tier4_array_first
+#endif // __BITBYTE_FOUNDATION_IMPORT__
+
+/// \def bitbyte_foundation_tier4_array_first
+/// \param _Type
+///
+#define bitbyte_foundation_tier4_array_first(_Type) \
+  _bitbyte_foundation_tier4_array__##_Type##__first
+
+/// \brief
+/// \param _This
+/// \param allocator
+///
+extern
+BITBYTE_FOUNDATION_TIER4_EXPORT
+void *
+_bitbyte_foundation_tier4_array_first(
+  /* const size_t _Type_size, */
+  /* const size_t _Type_alignment, */
+  bitbyte_foundation_tier4_array_t *_This);
+
+//===----------------------------------------------------------------------===//
+
+/// \def foundation_array_first_const
+/// \copydoc bitbyte_foundation_array_first_const
+#ifdef __BITBYTE_FOUNDATION_IMPORT__
+  #define foundation_array_first_const bitbyte_foundation_array_first_const
+#endif // __BITBYTE_FOUNDATION_IMPORT__
+
+/// \def bitbyte_foundation_array_first_const
+/// \copydoc bitbyte_foundation_tier4_array_first_const
+#ifdef __BITBYTE_FOUNDATION_IMPORT__
+  #define bitbyte_foundation_array_first_const bitbyte_foundation_tier4_array_first_const
+#endif // __BITBYTE_FOUNDATION_IMPORT__
+
+/// \def bitbyte_foundation_tier4_array_first_const
+/// \param _Type
+///
+#define bitbyte_foundation_tier4_array_first_const(_Type) \
+  _bitbyte_foundation_tier4_array__##_Type##__first_const
+
+/// \brief
+/// \param _This
+/// \param allocator
+///
+extern
+BITBYTE_FOUNDATION_TIER4_EXPORT
+const void *
+_bitbyte_foundation_tier4_array_first_const(
+  /* const size_t _Type_size, */
+  /* const size_t _Type_alignment, */
+  const bitbyte_foundation_tier4_array_t *_This);
+
+//===----------------------------------------------------------------------===//
+
+/// \def foundation_array_last
+/// \copydoc bitbyte_foundation_array_last
+#ifdef __BITBYTE_FOUNDATION_IMPORT__
+  #define foundation_array_last bitbyte_foundation_array_last
+#endif // __BITBYTE_FOUNDATION_IMPORT__
+
+/// \def bitbyte_foundation_array_last
+/// \copydoc bitbyte_foundation_tier4_array_last
+#ifdef __BITBYTE_FOUNDATION_IMPORT__
+  #define bitbyte_foundation_array_last bitbyte_foundation_tier4_array_last
+#endif // __BITBYTE_FOUNDATION_IMPORT__
+
+/// \def bitbyte_foundation_tier4_array_last
+/// \param _Type
+///
+#define bitbyte_foundation_tier4_array_last(_Type) \
+  _bitbyte_foundation_tier4_array__##_Type##__last
+
+/// \brief
+/// \param _This
+/// \param allocator
+///
+extern
+BITBYTE_FOUNDATION_TIER4_EXPORT
+void *
+_bitbyte_foundation_tier4_array_last(
+  const size_t _Type_size,
+  /* const size_t _Type_alignment, */
+  bitbyte_foundation_tier4_array_t *_This);
+
+//===----------------------------------------------------------------------===//
+
+/// \def foundation_array_last_const
+/// \copydoc bitbyte_foundation_array_last_const
+#ifdef __BITBYTE_FOUNDATION_IMPORT__
+  #define foundation_array_last_const bitbyte_foundation_array_last_const
+#endif // __BITBYTE_FOUNDATION_IMPORT__
+
+/// \def bitbyte_foundation_array_last_const
+/// \copydoc bitbyte_foundation_tier4_array_last_const
+#ifdef __BITBYTE_FOUNDATION_IMPORT__
+  #define bitbyte_foundation_array_last_const bitbyte_foundation_tier4_array_last_const
+#endif // __BITBYTE_FOUNDATION_IMPORT__
+
+/// \def bitbyte_foundation_tier4_array_last_const
+/// \param _Type
+///
+#define bitbyte_foundation_tier4_array_last_const(_Type) \
+  _bitbyte_foundation_tier4_array__##_Type##__last_const
+
+/// \brief
+/// \param _This
+/// \param allocator
+///
+extern
+BITBYTE_FOUNDATION_TIER4_EXPORT
+const void *
+_bitbyte_foundation_tier4_array_last_const(
+  const size_t _Type_size,
+  /* const size_t _Type_alignment, */
+  const bitbyte_foundation_tier4_array_t *_This);
+
+//===----------------------------------------------------------------------===//
+
 #ifdef __cplusplus
 }
 #endif // __cplusplus
@@ -613,6 +741,30 @@ class Array {
                                                                    /* _Alignof(##_Type##), */ \
                                                                    &_This->__array__, \
                                                                    idx); \
+  } \
+ \
+  /*BITBYTE_FOUNDATION_TIER2_FORCE_INLINE*/ _Type *_bitbyte_foundation_tier4_array__##_Type##__first(BITBYTE_FOUNDATION_TIER4_ARRAY_C(_Type) *_This) { \
+    return (_Type *)_bitbyte_foundation_tier4_array_first(/* sizeof(##_Type##), */ \
+                                                          /* _Alignof(##_Type##), */ \
+                                                          &_This->__array__); \
+  } \
+ \
+  /*BITBYTE_FOUNDATION_TIER2_FORCE_INLINE*/ const _Type *_bitbyte_foundation_tier4_array__##_Type##__first_const(const BITBYTE_FOUNDATION_TIER4_ARRAY_C(_Type) *_This) { \
+    return (const _Type *)_bitbyte_foundation_tier4_array_first_const(/* sizeof(##_Type##), */ \
+                                                                      /* _Alignof(##_Type##), */ \
+                                                                      &_This->__array__); \
+  } \
+   \
+  /*BITBYTE_FOUNDATION_TIER2_FORCE_INLINE*/ _Type *_bitbyte_foundation_tier4_array__##_Type##__last(BITBYTE_FOUNDATION_TIER4_ARRAY_C(_Type) *_This) { \
+    return (_Type *)_bitbyte_foundation_tier4_array_last(sizeof(##_Type##),  \
+                                                         /* _Alignof(##_Type##), */ \
+                                                         &_This->__array__); \
+  } \
+ \
+  /*BITBYTE_FOUNDATION_TIER2_FORCE_INLINE*/ const _Type *_bitbyte_foundation_tier4_array__##_Type##__last_const(const BITBYTE_FOUNDATION_TIER4_ARRAY_C(_Type) *_This) { \
+    return (const _Type *)_bitbyte_foundation_tier4_array_last_const(sizeof(##_Type##),  \
+                                                                     /* _Alignof(##_Type##), */ \
+                                                                     &_This->__array__); \
   }
 
 #define _BITBYTE_FOUNDATION_TIER4_DECL_ARRAY_CXX(_Type) \
@@ -642,6 +794,11 @@ class Array {
     /*BITBYTE_FOUNDATION_TIER2_FORCE_INLINE*/ _Type &operator[](const size_t idx) { return *at(idx); } \
     /*BITBYTE_FOUNDATION_TIER2_FORCE_INLINE*/ const _Type *at(const size_t idx) const { return bitbyte_foundation_tier4_array_at_const(_Type)(&this->_This, idx); } \
     /*BITBYTE_FOUNDATION_TIER2_FORCE_INLINE*/ const _Type &operator[](const size_t idx) const { return *at(idx); } \
+   public: \
+    /*BITBYTE_FOUNDATION_TIER2_FORCE_INLINE*/ _Type *first() { return bitbyte_foundation_tier4_array_first(_Type)(&this->_This); } \
+    /*BITBYTE_FOUNDATION_TIER2_FORCE_INLINE*/ const _Type *first() const { return bitbyte_foundation_tier4_array_first_const(_Type)(&this->_This); } \
+    /*BITBYTE_FOUNDATION_TIER2_FORCE_INLINE*/ _Type *last() { return bitbyte_foundation_tier4_array_last(_Type)(&this->_This); } \
+    /*BITBYTE_FOUNDATION_TIER2_FORCE_INLINE*/ const _Type *last() const { return bitbyte_foundation_tier4_array_last_const(_Type)(&this->_This); } \
    private: \
     _Array_c _This; \
   };
