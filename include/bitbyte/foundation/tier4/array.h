@@ -303,6 +303,7 @@ class Array {
     typedef BITBYTE_FOUNDATION_TIER4_ARRAY_C(_Type) _Array_c; \
     typedef BITBYTE_FOUNDATION_TIER4_ARRAY_CXX(_Type) _Array_cxx; \
    public: \
+    explicit Array(); \
     /*BITBYTE_FOUNDATION_TIER2_FORCE_INLINE*/ explicit Array(::bitbyte::foundation::tier4::Allocator *allocator) { bitbyte_foundation_tier4_array_init(_Type)(&this->_This, allocator->to_c()); } \
     /*BITBYTE_FOUNDATION_TIER2_FORCE_INLINE*/ explicit Array(const _Array_cxx &rhs) { bitbyte_foundation_tier4_array_dup(_Type)(&this->_This, &rhs._This); } \
     /*BITBYTE_FOUNDATION_TIER2_FORCE_INLINE*/ explicit Array(_Array_cxx &&rhs) { bitbyte_foundation_tier4_array_move(_Type)(&this->_This, &rhs._This); } \
