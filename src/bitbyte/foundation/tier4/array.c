@@ -105,6 +105,49 @@ _bitbyte_foundation_tier4_array_dup(
 
 //===----------------------------------------------------------------------===//
 
+size_t
+_bitbyte_foundation_tier4_array_size(
+  const size_t _Type_size,
+  /* const size_t _Type_alignment, */
+  const bitbyte_foundation_tier4_array_t *_This)
+{
+#if BITBYTE_FOUNDATION_CONFIGURATION == BITBYTE_FOUNDATION_CONFIGURATION_DEBUG
+  bitbyte_foundation_tier2_assert(_This != NULL);
+#endif
+  const size_t size_in_bytes = (size_t)(_This->_storage.finish - _This->_storage.start);
+  return (size_in_bytes / _Type_size);
+}
+
+//===----------------------------------------------------------------------===//
+
+size_t
+_bitbyte_foundation_tier4_array_capacity(
+  const size_t _Type_size,
+  /* const size_t _Type_alignment, */
+  const bitbyte_foundation_tier4_array_t *_This)
+{
+#if BITBYTE_FOUNDATION_CONFIGURATION == BITBYTE_FOUNDATION_CONFIGURATION_DEBUG
+  bitbyte_foundation_tier2_assert(_This != NULL);
+#endif
+  const size_t capacity_in_bytes = (size_t)(_This->_storage.end - _This->_storage.start);
+  return (capacity_in_bytes / _Type_size);
+}
+//===----------------------------------------------------------------------===//
+
+bool
+_bitbyte_foundation_tier4_array_empty(
+  /* const size_t _Type_size, */
+  /* const size_t _Type_alignment, */
+  const bitbyte_foundation_tier4_array_t *_This)
+{
+#if BITBYTE_FOUNDATION_CONFIGURATION == BITBYTE_FOUNDATION_CONFIGURATION_DEBUG
+  bitbyte_foundation_tier2_assert(_This != NULL);
+#endif
+  return (_This->_storage.start == _This->_storage.finish);
+}
+
+//===----------------------------------------------------------------------===//
+
 #ifdef __cplusplus
 }
 #endif // __cplusplus
