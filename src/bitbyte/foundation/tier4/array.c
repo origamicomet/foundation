@@ -12,6 +12,10 @@
 
 #include "bitbyte/foundation/tier4/array.h"
 
+//===----------------------------------------------------------------------===//
+
+#include "bitbyte/foundation/tier1/inttypes.h"
+
 //============================================================================//
 
 #ifdef __cplusplus
@@ -322,6 +326,25 @@ _bitbyte_foundation_tier4_array_end_const(
   bitbyte_foundation_tier2_assert(_This != NULL);
 #endif
   return (const void *)(_This->_storage.finish);
+}
+
+//===----------------------------------------------------------------------===//
+
+int
+_bitbyte_foundation_tier4_array_to_s(
+  const char *_Type_name,
+  const size_t _Type_size,
+  /* const size_t _Type_alignment, */
+  const bitbyte_foundation_tier4_array_t *_This,
+  char buf[], int buf_sz)
+{
+#if BITBYTE_FOUNDATION_CONFIGURATION == BITBYTE_FOUNDATION_CONFIGURATION_DEBUG
+  bitbyte_foundation_tier2_assert(_This != NULL);
+#endif
+  return snprintf(&buf[0], buf_sz, "#<bitbyte_foundation_tier4_array_t:%.16" PRIxPTR " _Type=`%s' size=%u capacity=%u raw=%.16" PRIxPTR ">",
+                  _This, _Type_name, _bitbyte_foundation_tier4_array_size(_Type_size, /* _Type_alignment, */ _This),
+                  _bitbyte_foundation_tier4_array_capacity(_Type_size, /* _Type_alignment, */ _This),
+                  (const void *)_This->_storage.start);
 }
 
 //===----------------------------------------------------------------------===//

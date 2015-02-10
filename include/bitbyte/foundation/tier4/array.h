@@ -574,6 +574,40 @@ _bitbyte_foundation_tier4_array_end_const(
 
 //===----------------------------------------------------------------------===//
 
+/// \def foundation_array_to_s
+/// \copydoc bitbyte_foundation_array_to_s
+#ifdef __BITBYTE_FOUNDATION_IMPORT__
+  #define foundation_array_to_s bitbyte_foundation_array_to_s
+#endif // __BITBYTE_FOUNDATION_IMPORT__
+
+/// \def bitbyte_foundation_array_to_s
+/// \copydoc bitbyte_foundation_tier4_array_to_s
+#ifdef __BITBYTE_FOUNDATION_IMPORT__
+  #define bitbyte_foundation_array_to_s bitbyte_foundation_tier4_array_to_s
+#endif // __BITBYTE_FOUNDATION_IMPORT__
+
+/// \def bitbyte_foundation_tier4_array_to_s
+/// \param _Type
+///
+#define bitbyte_foundation_tier4_array_to_s(_Type) \
+  _bitbyte_foundation_tier4_array__##_Type##__to_s
+
+/// \brief
+/// \param _This
+/// \param allocator
+///
+extern
+BITBYTE_FOUNDATION_TIER4_EXPORT
+int
+_bitbyte_foundation_tier4_array_to_s(
+  const char *_Type_name,
+  const size_t _Type_size,
+  /* const size_t _Type_alignment, */
+  const bitbyte_foundation_tier4_array_t *_This,
+  char buf[], int buf_sz);
+
+//===----------------------------------------------------------------------===//
+
 #ifdef __cplusplus
 }
 #endif // __cplusplus
@@ -765,6 +799,15 @@ class Array {
     return (const _Type *)_bitbyte_foundation_tier4_array_end_const(/* sizeof(##_Type##), */  \
                                                                     /* _Alignof(##_Type##), */ \
                                                                     &_This->__array__); \
+  } \
+ \
+  /*BITBYTE_FOUNDATION_TIER2_FORCE_INLINE*/ int _bitbyte_foundation_tier4_array__##_Type##__to_s(const BITBYTE_FOUNDATION_TIER4_ARRAY_C(_Type) *_This, \
+                                                                                                          char buf[], const int buf_sz) { \
+    return _bitbyte_foundation_tier4_array_to_s(#_Type, \
+                                                sizeof(##_Type##), \
+                                                /* _Alignof(##_Type##), */ \
+                                                &_This->__array__, \
+                                                buf, buf_sz); \
   }
 
 #define _BITBYTE_FOUNDATION_TIER4_DECL_ARRAY_CXX(_Type) \
@@ -799,6 +842,8 @@ class Array {
     /*BITBYTE_FOUNDATION_TIER2_FORCE_INLINE*/ const _Type *begin() const { return bitbyte_foundation_tier4_array_begin_const(_Type)(&this->_This); } \
     /*BITBYTE_FOUNDATION_TIER2_FORCE_INLINE*/ _Type *end() { return bitbyte_foundation_tier4_array_end(_Type)(&this->_This); } \
     /*BITBYTE_FOUNDATION_TIER2_FORCE_INLINE*/ const _Type *end() const { return bitbyte_foundation_tier4_array_end_const(_Type)(&this->_This); } \
+   public: \
+    /*BITBYTE_FOUNDATION_TIER2_FORCE_INLINE*/ int to_s(char buf[], const int buf_sz) const { return bitbyte_foundation_tier4_array_to_s(_Type)(&this->_This, buf, buf_sz); } \
    private: \
     _Array_c _This; \
   };
