@@ -271,7 +271,7 @@ _bitbyte_foundation_tier4_array_at_const(
 //===----------------------------------------------------------------------===//
 
 void *
-_bitbyte_foundation_tier4_array_first(
+_bitbyte_foundation_tier4_array_begin(
   /* const size_t _Type_size, */
   /* const size_t _Type_alignment, */
   bitbyte_foundation_tier4_array_t *_This)
@@ -285,7 +285,7 @@ _bitbyte_foundation_tier4_array_first(
 //===----------------------------------------------------------------------===//
 
 const void *
-_bitbyte_foundation_tier4_array_first_const(
+_bitbyte_foundation_tier4_array_begin_const(
   /* const size_t _Type_size, */
   /* const size_t _Type_alignment, */
   const bitbyte_foundation_tier4_array_t *_This)
@@ -299,33 +299,29 @@ _bitbyte_foundation_tier4_array_first_const(
 //===----------------------------------------------------------------------===//
 
 void *
-_bitbyte_foundation_tier4_array_last(
-  const size_t _Type_size,
+_bitbyte_foundation_tier4_array_end(
+  /* const size_t _Type_size, */
   /* const size_t _Type_alignment, */
   bitbyte_foundation_tier4_array_t *_This)
 {
 #if BITBYTE_FOUNDATION_CONFIGURATION == BITBYTE_FOUNDATION_CONFIGURATION_DEBUG
   bitbyte_foundation_tier2_assert(_This != NULL);
 #endif
-  if (_This->_storage.start != _This->_storage.finish)
-    return (void *)(_This->_storage.finish - _Type_size);
-  return (void *)(_This->_storage.start);
+  return (void *)(_This->_storage.finish);
 }
 
 //===----------------------------------------------------------------------===//
 
 const void *
-_bitbyte_foundation_tier4_array_last_const(
-  const size_t _Type_size,
+_bitbyte_foundation_tier4_array_end_const(
+  /* const size_t _Type_size, */
   /* const size_t _Type_alignment, */
   const bitbyte_foundation_tier4_array_t *_This)
 {
 #if BITBYTE_FOUNDATION_CONFIGURATION == BITBYTE_FOUNDATION_CONFIGURATION_DEBUG
   bitbyte_foundation_tier2_assert(_This != NULL);
 #endif
-  if (_This->_storage.start != _This->_storage.finish)
-    return (const void *)(_This->_storage.finish - _Type_size);
-  return (const void *)(_This->_storage.start);
+  return (const void *)(_This->_storage.finish);
 }
 
 //===----------------------------------------------------------------------===//
