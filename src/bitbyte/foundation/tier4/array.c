@@ -240,6 +240,36 @@ _bitbyte_foundation_tier4_array_grow(
 
 //===----------------------------------------------------------------------===//
 
+void *
+_bitbyte_foundation_tier4_array_at(
+  const size_t _Type_size,
+  /* const size_t _Type_alignment, */
+  bitbyte_foundation_tier4_array_t *_This,
+  const size_t idx)
+{
+#if BITBYTE_FOUNDATION_CONFIGURATION == BITBYTE_FOUNDATION_CONFIGURATION_DEBUG
+  bitbyte_foundation_tier2_assert(_This != NULL);
+#endif
+  return (void *)(_This->_storage.start + idx * _Type_size);
+}
+
+//===----------------------------------------------------------------------===//
+
+const void *
+_bitbyte_foundation_tier4_array_at_const(
+  const size_t _Type_size,
+  /* const size_t _Type_alignment, */
+  const bitbyte_foundation_tier4_array_t *_This,
+  const size_t idx)
+{
+#if BITBYTE_FOUNDATION_CONFIGURATION == BITBYTE_FOUNDATION_CONFIGURATION_DEBUG
+  bitbyte_foundation_tier2_assert(_This != NULL);
+#endif
+  return (const void *)(_This->_storage.start + idx * _Type_size);
+}
+
+//===----------------------------------------------------------------------===//
+
 #ifdef __cplusplus
 }
 #endif // __cplusplus
