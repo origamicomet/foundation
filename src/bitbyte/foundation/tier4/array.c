@@ -148,6 +148,98 @@ _bitbyte_foundation_tier4_array_empty(
 
 //===----------------------------------------------------------------------===//
 
+static
+void
+_bitbyte_foundation_tier4_array_resize_in_bytes(
+  /* const size_t _Type_size, */
+  const size_t _Type_alignment,
+  bitbyte_foundation_tier4_array_t *_This,
+  const size_t new_size_in_bytes)
+{
+  const size_t new_capacity_in_bytes = new_size_in_bytes;
+  // Don't take into account the current size nor capacity to reduce code
+  // complexity. This shirks the responsibility to the caller, but increases
+  // code reuse in the process and consequently makes changes to the internal
+  // memory management less laborious.
+  _This->_storage.start = (uintptr_t)_This->_allocator->realloc(_This->_allocator,
+                                                                (void *)_This->_storage.start,
+                                                                new_size_in_bytes,
+                                                                _Type_alignment);
+  _This->_storage.finish = _This->_storage.start + new_size_in_bytes;
+  _This->_storage.end = _This->_storage.start + new_capacity_in_bytes;
+}
+
+void
+_bitbyte_foundation_tier4_array_resize(
+  const size_t _Type_size,
+  const size_t _Type_alignment,
+  bitbyte_foundation_tier4_array_t *_This,
+  const size_t new_size)
+{
+#if BITBYTE_FOUNDATION_CONFIGURATION == BITBYTE_FOUNDATION_CONFIGURATION_DEBUG
+  bitbyte_foundation_tier2_assert(_This != NULL);
+#endif
+  _bitbyte_foundation_tier4_array_resize_in_bytes(/* _Type_size, */ _Type_alignment, _This, new_size * _Type_size);
+}
+
+//===----------------------------------------------------------------------===//
+
+void
+_bitbyte_foundation_tier4_array_reserve(
+  const size_t _Type_size,
+  const size_t _Type_alignment,
+  bitbyte_foundation_tier4_array_t *_This,
+  const size_t additional)
+{
+#if BITBYTE_FOUNDATION_CONFIGURATION == BITBYTE_FOUNDATION_CONFIGURATION_DEBUG
+  bitbyte_foundation_tier2_assert(_This != NULL);
+#endif
+  const size_t additional_in_bytes = additional * _Type_size;
+  const size_t cur_size_in_bytes = (size_t)(_This->_storage.finish - _This->_storage.start);
+  const size_t cur_capacity_in_bytes = (size_t)(_This->_storage.end - _This->_storage.start);
+  const size_t new_capacity_in_bytes = cur_capacity_in_bytes + additional_in_bytes;
+  _This->_storage.start = (uintptr_t)_This->_allocator->realloc(_This->_allocator,
+                                                                (void *)_This->_storage.start,
+                                                                new_capacity_in_bytes,
+                                                                _Type_alignment);
+  _This->_storage.finish = _This->_storage.start + cur_size_in_bytes;
+  _This->_storage.end = _This->_storage.start + new_capacity_in_bytes;
+}
+
+//===----------------------------------------------------------------------===//
+
+static
+void
+_bitbyte_foundation_tier4_array_grow_in_bytes(
+  /* const size_t _Type_size, */
+  const size_t _Type_alignment,
+  bitbyte_foundation_tier4_array_t *_This,
+  const size_t by_in_bytes)
+{
+  const size_t available = (size_t)(_This->_storage.end - _This->_storage.finish);
+  if (available >= by_in_bytes) {
+    _This->_storage.finish += available;
+  } else {
+    const size_t cur_size_in_bytes = (size_t)(_This->_storage.finish - _This->_storage.start);
+    _bitbyte_foundation_tier4_array_resize_in_bytes(/* _Type_size, */ _Type_alignment, _This, cur_size_in_bytes + by_in_bytes);
+  }
+}
+
+void
+_bitbyte_foundation_tier4_array_grow(
+  const size_t _Type_size,
+  const size_t _Type_alignment,
+  bitbyte_foundation_tier4_array_t *_This,
+  const size_t by)
+{
+#if BITBYTE_FOUNDATION_CONFIGURATION == BITBYTE_FOUNDATION_CONFIGURATION_DEBUG
+  bitbyte_foundation_tier2_assert(_This != NULL);
+#endif
+  _bitbyte_foundation_tier4_array_grow_in_bytes(/* _Type_size, */ _Type_alignment, _This, by * _Type_size);
+}
+
+//===----------------------------------------------------------------------===//
+
 #ifdef __cplusplus
 }
 #endif // __cplusplus
