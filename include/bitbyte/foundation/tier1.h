@@ -54,6 +54,7 @@ using namespace ::bitbyte::foundation::tier1;
 #include "bitbyte/foundation/tier1/stdbool.h"
 #include "bitbyte/foundation/tier1/stdint.h"
 #include "bitbyte/foundation/tier1/stdio.h"
+#include "bitbyte/foundation/tier1/constructor_and_destructor.h"
 
 //============================================================================//
 
