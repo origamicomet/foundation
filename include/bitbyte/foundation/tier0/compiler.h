@@ -180,7 +180,7 @@ typedef bitbyte_foundation_tier0_compiler_t bitbyte_foundation_compiler_t;
   /// \def FOUNDATION_COMPILER_CLANG
   /// \copydoc BITBYTE_FOUNDATION_COMPILER_CLANG
   #define FOUNDATION_COMPILER_CLANG \
-    BITBYTE_FOUNDATION_COMPILER_CLAN
+    BITBYTE_FOUNDATION_COMPILER_CLANG
 #endif // __BITBYTE_FOUNDATION_IMPORT__
 
 //===----------------------------------------------------------------------===//
