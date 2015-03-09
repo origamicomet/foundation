@@ -47,6 +47,7 @@ using namespace ::bitbyte::foundation::tier3;
 
 //===----------------------------------------------------------------------===//
 
+#include "bitbyte/foundation/tier3/atomics.h"
 #include "bitbyte/foundation/tier3/cpu.h"
 #include "bitbyte/foundation/tier3/mutex.h"
 #include "bitbyte/foundation/tier3/timer.h"
